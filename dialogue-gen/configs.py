@@ -1,7 +1,6 @@
 from typing import Union
 from argparse import Namespace
 from dataclasses import dataclass
-from functools import cache
 import json
 
 # parsed command line args
@@ -34,8 +33,15 @@ class DialogueBoxConfigs:
 
 @dataclass
 class Threshold:
+    """Contains info about mapping count to duration, as well as info about converting frame durations to timestamp durations.
+    The expected out frame won't be known at first.
+    We recommend you run the tool first to fill in the expected frame and the correct fix.
+    """
+
     count: int
     duration: str
+    expectedFrames: int = None  # expected out frame
+    fix: str = None             # timestamp fix
 
 
 @dataclass
