@@ -31,6 +31,10 @@ def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
         olcolor=characterInfo.color.headerOutline,
         font=configs.HEADER.font)
 
+    dropTextFilter = dropTextFilterArgs(
+        resource=configs.DIALOGUE_BOX.dropTextMaskPath,
+        end=configs.DIALOGUE_BOX.dropTextEnd)
+
     richTextFilter = richTextFilterArgs(
         text=dialogueLine.text,
         geometry=configs.DIALOGUE_BOX.geometry,
@@ -40,7 +44,7 @@ def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
 
     return Clip('color:#00000000').set_duration(duration)\
         .fx('qtext', richTextFilter)\
-        .fx('mask_start', dropTextFilterArgs(configs.DIALOGUE_BOX.dropTextMaskPath))\
+        .fx('mask_start', dropTextFilter)\
         .fx('dynamictext', headerFilter)
 
 

@@ -15,11 +15,6 @@ class VideoModeConfigs:
 
 
 @dataclass
-class TimingConfigs:
-    inEnd: str
-
-
-@dataclass
 class HeaderConfigs:
     geometry: str
     font: str
@@ -31,6 +26,7 @@ class HeaderConfigs:
 class DialogueBoxConfigs:
     geometry: str
     dropTextMaskPath: str
+    dropTextEnd: str
     font: str
     fontSize: int
 
@@ -40,7 +36,6 @@ DIALOGUE_REGEX: str
 
 # more specific configs
 VIDEO_MODE: VideoModeConfigs
-TIMING: TimingConfigs
 HEADER: HeaderConfigs
 DIALOGUE_BOX: DialogueBoxConfigs
 
@@ -60,7 +55,6 @@ def loadConfigJson(path: str):
     # bring globals into scope
     global DIALOGUE_REGEX
     global VIDEO_MODE
-    global TIMING
     global HEADER
     global DIALOGUE_BOX
     global CHARACTERS
@@ -68,7 +62,6 @@ def loadConfigJson(path: str):
     # assigne globals
     DIALOGUE_REGEX = configJson.get('dialogueRegex')
     VIDEO_MODE = VideoModeConfigs(**configJson.get('videoMode'))
-    TIMING = TimingConfigs(**configJson.get('timing'))
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
     CHARACTERS = configJson.get('characters')
