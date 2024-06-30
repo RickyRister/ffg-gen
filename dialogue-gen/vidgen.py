@@ -2,6 +2,8 @@ from functools import partial
 from vidpy import Clip, Composition
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
+import re
+from bisect import bisect
 from mlt_fix import makeXmlEditable
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from parsing import DialogueLine, CharacterInfo
@@ -14,7 +16,19 @@ def determineDuration(text: str) -> float:
     """Determines how long the text should last for depending on its length.
     Returns duration in seconds
     """
-    return 5
+
+    count: int = None
+    match(configs.DURATIONS.mode):
+        case 'char':
+            count = len(text)
+        case 'word':
+            count = len(re.findall(r'\w+', text))
+        case _:
+            raise ValueError(f'{configs.DURATIONS.mode} is not a valid durations mode')
+
+    index = bisect(configs.DURATIONS.thresholds, count,
+                   key=lambda threshold: threshold.count)
+    return configs.DURATIONS.thresholds[index-1].duration
 
 
 def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
@@ -22,6 +36,8 @@ def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
     characterInfo: CharacterInfo = dialogueLine.character
 
     duration: float = determineDuration(dialogueLine.text)
+
+    print(dialogueLine.text, duration)
 
     headerFilter: dict = textFilterArgs(
         text=characterInfo.displayName,

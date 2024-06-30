@@ -1,4 +1,9 @@
-tenmu 1: bird!
+tenmu 1: bird! bird bird bird
 fujioki 1: bird?
 tenmu 1: bird bird bird
 fujioki 3: "bird" bird bird?
+tenmu 2: this part suddenly has way more 
+tenmu 2: this part suddenly has way more text than before. Is this a problem? I don't really care either ways
+tenmu 2: this part suddenly has way more text than before. Is this a problem? I don't really care either ways. There is even more text following it
+
+
