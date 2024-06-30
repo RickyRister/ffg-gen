@@ -25,7 +25,7 @@ class CharacterInfo:
 
     def __post_init__(self):
         if isinstance(self.color, dict):
-            self.color=CharacterColor(**self.color)
+            self.color = CharacterColor(**self.color)
 
     @cache
     def ofName(name: str):
@@ -50,6 +50,10 @@ class DialogueLine:
     num: int | None    # the portrait number
 
 
+def isComment(line: str) -> bool:
+    return len(line) == 0 or line.startswith('#') or line.startswith('//') or line.startswith('(')
+
+
 def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine]:
     """Parse the script into the internal representation
     """
@@ -61,7 +65,7 @@ def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine]:
         line = line.strip()
 
         # skip this line if it's empty or it's a comment
-        if (len(line) == 0 or line.startswith('#')):
+        if (isComment(line)):
             continue
 
         # match regex and throw if match fails
