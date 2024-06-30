@@ -23,6 +23,10 @@ class CharacterInfo:
     color: CharacterColor
     isPlayer: bool
 
+    def __post_init__(self):
+        if isinstance(self.color, dict):
+            self.color=CharacterColor(**self.color)
+
     @cache
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that
@@ -32,11 +36,7 @@ class CharacterInfo:
         if not character_json:
             raise ValueError(f'{name} not found in characters in config json')
 
-        return CharacterInfo(
-            isPlayer=character_json['isPlayer'],
-            displayName=character_json['displayName'],
-            portraitPathFormat=character_json['portraitPathFormat'],
-            color=CharacterColor(**character_json.get('color')))
+        return CharacterInfo(**character_json)
 
 
 @dataclass
