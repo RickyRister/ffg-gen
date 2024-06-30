@@ -27,7 +27,7 @@ def main():
     xml: str = dialogue_line.xml()
     fixedXml: Element = makeXmlEditable(XML(xml))
 
-    with open('output.mlt', 'wb') as outfile:
+    with open('experiment.mlt', 'wb') as outfile:
         xml_string = ElementTree.tostring(fixedXml)
         outfile.write(xml_string)
 
