@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
 from mlt_fix import makeXmlEditable
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from parsed import DialogueLine, CharacterInfo
+from parsing import DialogueLine, CharacterInfo
 import configs
 
 # This is where most of the heavy lifting happens

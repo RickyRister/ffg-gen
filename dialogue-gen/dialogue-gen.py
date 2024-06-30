@@ -1,10 +1,9 @@
 from argparse import ArgumentParser
-import json
 from xml.etree.ElementTree import Element
 from xml.etree import ElementTree 
 import configs
-import parsed
-import processing
+import parsing
+import vidgen
 
 
 def createArgumentParser() -> ArgumentParser:
@@ -26,9 +25,9 @@ def main():
 
     dialogueLines = None
     with open(configs.ARGS.input) as inputFile:
-        dialogueLines = parsed.parseDialogueFile(inputFile)
+        dialogueLines = parsing.parseDialogueFile(inputFile)
 
-    xml: Element = processing.processDialogueLines(dialogueLines)
+    xml: Element = vidgen.processDialogueLines(dialogueLines)
 
     with open(configs.ARGS.output, 'wb') as outfile:
         xml_string = ElementTree.tostring(xml)
