@@ -31,7 +31,7 @@ class CharacterInfo:
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that
         """
-        character_json: dict = configs.CHARACTERS.get(name)
+        character_json: dict = configs.CHARACTERS.get(str.lower(name))
 
         if not character_json:
             raise ValueError(f'{name} not found in characters in config json')
