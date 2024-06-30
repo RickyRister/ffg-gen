@@ -23,23 +23,33 @@
         "thresholds": [
             {
                 "count": 0,
-                "duration": 3
+                "duration": 3,
+                "expectedFrames": 75,
+                "fix": "00:00:02.960"
             },
             {
                 "count": 60,
-                "duration": 4
+                "duration": 4,
+                "expectedFrames": 100,
+                "fix": "00:00:03.960"
             },
             {
                 "count": 80,
-                "duration": 4
+                "duration": 4.5,
+                "expectedFrames": 112,
+                "fix": "00:00:04.467"
             },
             {
                 "count": 100,
-                "duration": 5
+                "duration": 5,
+                "expectedFrames": 125,
+                "fix": "00:00:04.960"
             },
             {
                 "count": 120,
-                "duration": 6
+                "duration": 6,
+                "expectedFrames": 150,
+                "fix": "00:00:05.960"
             }
         ]
     },

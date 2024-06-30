@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
 import re
 from bisect import bisect
-from mlt_fix import makeXmlEditable
+from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from parsing import DialogueLine, CharacterInfo
 import configs
@@ -74,6 +74,6 @@ def processDialogueLines(dialogueLines: list[DialogueLine]) -> Element:
         fps=configs.VIDEO_MODE.fps)
 
     xml: str = composition.xml()
-    fixedXml: Element = makeXmlEditable(XML(xml))
+    fixedXml: Element = fix_mlt(XML(xml))
 
     return fixedXml

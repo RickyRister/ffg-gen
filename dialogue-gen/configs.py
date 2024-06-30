@@ -39,7 +39,7 @@ class Threshold:
     """
 
     count: int
-    duration: str
+    duration: float
     expectedFrames: int = None  # expected out frame
     fix: str = None             # timestamp fix
 
