@@ -26,5 +26,7 @@ def makeXmlEditable(xml : Element) -> Element:
                 filter_element.append(createPropertyElement('shotcut:filter', 'dynamicText'))
                 filter_element.append(createPropertyElement('shotcut:usePointSize', '1'))
                 filter_element.append(createPropertyElement('shotcut:pointSize', filter_element.find("./property[@name='size']").text))
+            case 'qtext':
+                filter_element.append(createPropertyElement('shotcut:filter', 'richText'))
 
     return xml

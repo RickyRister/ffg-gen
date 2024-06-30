@@ -2,36 +2,21 @@ from vidpy import Clip, Composition
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
 from mlt_fix import makeXmlEditable
+from filters import textFilterArgs, richTextFilterArgs
 
-def generateTextFilter(text, geometry, color="#ffffff", bgcolor="0x00000000", olcolor="0x00000000", outline=1, halign="center", valign="middle", pad=0, font="Sans", size=1080, style="normal", weight=400) -> dict:
-    return {
-        'argument': text,
-        'geometry': geometry,
-        'family': font,
-        'size': size,
-        'weight': weight,
-        'style': style,
-        'fgcolour': color,
-        'bgcolour': bgcolor,
-        'olcolour': olcolor,
-        'outline': outline,
-        'pad': pad,
-        'halign': halign,
-        'valign': valign,
-    }
 
 
 def main():
-    tenmu_header: dict = generateTextFilter(
-        '天梦', '581 784 350 42 1', size=28, weight=500, olcolor='#763090', halign='left', font='MF KeKe (Noncommercial)')
-    fujioki_header: dict = generateTextFilter(
-        '不如归', '581 784 350 42 1', size=28, weight=500, olcolor='#a9b7cc', halign='left', font='MF KeKe (Noncommercial)')
+    tenmu_header: dict = textFilterArgs(
+        '天梦', '581 784 350 42 1', size=28, olcolor='#763090', halign='left', font='MF KeKe (Noncommercial)')
+    fujioki_header: dict = textFilterArgs(
+        '不如归', '581 784 350 42 1', size=28, olcolor='#a9b7cc', halign='left', font='MF KeKe (Noncommercial)')
 
     clips = [
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header),
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header),
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header),
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header).fx('qtext', richTextFilterArgs("bird", '576 830 768 159 1', 'Stylish', 30)),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header).fx('qtext', richTextFilterArgs("bird?", '576 830 768 159 1', 'Stylish', 30)),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header).fx('qtext', richTextFilterArgs("bird's bird bird", '576 830 768 159 1', 'Stylish', 30)),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header).fx('qtext', richTextFilterArgs('"bird" bird bird?', '576 830 768 159 1', 'Stylish', 30)),
     ]
 
     dialogue_line = Composition(clips, singletrack=True, width=1920, height=1080, fps=30)
