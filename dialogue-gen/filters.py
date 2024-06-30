@@ -2,7 +2,7 @@
 
 def textFilterArgs(text, geometry,
                    color="#ffffff", bgcolor="0x00000000", olcolor="0x00000000",
-                   outline=1, halign="center", valign="middle",
+                   outline=1, halign="left", valign="middle",
                    pad=0, font="Sans", size=1080, style="normal",
                    weight=500) -> dict:
     """

@@ -1,7 +1,10 @@
 from argparse import ArgumentParser
 import json
+from xml.etree.ElementTree import Element
+from xml.etree import ElementTree 
 import configs
 import parsed
+import processing
 
 
 def createArgumentParser() -> ArgumentParser:
@@ -25,7 +28,11 @@ def main():
     with open(configs.ARGS.input) as inputFile:
         dialogueLines = parsed.parseDialogueFile(inputFile)
 
-    print(dialogueLines)    
+    xml: Element = processing.processDialogueLines(dialogueLines)
+
+    with open(configs.ARGS.output, 'wb') as outfile:
+        xml_string = ElementTree.tostring(xml)
+        outfile.write(xml_string)
     
 
 

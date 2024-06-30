@@ -22,7 +22,7 @@ class CharacterInfo:
     displayName: str
     portraitPathFormat: str
     color: CharacterColor
-    isPlayer: bool = False
+    isPlayer: bool
 
     @cache
     def ofName(name: str):
