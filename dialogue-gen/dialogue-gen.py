@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from argparse import ArgumentParser
 from xml.etree.ElementTree import Element
 from xml.etree import ElementTree 
