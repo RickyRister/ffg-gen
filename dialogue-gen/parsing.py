@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable
 from functools import cache
+from bisect import bisect
 import re
 import configs
 
@@ -48,6 +49,26 @@ class DialogueLine:
     text: str
     character: CharacterInfo
     num: int | None    # the portrait number
+
+    @property 
+    def duration(self) -> float:
+        """Determines how long the text should last for depending on its length.
+        Returns duration in seconds
+        """
+
+        count: int = None
+        match(configs.DURATIONS.mode):
+            case 'char':
+                count = len(self.text)
+            case 'word':
+                count = len(re.findall(r'\w+', self.text))
+            case _:
+                raise ValueError(f'{configs.DURATIONS.mode} is not a valid durations mode')
+
+        index = bisect(configs.DURATIONS.thresholds, count,
+                    key=lambda threshold: threshold.count)
+        return configs.DURATIONS.thresholds[index-1].duration
+
 
 
 def isComment(line: str) -> bool:

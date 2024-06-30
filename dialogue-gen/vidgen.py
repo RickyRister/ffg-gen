@@ -3,7 +3,6 @@ from vidpy import Clip, Composition
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
 import re
-from bisect import bisect
 from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from parsing import DialogueLine, CharacterInfo
@@ -12,32 +11,10 @@ import configs
 # This is where most of the heavy lifting happens
 
 
-def determineDuration(text: str) -> float:
-    """Determines how long the text should last for depending on its length.
-    Returns duration in seconds
-    """
-
-    count: int = None
-    match(configs.DURATIONS.mode):
-        case 'char':
-            count = len(text)
-        case 'word':
-            count = len(re.findall(r'\w+', text))
-        case _:
-            raise ValueError(f'{configs.DURATIONS.mode} is not a valid durations mode')
-
-    index = bisect(configs.DURATIONS.thresholds, count,
-                   key=lambda threshold: threshold.count)
-    return configs.DURATIONS.thresholds[index-1].duration
-
 
 def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
 
     characterInfo: CharacterInfo = dialogueLine.character
-
-    duration: float = determineDuration(dialogueLine.text)
-
-    # print(dialogueLine.text, duration)
 
     headerFilter: dict = textFilterArgs(
         text=characterInfo.displayName,
@@ -58,7 +35,7 @@ def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
         fontSize=configs.DIALOGUE_BOX.fontSize,
         color=characterInfo.color.dialogue)
 
-    return Clip('color:#00000000').set_duration(duration)\
+    return Clip('color:#00000000').set_duration(dialogueLine.duration)\
         .fx('qtext', richTextFilter)\
         .fx('mask_start', dropTextFilter)\
         .fx('dynamictext', headerFilter)
