@@ -1,0 +1,4 @@
+tenmu 1: bird!
+fujioki 1: bird?
+tenmu 1: bird bird bird
+fujioki 3: "bird" bird bird?

@@ -1,4 +1,5 @@
 {
+    "dialogueRegex": "(?P<character>.*) (?P<num>\\d*): (?P<text>.*)",
     "videoMode": {
         "width": 1920,
         "height": 1080,
