@@ -1,3 +1,4 @@
+from functools import partial
 from vidpy import Clip, Composition
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
@@ -11,12 +12,14 @@ def main():
         '天梦', '581 784 350 42 1', size=28, olcolor='#763090', halign='left', font='MF KeKe (Noncommercial)')
     fujioki_header: dict = textFilterArgs(
         '不如归', '581 784 350 42 1', size=28, olcolor='#a9b7cc', halign='left', font='MF KeKe (Noncommercial)')
+    
+    richText = partial(richTextFilterArgs, geometry='576 830 768 159 1', font='Stylish', fontSize=30)
 
     clips = [
-        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs("bird", '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', tenmu_header),
-        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs("bird?", '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', fujioki_header),
-        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs("bird's bird bird", '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', tenmu_header),
-        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs('"bird" bird bird?', '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', fujioki_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richText("bird")).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', tenmu_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richText("bird?")).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', fujioki_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richText("bird's bird bird")).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', tenmu_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richText('"bird" bird bird?')).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', fujioki_header),
     ]
 
     dialogue_line = Composition(clips, singletrack=True, width=1920, height=1080, fps=30)
