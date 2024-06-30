@@ -9,7 +9,7 @@ import vidgen
 
 
 def createArgumentParser() -> ArgumentParser:
-    parser = ArgumentParser(description='Generate .')
+    parser = ArgumentParser(description='Generates mlt files for dialogue scenes in Touhou-style album videos.')
     parser.add_argument('--config', '-c', type=str,
                         help='path to the config file', default='dialogue-gen.json')
     parser.add_argument('--input', '-i', type=str,
