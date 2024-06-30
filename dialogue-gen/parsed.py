@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Iterable
 from functools import cache
 import re
-import config
+import json
+import configs
 
 
 @dataclass
@@ -27,16 +28,16 @@ class CharacterInfo:
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that
         """
-        character_json: dict = config.CONFIG_JSON['characters'][name]
+        character_json: dict = configs.CHARACTERS.get(name)
+
+        if not character_json:
+            raise ValueError(f'{name} not found in characters in config json')
+
         return CharacterInfo(
             isPlayer=character_json['isPlayer'],
             displayName=character_json['displayName'],
             portraitPathFormat=character_json['portraitPathFormat'],
-            color=CharacterColor(
-                headerOutline=character_json['color']['headerOutline'],
-                headerFill=character_json['color']['headerFill'],
-                dialogue=character_json['color']['dialogue']
-            ))
+            color=CharacterColor(**character_json.get('color')))
 
 
 @dataclass
@@ -53,7 +54,7 @@ class DialogueLine:
 def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine]:
     """Parse the script into the internal representation
     """
-    pattern: re.Pattern = re.compile(config.CONFIG_JSON['dialogueRegex'])
+    pattern: re.Pattern = re.compile(configs.DIALOGUE_REGEX)
 
     dialoguelines: list[DialogueLine] = []
     for line in lines:

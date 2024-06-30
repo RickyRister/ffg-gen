@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 import json
-import config
+import configs
 import parsed
 
 
@@ -17,16 +17,15 @@ def createArgumentParser() -> ArgumentParser:
 
 def main():
     parser = createArgumentParser()
-    config.ARGS = parser.parse_args()
+    configs.ARGS = parser.parse_args()
 
-    with open(config.ARGS.config) as configFile:
-        config.CONFIG_JSON = json.load(configFile)
+    configs.loadConfigJson(configs.ARGS.config)
 
-    with open(config.ARGS.input) as inputFile:
+    dialogueLines = None
+    with open(configs.ARGS.input) as inputFile:
         dialogueLines = parsed.parseDialogueFile(inputFile)
-        print(dialogueLines)
 
-
+    print(dialogueLines)    
     
 
 
