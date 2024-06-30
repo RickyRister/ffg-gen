@@ -21,8 +21,8 @@
     },
     "characters": {
         "tenmu": {
-            "player": true,
-            "name": "天梦",
+            "isPlayer": true,
+            "displayName": "天梦",
             "portraitPathFormat": "",
             "color": {
                 "headerFill": "#ffffff",
@@ -31,8 +31,8 @@
             }
         },
         "fujioki": {
-            "player": false,
-            "name": "不如归",
+            "isPlayer": false,
+            "displayName": "不如归",
             "portraitPathFormat": "",
             "color": {
                 "headerFill": "#ffffff",
