@@ -2,7 +2,7 @@ from vidpy import Clip, Composition
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
 from mlt_fix import makeXmlEditable
-from filters import textFilterArgs, richTextFilterArgs
+from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 
 
 
@@ -13,10 +13,10 @@ def main():
         '不如归', '581 784 350 42 1', size=28, olcolor='#a9b7cc', halign='left', font='MF KeKe (Noncommercial)')
 
     clips = [
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header).fx('qtext', richTextFilterArgs("bird", '576 830 768 159 1', 'Stylish', 30)),
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header).fx('qtext', richTextFilterArgs("bird?", '576 830 768 159 1', 'Stylish', 30)),
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header).fx('qtext', richTextFilterArgs("bird's bird bird", '576 830 768 159 1', 'Stylish', 30)),
-        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header).fx('qtext', richTextFilterArgs('"bird" bird bird?', '576 830 768 159 1', 'Stylish', 30)),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs("bird", '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', tenmu_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs("bird?", '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', fujioki_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs("bird's bird bird", '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', tenmu_header),
+        Clip('color:#00000000').set_duration(5).fx('qtext', richTextFilterArgs('"bird" bird bird?', '576 830 768 159 1', 'Stylish', 30)).fx('mask_start', dropTextFilterArgs('droptextmask.png')).fx('dynamictext', fujioki_header),
     ]
 
     dialogue_line = Composition(clips, singletrack=True, width=1920, height=1080, fps=30)

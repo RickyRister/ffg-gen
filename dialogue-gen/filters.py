@@ -56,8 +56,21 @@ li.checked::marker { content: "\2612"; }
 <p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'{FONT}'; font-size:{SIZE}pt; color:{COLOR};">{TEXT}</span></p></body></html>
 """
 
+
 def generateHtml(text: str, font: str, fontSize: int, color: str = '#ffffff') -> str:
     """Generates the html for the rich text filter
     """
 
     return HTML.replace("{FONT}", font).replace("{SIZE}", str(fontSize)).replace("{COLOR}", color).replace("{TEXT}", text)
+
+
+def dropTextFilterArgs(resource: str, end: str = '00:00:00.133') -> dict:
+    """Generates the args for a mask filter to create the drop text effect. Use with 'mask_start' filter 
+    """
+    return {
+        'filter': 'shape',
+        "filter.mix": f'00:00:00.000=0;{end}=100',
+        "filter.resource": resource,
+        "filter.use_luminance": 1,
+        "filter.use_mix": 1
+    }
