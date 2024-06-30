@@ -5,5 +5,5 @@ from argparse import Namespace
 ARGS: Namespace
 
 # loaded from the json config on startup
-JSON_CONFIG: dict
+CONFIG_JSON: dict
 

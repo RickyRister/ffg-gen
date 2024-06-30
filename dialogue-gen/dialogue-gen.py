@@ -17,7 +17,7 @@ def main():
     config.ARGS = parser.parse_args()
 
     with open(config.ARGS.configFile) as configFile:
-        config.JSON_CONFIG = json.load(configFile)
+        config.CONFIG_JSON = json.load(configFile)
     
 
 
