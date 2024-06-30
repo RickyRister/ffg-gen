@@ -1,5 +1,7 @@
-from vidpy import Clip, Composition, Text
-
+from vidpy import Clip, Composition
+from xml.etree import ElementTree
+from xml.etree.ElementTree import Element, XML
+from mlt_fix import makeXmlEditable
 
 def generateTextFilter(text, geometry, color="#ffffff", bgcolor="0x00000000", olcolor="0x00000000", outline=1, halign="center", valign="middle", pad=0, font="Sans", size=1080, style="normal", weight=400) -> dict:
     return {
@@ -19,27 +21,29 @@ def generateTextFilter(text, geometry, color="#ffffff", bgcolor="0x00000000", ol
     }
 
 
-""" 
-'shotcut:filter': 'dynamictext',
-        'shotcut:usePointSize': 1,
-        'shotcut:animIn': '00:00:00.000',
-        'shotcut:animOut': '00:00:00.000',
-        'shotcut:pointSize': 28
-"""
+def main():
+    tenmu_header: dict = generateTextFilter(
+        '天梦', '581 784 350 42 1', size=28, weight=500, olcolor='#763090', halign='left', font='MF KeKe (Noncommercial)')
+    fujioki_header: dict = generateTextFilter(
+        '不如归', '581 784 350 42 1', size=28, weight=500, olcolor='#a9b7cc', halign='left', font='MF KeKe (Noncommercial)')
 
+    clips = [
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header),
+        Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header),
+    ]
 
-clip1 = Clip('color:#00000000')
-tenmu_header: dict = generateTextFilter(
-    '天梦', '581 784 350 42 1', size=28, weight=500, olcolor='#763090', halign='left', font='MF KeKe (Noncommercial)')
-fujioki_header: dict = generateTextFilter(
-    '不如归', '581 784 350 42 1', size=28, weight=500, olcolor='#a9b7cc', halign='left', font='MF KeKe (Noncommercial)')
+    dialogue_line = Composition(clips, singletrack=True, width=1920, height=1080, fps=30)
 
-clips = [
-    Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header),
-    Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header),
-    Clip('color:#00000000').set_duration(5).fx('dynamictext', tenmu_header),
-    Clip('color:#00000000').set_duration(5).fx('dynamictext', fujioki_header),
-]
+    xml: str = dialogue_line.xml()
+    fixedXml: Element = makeXmlEditable(XML(xml))
 
-stiched = Composition(clips, singletrack=True, width=1920, height=1080, fps=30)
-stiched.save_xml('output.mlt')
+    with open('output.mlt', 'wb') as outfile:
+        xml_string = ElementTree.tostring(fixedXml)
+        outfile.write(xml_string)
+
+    
+
+if __name__ == "__main__":
+    main()
