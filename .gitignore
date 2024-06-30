@@ -1,3 +1,4 @@
 # mlt files created while testing
 *.mlt
 
+__pycache__
