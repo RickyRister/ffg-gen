@@ -5,7 +5,7 @@ from xml.etree.ElementTree import Element, XML
 import re
 from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from parsing import DialogueLine, CharacterInfo
+from dialogueline import DialogueLine, CharacterInfo
 import configs
 
 # This is where most of the heavy lifting happens
