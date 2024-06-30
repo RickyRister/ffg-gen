@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 import json
 import config
+import parsed
 
 
 def createArgumentParser() -> ArgumentParser:
@@ -18,6 +19,8 @@ def main():
 
     with open(config.ARGS.configFile) as configFile:
         config.CONFIG_JSON = json.load(configFile)
+
+    print(parsed.CharacterInfo.ofName("tenmu"))
     
 
 
