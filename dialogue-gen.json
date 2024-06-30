@@ -1,0 +1,44 @@
+{
+    "videoMode": {
+        "width": 1920,
+        "height": 1080,
+        "fps": 30
+    },
+    "timing": {
+        "inEnd": "00:00:00.133"
+    },
+    "header": {
+        "geometry": "581 784 350 42 1",
+        "font": "MF KeKe (Noncommercial)",
+        "fontSize": 28,
+        "weight": 500
+    },
+    "dialogueBox": {
+        "geometry": "576 830 768 159 1",
+        "dropTextMaskPath": "droptextmask.png",
+        "font": "Stylish",
+        "fontSize": 30
+    },
+    "characters": {
+        "tenmu": {
+            "player": true,
+            "name": "天梦",
+            "portraitPathFormat": "",
+            "color": {
+                "headerFill": "#ffffff",
+                "headerOutline": "#763090",
+                "dialogue": "#ffffff"
+            }
+        },
+        "fujioki": {
+            "player": false,
+            "name": "不如归",
+            "portraitPathFormat": "",
+            "color": {
+                "headerFill": "#ffffff",
+                "headerOutline": "#a9b7cc",
+                "dialogue": "#ffffff"
+            }
+        }
+    }
+}
