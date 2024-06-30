@@ -37,7 +37,7 @@ def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
 
     duration: float = determineDuration(dialogueLine.text)
 
-    print(dialogueLine.text, duration)
+    # print(dialogueLine.text, duration)
 
     headerFilter: dict = textFilterArgs(
         text=characterInfo.displayName,
