@@ -1,4 +1,5 @@
 from xml.etree.ElementTree import Element
+from xml.etree import ElementTree
 import configs
 
 
@@ -17,6 +18,7 @@ def fix_mlt(xml: Element) -> Element:
     xml = make_mlt_editable(xml)
     xml = fix_filters(xml)
     xml = fix_out_timestamps(xml)
+    xml = fix_affine_out(xml)
 
     return xml
 
@@ -67,5 +69,23 @@ def fix_out_timestamps(xml: Element) -> Element:
             continue
 
         producer.set('out', fix)
+
+    return xml
+
+
+def fix_affine_out(xml: Element) -> Element:
+    """Copies the out timestamp of the parent producer to any affine filters
+    """
+
+    # find all parent nodes of filter nodes
+    for producer in xml.findall(".//filter/.."):    
+        out: str = producer.get('out')
+
+        # loop through all filters nodes of the parent node
+        for filter_element in producer.findall('./filter'):
+
+            # replace 'out' if it's an affine filter     
+            if filter_element.find("./property[@name='mlt_service']").text == 'affine':
+                filter_element.set('out', out)
 
     return xml
