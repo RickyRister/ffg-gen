@@ -61,6 +61,8 @@ class CommonMovementConfigs:
     brightnessFadeLevel: float
     moveEnd: str
     exitDuration: float
+    fadeInEnd: str
+    fadeOutEnd: str
 
 
 @dataclass

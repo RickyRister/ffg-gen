@@ -101,3 +101,14 @@ def brightnessFilterArgs(level: str) -> dict:
     return {
         'level': level
     }
+
+def fadeFilterArgs(alpha: str) -> dict:
+    """Generates the args for the fade in/out filter. use with 'brightness' filter.
+
+    Args:
+        alpha: The alpha field in the filter. This includes timestamps and value
+    """
+
+    return {
+        'alpha': alpha
+    }

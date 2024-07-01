@@ -3,7 +3,7 @@ from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element, XML
 from enum import Enum
 from mlt_fix import fix_mlt
-from filters import affineFilterArgs, brightnessFilterArgs
+from filters import affineFilterArgs, brightnessFilterArgs, fadeFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 import configs
 from configs import CharacterMovementConfigs
@@ -116,6 +116,14 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # apply brightness
     clip.fx('brightness', brightnessFilterArgs(determine_brightness_levels(transition)))
+
+    # apply fade in
+    if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
+        clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=0;{configs.MOVEMENT.fadeInEnd}=1'))
+
+    # apply fade out
+    if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
+        clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))    
 
     return clip
 
