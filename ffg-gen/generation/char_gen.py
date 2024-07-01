@@ -49,52 +49,62 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
 
     clips: list[Clip] = []
 
+    charInfo = CharacterInfo.ofName(name)
+
     # Initialize state to offstage
     state: State = State.OFFSTAGE
-    current_expression: str = None
+    curr_expression: str = charInfo.defaultExpression
 
     for dialogueLine in dialogueLines:
         speaker: str = dialogueLine.character.name
 
+        if speaker == name:
+            curr_expression = dialogueLine.expression
+
         match(state):
             case State.OFFSTAGE:
                 if (speaker == name):
-                    clips.append(create_clip(name, dialogueLine, Transition.FULL_ENTER))
+                    clips.append(create_clip(Transition.FULL_ENTER,
+                                 charInfo, curr_expression, dialogueLine))
                     state = State.FRONT
                 else:
-                    clips.append(create_clip(name, dialogueLine, Transition.HALF_ENTER))
+                    clips.append(create_clip(Transition.HALF_ENTER,
+                                 charInfo, curr_expression, dialogueLine))
                     state = State.BACK
             case State.BACK:
                 if (speaker == name):
-                    clips.append(create_clip(name, dialogueLine, Transition.IN))
+                    clips.append(create_clip(Transition.IN,
+                                             charInfo, curr_expression, dialogueLine))
                     state = State.FRONT
                 else:
-                    clips.append(create_clip(name, dialogueLine, Transition.STAY_OUT))
+                    clips.append(create_clip(Transition.STAY_OUT,
+                                 charInfo, curr_expression, dialogueLine))
                     state = State.BACK
             case State.FRONT:
                 if (speaker == name):
-                    clips.append(create_clip(name, dialogueLine, Transition.STAY_IN))
+                    clips.append(create_clip(Transition.STAY_IN,
+                                 charInfo, curr_expression, dialogueLine))
                     state = State.FRONT
                 else:
-                    clips.append(create_clip(name, dialogueLine, Transition.OUT))
+                    clips.append(create_clip(Transition.OUT,
+                                             charInfo, curr_expression, dialogueLine))
                     state = State.BACK
 
     # final exit
     match(state):
-        case State.FRONT: clips.append(create_clip(name, dialogueLine, Transition.FULL_EXIT))
-        case State.BACK: clips.append(create_clip(name, dialogueLine, Transition.HALF_EXIT))
+        case State.FRONT: clips.append(create_clip(Transition.FULL_EXIT, charInfo, curr_expression, dialogueLine))
+        case State.BACK: clips.append(create_clip(Transition.HALF_EXIT, charInfo, curr_expression, dialogueLine))
 
     return clips
 
 
-def create_clip(name: str, dialogueLine: DialogueLine, transition: Transition) -> Clip:
+def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, dialogueLine: DialogueLine) -> Clip:
 
     # determine which character config to use
-    charInfo: CharacterInfo = CharacterInfo.ofName(name)
     moveConfigs: CharacterMovementConfigs = configs.PLAYER_MOVEMENT if charInfo.isPlayer else configs.ENEMY_MOVEMENT
 
     # create clip with portrait
-    portraitPath = charInfo.portraitPathFormat.format(expression=dialogueLine.expression)
+    portraitPath = charInfo.portraitPathFormat.format(expression=expression)
     clip = Clip(portraitPath).set_duration(dialogueLine.duration)
 
     # apply base geometry correction to image if required

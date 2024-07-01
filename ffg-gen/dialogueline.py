@@ -23,6 +23,7 @@ class CharacterInfo:
     portraitPathFormat: str
     color: CharacterColor
     isPlayer: bool
+    defaultExpression: str  # the default expression the character starts in
     name: str = None    # the dict name, for tracking purposes
     geometry: str = None    # in case the character's base portrait needs to repositioned
 
