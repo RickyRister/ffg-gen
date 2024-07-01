@@ -58,6 +58,8 @@ def gen_text(dialogueLines: list[DialogueLine]):
         write_xml(xml, '_text')
     except Exception as e:
         print('Encountered exception while generating text:', e)
+        if (configs.ARGS.debug):
+            raise e
 
 
 def gen_header(dialogueLines: list[DialogueLine]):
@@ -65,6 +67,8 @@ def gen_header(dialogueLines: list[DialogueLine]):
         raise RuntimeError("gen_header not implemented yet")
     except Exception as e:
         print('Encountered exception while generating headers:', e)
+        if (configs.ARGS.debug):
+            raise e
 
 
 def gen_chars(dialogueLines: list[DialogueLine]):
@@ -83,3 +87,5 @@ def gen_char(dialogueLines: list[DialogueLine], character: str):
     except Exception as e:
         print(f'Encountered exception while generating character {character}:',
               e)
+        if (configs.ARGS.debug):
+            raise e

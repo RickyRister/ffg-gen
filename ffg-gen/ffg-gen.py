@@ -19,6 +19,8 @@ def createArgumentParser() -> ArgumentParser:
                         help='path to the input dialogue file', default='dialogue.txt')
     parser.add_argument('--output', '-o',  type=str,
                         help='base name of the output file', default='output.mlt')
+    parser.add_argument('--debug', '-d', action='store_const', const=True,
+                        help='causes the program to throw on error instead of just printing and skipping', default=False)
 
     subparsers = parser.add_subparsers(
         help='the type of scene to generate for', required=True)
