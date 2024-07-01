@@ -41,7 +41,8 @@ def richTextFilterArgs(text: str, geometry: str, font: str, fontSize: int, color
         'geometry': geometry,
         'html': generateHtml(text, font, fontSize, color),
         'pixel_ratio': 1,
-        'overflow-y': 1
+        'overflow-y': 1,
+        'bgcolour': '#00000000'
     }
 
 
