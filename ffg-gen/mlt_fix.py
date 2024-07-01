@@ -1,5 +1,6 @@
 from xml.etree.ElementTree import Element
 from xml.etree import ElementTree
+import re
 import configs
 
 
@@ -31,7 +32,7 @@ def make_mlt_editable(xml: Element) -> Element:
 
 
 def fix_filters(xml: Element) -> Element:
-    """Add required shotcut-exclusive tags to filters 
+    """Add required shotcut-exclusive tags to filters
     """
 
     for filter_element in xml.findall('.//filter'):
@@ -48,8 +49,32 @@ def fix_filters(xml: Element) -> Element:
                 filter_element.append(createPropertyElement('shotcut:filter', 'maskFromFile'))
             case 'affine':
                 filter_element.append(createPropertyElement('shotcut:filter', 'affineSizePosition'))
+            case 'brightness':
+                handle_possible_fades(filter_element)
 
     return xml
+
+
+def handle_possible_fades(brightness_filter: Element):
+    """Possibly adds the appropriate fade in/out shotcut filter tag to the known brightness filter
+    """
+
+    alpha = brightness_filter.find("./property[@name='alpha']")
+    if alpha is not None:
+        pattern = re.compile('00:00:00\.000=(?P<initial>\d);(?P<end>.+)=\d')
+        matches: re.Match = pattern.match(alpha.text)
+
+        match (matches.group('initial')):
+            case '1':
+                brightness_filter.append(createPropertyElement(
+                    'shotcut:filter', 'fadeOutBrightness'))
+                brightness_filter.append(createPropertyElement(
+                    'shotcut:animOut', matches.group('end')))
+            case '0':
+                brightness_filter.append(createPropertyElement(
+                    'shotcut:filter', 'fadeInBrightness'))
+                brightness_filter.append(createPropertyElement(
+                    'shotcut:animIn', matches.group('end')))
 
 
 def fix_out_timestamps(xml: Element) -> Element:
@@ -78,13 +103,13 @@ def fix_affine_out(xml: Element) -> Element:
     """
 
     # find all parent nodes of filter nodes
-    for producer in xml.findall(".//filter/.."):    
+    for producer in xml.findall(".//filter/.."):
         out: str = producer.get('out')
 
         # loop through all filters nodes of the parent node
         for filter_element in producer.findall('./filter'):
 
-            # replace 'out' if it's an affine filter     
+            # replace 'out' if it's an affine filter
             if filter_element.find("./property[@name='mlt_service']").text == 'affine':
                 filter_element.set('out', out)
 
