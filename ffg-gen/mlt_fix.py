@@ -27,6 +27,7 @@ def make_mlt_editable(xml: Element) -> Element:
 
     return xml
 
+
 def fix_filters(xml: Element) -> Element:
     """Add required shotcut-exclusive tags to filters 
     """
@@ -35,18 +36,16 @@ def fix_filters(xml: Element) -> Element:
         mlt_service: Element = filter_element.find("./property[@name='mlt_service']").text
         match(mlt_service):
             case 'dynamictext':
-                filter_element.append(createPropertyElement(
-                    'shotcut:filter', 'dynamicText'))
-                filter_element.append(createPropertyElement(
-                    'shotcut:usePointSize', '1'))
+                filter_element.append(createPropertyElement('shotcut:filter', 'dynamicText'))
+                filter_element.append(createPropertyElement('shotcut:usePointSize', '1'))
                 filter_element.append(createPropertyElement(
                     'shotcut:pointSize', filter_element.find("./property[@name='size']").text))
             case 'qtext':
-                filter_element.append(createPropertyElement(
-                    'shotcut:filter', 'richText'))
+                filter_element.append(createPropertyElement('shotcut:filter', 'richText'))
             case 'mask_start':
-                filter_element.append(createPropertyElement(
-                    'shotcut:filter', 'maskFromFile'))
+                filter_element.append(createPropertyElement('shotcut:filter', 'maskFromFile'))
+            case 'affine':
+                filter_element.append(createPropertyElement('shotcut:filter', 'affineSizePosition'))
 
     return xml
 
@@ -56,7 +55,7 @@ def fix_out_timestamps(xml: Element) -> Element:
     """
 
     fixes: dict[str, str] = {str(threshold.expectedFrames): threshold.fix
-                             for threshold in configs.DURATIONS.thresholds 
+                             for threshold in configs.DURATIONS.thresholds
                              if threshold.expectedFrames is not None and threshold.fix is not None}
 
     for producer in xml.findall('.//*[@out]'):
