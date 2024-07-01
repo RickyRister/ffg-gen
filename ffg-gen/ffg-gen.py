@@ -5,7 +5,7 @@ from xml.etree.ElementTree import Element
 from xml.etree import ElementTree
 import configs
 import dialogueline
-import vidgen
+from generation import text_gen
 
 
 def createArgumentParser() -> ArgumentParser:
@@ -41,7 +41,7 @@ def main():
     with open(configs.ARGS.input) as inputFile:
         dialogueLines = dialogueline.parseDialogueFile(inputFile)
 
-    xml: Element = vidgen.processDialogueLines(dialogueLines)
+    xml: Element = text_gen.processDialogueLines(dialogueLines)
 
     with open(configs.ARGS.output, 'wb') as outfile:
         xml_string = ElementTree.tostring(xml)
