@@ -10,22 +10,23 @@ import dialogue_gen
 
 
 def createArgumentParser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description='Generates mlt files for Touhou-style album videos.')
+    parentparser = ArgumentParser(add_help=False)
 
-    parser.add_argument('--config', '-c', type=str,
+    parentparser.add_argument('--config', '-c', type=str,
                         help='path to the config file', default='dialogue-gen.json')
-    parser.add_argument('--input', '-i', type=str,
+    parentparser.add_argument('--input', '-i', type=str,
                         help='path to the input dialogue file', default='dialogue.txt')
-    parser.add_argument('--output', '-o',  type=str,
+    parentparser.add_argument('--output', '-o',  type=str,
                         help='base name of the output file', default='output.mlt')
-    parser.add_argument('--debug', '-d', action='store_const', const=True,
+    parentparser.add_argument('--debug', '-d', action='store_const', const=True,
                         help='causes the program to throw on error instead of just printing and skipping', default=False)
 
+    parser = ArgumentParser(
+        description='Generates mlt files for Touhou-style album videos.', parents=[parentparser])
     subparsers = parser.add_subparsers(
-        help='the type of scene to generate for', required=True)
+        help='the type of scene to generate', required=True)
 
-    dialogue_gen.attach_subparser_to(subparsers)
+    dialogue_gen.attach_subparser_to(subparsers, [parentparser])
 
     return parser
 

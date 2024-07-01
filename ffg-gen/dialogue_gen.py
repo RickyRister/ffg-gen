@@ -7,11 +7,11 @@ from dialogueline import DialogueLine, parseDialogueFile
 from generation import text_gen, char_gen
 
 
-def attach_subparser_to(subparsers: _SubParsersAction) -> None:
+def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
     """Adds the command parser for dialogue scene to the subparser"""
 
     parser: ArgumentParser = subparsers.add_parser(
-        'dialogue', help='Generate mlt for a dialogue scene')
+        'dialogue', help='Generate mlt for a dialogue scene', parents=parents)
 
     parser.add_argument(
         'components', nargs='+',
