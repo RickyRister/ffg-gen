@@ -47,11 +47,11 @@ class CharacterInfo:
 class DialogueLine:
     """A single parsed line from the script.
     The fields are parsed by using the regex in the config json.
-    only the num field is optional
+    only the expression field is optional
     """
     text: str
     character: CharacterInfo
-    num: int | None    # the portrait number
+    expression: str | None   
 
     @property
     def duration(self) -> float:
@@ -101,7 +101,7 @@ def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine]:
         dialogueline = DialogueLine(
             text=match.group('text').strip(),
             character=CharacterInfo.ofName(match.group('character').strip()),
-            num=int(match.group('num').strip()))
+            expression=int(match.group('expression').strip()))
         dialoguelines.append(dialogueline)
 
     return dialoguelines
