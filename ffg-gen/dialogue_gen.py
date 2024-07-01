@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element
 from pathlib import Path
 import configs
 from dialogueline import DialogueLine, parseDialogueFile
-from generation import text_gen
+from generation import text_gen, char_gen
 
 
 def attach_subparser_to(subparsers: _SubParsersAction) -> None:
@@ -75,7 +75,8 @@ def gen_chars(dialogueLines: list[DialogueLine]):
 
 def gen_char(dialogueLines: list[DialogueLine], character: str):
     try:
-        raise RuntimeError("gen_char not implemented yet")
+        xml: Element = char_gen.generate(dialogueLines, character)
+        write_xml(xml, f'_{character}')
     except Exception as e:
         print(f'Encountered exception while generating character {character}:',
               e)
