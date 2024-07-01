@@ -66,6 +66,7 @@ class CommonMovementConfigs:
 class CharacterMovementConfigs:
     backGeometry: str
     offstageGeometry: str
+    frontGeometry: str = None
 
 
 # dialogue regex
