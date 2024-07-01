@@ -80,7 +80,8 @@ def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
     """Processes the list of DialogueLines into a completed mlt for the given character
     """
     # double check that the character is actually in the scene
-    names = map(lambda dl: dl.character.name, dialogueLines)
+    names = set(map(lambda dl: dl.character.name, dialogueLines))
+    print(names)
     if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
 
