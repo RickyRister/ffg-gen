@@ -10,6 +10,17 @@ import configs
 State = Enum('State', ['OFFSTAGE', 'FRONT', 'BACK'])
 
 
+class Transition(Enum):
+    IN = 1
+    OUT = 2
+    FULL_ENTER = 3
+    HALF_ENTER = 4
+    FULL_EXIT = 5
+    HALF_EXIT = 6
+    STAY_IN = 7
+    STAY_OUT = 8
+
+
 def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
     """Processes the list of DialogueLines into a completed mlt for the given character
     """
@@ -36,38 +47,44 @@ def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
 
 def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[Clip]:
 
+    clips: list[Clip] = []
+
     # Initialize state to offstage
     state: State = State.OFFSTAGE
 
-    for index, dialogueLine in enumerate(dialogueLines, start=1):
+    for dialogueLine in dialogueLines:
         speaker: str = dialogueLine.character.name
-
-        # special processing if last line
-        if (index == len(dialogueLines)):
-            match(state):
-                case State.FRONT: print("front exit")
-                case State.BACK: print("back exit")
-            break
 
         match(state):
             case State.OFFSTAGE:
                 if (speaker == name):
-                    print("front entrance")
+                    clips.append(create_clip(dialogueLine, Transition.FULL_ENTER))
                     state = State.FRONT
                 else:
-                    print("back entrance")
+                    clips.append(create_clip(dialogueLine, Transition.HALF_ENTER))
                     state = State.BACK
             case State.BACK:
                 if (speaker == name):
-                    print("move to front")
+                    clips.append(create_clip(dialogueLine, Transition.IN))
                     state = State.FRONT
                 else:
-                    print("stay back")
+                    clips.append(create_clip(dialogueLine, Transition.STAY_OUT))
                     state = State.BACK
             case State.FRONT:
                 if (speaker == name):
-                    print("stay front")
+                    clips.append(create_clip(dialogueLine, Transition.STAY_IN))
                     state = State.FRONT
                 else:
-                    print("move to back")
+                    clips.append(create_clip(dialogueLine, Transition.OUT))
                     state = State.BACK
+
+    # final exit
+    match(state):
+        case State.FRONT: clips.append(create_clip(dialogueLine, Transition.FULL_EXIT))
+        case State.BACK: clips.append(create_clip(dialogueLine, Transition.HALF_EXIT))
+
+    return clips    
+
+
+def create_clip(dialogueLine: DialogueLine, transition: Transition) -> Clip:
+    pass
