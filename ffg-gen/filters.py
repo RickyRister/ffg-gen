@@ -89,3 +89,15 @@ def affineFilterArgs(rect: str, halign="center", valign="middle") -> dict:
         'transition.valign': halign,
         'transition.halign': valign,
     }
+
+
+def brightnessFilterArgs(level: str) -> dict:
+    """Generates the args for the brightness filter. use with 'brightness' filter
+
+    Args:
+        level: The level field in the filter. This includes timestamps and value
+    """
+
+    return {
+        'level': level
+    }

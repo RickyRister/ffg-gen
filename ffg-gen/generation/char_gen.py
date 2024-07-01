@@ -3,7 +3,7 @@ from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element, XML
 from enum import Enum
 from mlt_fix import fix_mlt
-from filters import affineFilterArgs
+from filters import affineFilterArgs, brightnessFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 import configs
 from configs import CharacterMovementConfigs
@@ -114,6 +114,9 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # apply movement
     clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, moveConfigs)))
 
+    # apply brightness
+    clip.fx('brightness', brightnessFilterArgs(determine_brightness_levels(transition)))
+
     return clip
 
 
@@ -144,3 +147,27 @@ def determine_movement_rect(transition: Transition, movementConfigs: CharacterMo
             return frontGeometry
         case Transition.STAY_OUT:
             return backGeometry
+
+
+def determine_brightness_levels(transition: Transition) -> str:
+    fade_end = configs.MOVEMENT.brightnessFadeEnd
+    full_level = '1'
+    dim_level = configs.MOVEMENT.brightnessFadeLevel
+
+    match(transition):
+        case Transition.IN:
+            return f'00:00:00.000={dim_level};{fade_end}={full_level}'
+        case Transition.OUT:
+            return f'00:00:00.000={full_level};{fade_end}={dim_level}'
+        case Transition.FULL_ENTER:
+            return f'00:00:00.000={dim_level};{fade_end}={full_level}'
+        case Transition.HALF_ENTER:
+            return f'{dim_level}'
+        case Transition.FULL_EXIT:
+            return f'00:00:00.000={full_level};{fade_end}={dim_level}'
+        case Transition.HALF_EXIT:
+            return f'{dim_level}'
+        case Transition.STAY_IN:
+            return f'{full_level}'
+        case Transition.STAY_OUT:
+            return f'{dim_level}'
