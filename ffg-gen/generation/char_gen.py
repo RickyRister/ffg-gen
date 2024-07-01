@@ -11,17 +11,44 @@ import configs
 State = Enum('State', ['OFFSTAGE', 'FRONT', 'BACK'])
 
 
-
 def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[Clip]:
 
     # Initialize state to offstage
     state: State = State.OFFSTAGE
 
-    for index, dialogueLine in enumerate(dialogueLines):
-        pass
+    for index, dialogueLine in enumerate(dialogueLines, start=1):
+        speaker: str = dialogueLine.character.name
 
+        # special processing if last line
+        if (index == len(dialogueLines)):
+            match(state):
+                case State.FRONT: print("front exit")
+                case State.BACK: print("back exit")
+            break
 
-    
+        match(state):
+            case State.OFFSTAGE:
+                if (speaker == name):
+                    print("front entrance")
+                    state = State.FRONT
+                else:
+                    print("back entrance")
+                    state = State.BACK
+            case State.BACK:
+                if (speaker == name):
+                    print("move to front")
+                    state = State.FRONT
+                else:
+                    print("stay back")
+                    state = State.BACK
+            case State.FRONT:
+                if(speaker == name):
+                    print("stay front")
+                    state = State.FRONT
+                else:
+                    print("move to back")
+                    state = State.BACK
+
     """
     headerFilter: dict = textFilterArgs(
         text=characterInfo.displayName,
@@ -48,6 +75,7 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
         .fx('dynamictext', headerFilter)
     """
 
+
 def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
     """Processes the list of DialogueLines into a completed mlt for the given character
     """
@@ -55,8 +83,6 @@ def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
     names = map(lambda dl: dl.character.name, dialogueLines)
     if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
-    
-
 
     clips: list[Clip] = processDialogueLines(dialogueLines, name)
 
