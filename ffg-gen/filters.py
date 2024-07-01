@@ -74,3 +74,17 @@ def dropTextFilterArgs(resource: str, end: str = '00:00:00.133') -> dict:
         "filter.use_luminance": 1,
         "filter.use_mix": 1
     }
+
+
+def affineFilterArgs(rect: str, halign="center", valign="middle") -> dict:
+    """Generates the args for the transform filter. use with 'affine' filter
+
+    Args:
+        rect: The rect field in the filter. This includes timestamps and geometry
+    """
+    return {
+        'transition.fill': '1',
+        'transition.rect': rect,
+        'transition.valign': halign,
+        'transition.halign': valign,
+    }

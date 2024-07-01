@@ -3,9 +3,10 @@ from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element, XML
 from enum import Enum
 from mlt_fix import fix_mlt
-from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
+from filters import affineFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 import configs
+from configs import CharacterMovementConfigs
 
 State = Enum('State', ['OFFSTAGE', 'FRONT', 'BACK'])
 
@@ -83,8 +84,54 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
         case State.FRONT: clips.append(create_clip(dialogueLine, Transition.FULL_EXIT))
         case State.BACK: clips.append(create_clip(dialogueLine, Transition.HALF_EXIT))
 
-    return clips    
+    return clips
 
 
 def create_clip(dialogueLine: DialogueLine, transition: Transition) -> Clip:
-    pass
+
+    # determine which character config to use
+    charInfo: CharacterInfo = dialogueLine.character
+    moveConfigs: CharacterMovementConfigs = configs.PLAYER_MOVEMENT if charInfo.isPlayer else configs.ENEMY_MOVEMENT
+
+    # create clip with portrait
+    portraitPath = charInfo.portraitPathFormat.format(number=dialogueLine.num)
+    clip = Clip(portraitPath).set_duration(dialogueLine.duration)
+
+    # apply base geometry correction to image if required
+    if charInfo.geometry:
+        clip.fx('affine', affineFilterArgs(charInfo.geometry))
+
+    # apply movement
+    clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, moveConfigs)))
+
+    return clip
+
+
+def determine_movement_rect(transition: Transition, movementConfigs: CharacterMovementConfigs) -> str:
+    moveEnd: str = configs.MOVEMENT.moveEnd
+    offstageGeometry: str = movementConfigs.offstageGeometry
+    backGeometry: str = movementConfigs.backGeometry
+
+    # calculate frontGeometry if not present
+    frontGeometry: str = movementConfigs.frontGeometry
+    if not movementConfigs.frontGeometry:
+        frontGeometry = f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height} 1'
+
+    match(transition):
+        case Transition.IN:
+            return f'00:00:00.000={backGeometry};{moveEnd}={frontGeometry}'
+        case Transition.OUT:
+            return f'00:00:00.000={frontGeometry};{moveEnd}={backGeometry}'
+        case Transition.FULL_ENTER:
+            return f'00:00:00.000={offstageGeometry};{moveEnd}={frontGeometry}'
+        case Transition.HALF_ENTER:
+            return f'00:00:00.000={offstageGeometry};{moveEnd}={backGeometry}'
+        case Transition.FULL_EXIT:
+            return f'00:00:00.000={frontGeometry};{moveEnd}={offstageGeometry}'
+        case Transition.HALF_EXIT:
+            return f'00:00:00.000={backGeometry};{moveEnd}={offstageGeometry}'
+        case Transition.STAY_IN:
+            return frontGeometry
+        case Transition.STAY_OUT:
+            return backGeometry
+        
