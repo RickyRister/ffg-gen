@@ -7,8 +7,31 @@ from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 import configs
 
-
 State = Enum('State', ['OFFSTAGE', 'FRONT', 'BACK'])
+
+
+def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
+    """Processes the list of DialogueLines into a completed mlt for the given character
+    """
+    # double check that the character is actually in the scene
+    names = set(map(lambda dl: dl.character.name, dialogueLines))
+    print(names)
+    if name not in names:
+        raise ValueError(f'{name} does not appear in the dialogue')
+
+    clips: list[Clip] = processDialogueLines(dialogueLines, name)
+
+    composition = Composition(
+        clips,
+        singletrack=True,
+        width=configs.VIDEO_MODE.width,
+        height=configs.VIDEO_MODE.height,
+        fps=configs.VIDEO_MODE.fps)
+
+    xml: str = composition.xml()
+    fixedXml: Element = fix_mlt(XML(xml))
+
+    return fixedXml
 
 
 def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[Clip]:
@@ -42,7 +65,7 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
                     print("stay back")
                     state = State.BACK
             case State.FRONT:
-                if(speaker == name):
+                if (speaker == name):
                     print("stay front")
                     state = State.FRONT
                 else:
@@ -74,27 +97,3 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
         .fx('mask_start', dropTextFilter)\
         .fx('dynamictext', headerFilter)
     """
-
-
-def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
-    """Processes the list of DialogueLines into a completed mlt for the given character
-    """
-    # double check that the character is actually in the scene
-    names = set(map(lambda dl: dl.character.name, dialogueLines))
-    print(names)
-    if name not in names:
-        raise ValueError(f'{name} does not appear in the dialogue')
-
-    clips: list[Clip] = processDialogueLines(dialogueLines, name)
-
-    composition = Composition(
-        clips,
-        singletrack=True,
-        width=configs.VIDEO_MODE.width,
-        height=configs.VIDEO_MODE.height,
-        fps=configs.VIDEO_MODE.fps)
-
-    xml: str = composition.xml()
-    fixedXml: Element = fix_mlt(XML(xml))
-
-    return fixedXml
