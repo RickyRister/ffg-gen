@@ -71,29 +71,3 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
                 else:
                     print("move to back")
                     state = State.BACK
-
-    """
-    headerFilter: dict = textFilterArgs(
-        text=characterInfo.displayName,
-        geometry=configs.HEADER.geometry,
-        size=configs.HEADER.fontSize,
-        color=characterInfo.color.headerFill,
-        olcolor=characterInfo.color.headerOutline,
-        font=configs.HEADER.font)
-
-    dropTextFilter = dropTextFilterArgs(
-        resource=configs.DIALOGUE_BOX.dropTextMaskPath,
-        end=configs.DIALOGUE_BOX.dropTextEnd)
-
-    richTextFilter = richTextFilterArgs(
-        text=dialogueLines.text,
-        geometry=configs.DIALOGUE_BOX.geometry,
-        font=configs.DIALOGUE_BOX.font,
-        fontSize=configs.DIALOGUE_BOX.fontSize,
-        color=characterInfo.color.dialogue)
-
-    return Clip('color:#00000000').set_duration(dialogueLines.duration)\
-        .fx('qtext', richTextFilter)\
-        .fx('mask_start', dropTextFilter)\
-        .fx('dynamictext', headerFilter)
-    """

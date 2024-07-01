@@ -55,6 +55,19 @@ class DurationConfigs:
                                for threshold in self.thresholds]
 
 
+@dataclass
+class CommonMovementConfigs:
+    brightnessFadeEnd: str
+    brightnessFadeLevel: float
+    moveEnd: str
+
+
+@dataclass
+class CharacterMovementConfigs:
+    backGeometry: str
+    offstageGeometry: str
+
+
 # dialogue regex
 DIALOGUE_REGEX: str
 
@@ -63,6 +76,9 @@ VIDEO_MODE: VideoModeConfigs
 HEADER: HeaderConfigs
 DIALOGUE_BOX: DialogueBoxConfigs
 DURATIONS: DurationConfigs
+MOVEMENT: CommonMovementConfigs
+PLAYER_MOVEMENT: CharacterMovementConfigs
+ENEMY_MOVEMENT: CharacterMovementConfigs
 
 # character configs are still stored as a dict
 CHARACTERS: dict[str, dict]
@@ -83,6 +99,9 @@ def loadConfigJson(path: str):
     global HEADER
     global DIALOGUE_BOX
     global DURATIONS
+    global MOVEMENT
+    global PLAYER_MOVEMENT
+    global ENEMY_MOVEMENT
     global CHARACTERS
 
     # assigne globals
@@ -91,4 +110,8 @@ def loadConfigJson(path: str):
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
     DURATIONS = DurationConfigs(**configJson.get('durations'))
+    MOVEMENT = CommonMovementConfigs(**configJson.get('movement').get('common'))
+    PLAYER_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('player'))
+    ENEMY_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('enemy'))
+
     CHARACTERS = configJson.get('characters')

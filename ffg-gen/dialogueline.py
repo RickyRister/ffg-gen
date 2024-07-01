@@ -24,6 +24,7 @@ class CharacterInfo:
     color: CharacterColor
     isPlayer: bool
     name: str = None    # the dict name, for tracking purposes
+    geometry: str = None    # in case the character's base portrait needs to repositioned
 
     def __post_init__(self):
         if isinstance(self.color, dict):
@@ -52,7 +53,7 @@ class DialogueLine:
     character: CharacterInfo
     num: int | None    # the portrait number
 
-    @property 
+    @property
     def duration(self) -> float:
         """Determines how long the text should last for depending on its length.
         Returns duration in seconds
@@ -65,12 +66,12 @@ class DialogueLine:
             case 'word':
                 count = len(re.findall(r'\w+', self.text))
             case _:
-                raise ValueError(f'{configs.DURATIONS.mode} is not a valid durations mode')
+                raise ValueError(
+                    f'{configs.DURATIONS.mode} is not a valid durations mode')
 
         index = bisect(configs.DURATIONS.thresholds, count,
-                    key=lambda threshold: threshold.count)
+                       key=lambda threshold: threshold.count)
         return configs.DURATIONS.thresholds[index-1].duration
-
 
 
 def isComment(line: str) -> bool:
