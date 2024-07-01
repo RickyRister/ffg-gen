@@ -23,6 +23,7 @@ class CharacterInfo:
     portraitPathFormat: str
     color: CharacterColor
     isPlayer: bool
+    name: str = None    # the dict name, for tracking purposes
 
     def __post_init__(self):
         if isinstance(self.color, dict):
@@ -37,7 +38,9 @@ class CharacterInfo:
         if not character_json:
             raise ValueError(f'{name} not found in characters in config json')
 
-        return CharacterInfo(**character_json)
+        characterInfo = CharacterInfo(**character_json)
+        characterInfo.name = name
+        return characterInfo
 
 
 @dataclass
