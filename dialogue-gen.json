@@ -1,31 +1,49 @@
 {
-    "dialogueRegex": "(?P<character>.*) (?P<num>\\d*): (?P<text>.*)",
+    "dialogueRegex": "(?P<character>.+)(?P<expression>\\d+): (?P<text>.+)",
     "videoMode": {
-        "width": 1920,
-        "height": 1080,
+        "width": 1280,
+        "height": 960,
         "fps": 30
     },
     "header": {
-        "geometry": "581 784 350 42 1",
+        "geometry": "108 717 350 42 1",
         "font": "MF KeKe (Noncommercial)",
         "fontSize": 28,
         "weight": 500
     },
     "dialogueBox": {
-        "geometry": "576 830 768 159 1",
-        "dropTextMaskPath": "droptextmask.png",
-        "dropTextEnd": "00:00:00.133",
-        "font": "Stylish",
-        "fontSize": 30
+        "geometry": "104 767 691 133 1",
+        "dropTextMaskPath": "_textless/common/drop text mask.png",
+        "dropTextEnd": "00:00:00.160",
+        "font": "Linux Biolinum O",
+        "fontSize": 28
+    },
+    "movement": {
+        "common": {
+            "brightnessFadeLevel": 0.7,
+            "brightnessFadeEnd": "00:00:00.200",
+            "moveEnd": "00:00:00.200",
+            "exitDuration": 0.4,
+            "fadeInEnd": "00:00:00.167",
+            "fadeOutEnd": "00:00:00.167"
+        },
+        "player": {
+            "backGeometry": "-36 24 1280 960 1",
+            "offstageGeometry": "-72 48 1280 960 1"
+        },
+        "enemy": {
+            "backGeometry": "36 24 1280 960 1",
+            "offstageGeometry": "72 48 1280 960"
+        }
     },
     "durations": {
         "mode": "char",
         "thresholds": [
             {
                 "count": 0,
-                "duration": 3,
-                "expectedFrames": 75,
-                "fix": "00:00:02.960"
+                "duration": 3.5,
+                "expectedFrames": 88,
+                "fix": "00:00:03.467"
             },
             {
                 "count": 60,
@@ -54,24 +72,34 @@
         ]
     },
     "characters": {
-        "tenmu": {
+        "reimu": {
             "isPlayer": true,
-            "displayName": "天梦",
-            "portraitPathFormat": "",
+            "displayName": "Reimu",
+            "geometry": "-315 99.7849 1280 960 1",
+            "portraitPathFormat": "_textless/common/reimu/player01{expression:0>2}.png",
+            "defaultExpression": "01",
             "color": {
-                "headerFill": "#ffffff",
-                "headerOutline": "#763090",
-                "dialogue": "#ffffff"
+                "headerOutline": "#fd6666"
             }
         },
-        "fujioki": {
-            "isPlayer": false,
-            "displayName": "不如归",
-            "portraitPathFormat": "",
+        "sameika": {
+            "isPlayer": true,
+            "displayName": "Sameika",
+            "geometry": "-342 118.71 1280 960 1",
+            "portraitPathFormat": "_textless/common/sameika/spplayer01{expression:0>2}.png",
+            "defaultExpression": "01",
             "color": {
-                "headerFill": "#ffffff",
-                "headerOutline": "#a9b7cc",
-                "dialogue": "#ffffff"
+                "headerOutline": "#ffff9300"
+            }
+        },
+        "kiko": {
+            "isPlayer": false,
+            "displayName": "Kiko",
+            "geometry": "134 160 1280 960 1",
+            "portraitPathFormat": "_textless/s1/portraits/boss01{expression:0>2}.png",
+            "defaultExpression": "01",
+            "color": {
+                "headerOutline": "#73FA79"
             }
         }
     }
