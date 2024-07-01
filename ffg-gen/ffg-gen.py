@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 import configs
 import dialogueline
 from generation import text_gen
+import dialogue_gen
 
 
 def createArgumentParser() -> ArgumentParser:
@@ -19,14 +20,10 @@ def createArgumentParser() -> ArgumentParser:
     parser.add_argument('--output', '-o',  type=str,
                         help='base name of the output file', default='output.mlt')
 
-    subparsers = parser.add_subparsers(help='sub-command help')
+    subparsers = parser.add_subparsers(
+        help='the type of scene to generate for', required=True)
 
-    dialogue_parser = subparsers.add_parser(
-        'dialogue', help='Generate mlt for a dialogue scene')
-    
-    dialogue_parser.add_argument(
-        'components', nargs='+',
-        help='"all" will generate all components. Otherwise, provide one or more options. Options: text, header, chars, char:[name]')
+    dialogue_gen.attach_subparser_to(subparsers)
 
     return parser
 
@@ -35,17 +32,7 @@ def main():
     parser = createArgumentParser()
     configs.ARGS = parser.parse_args()
 
-    configs.loadConfigJson(configs.ARGS.config)
-
-    dialogueLines = None
-    with open(configs.ARGS.input) as inputFile:
-        dialogueLines = dialogueline.parseDialogueFile(inputFile)
-
-    xml: Element = text_gen.processDialogueLines(dialogueLines)
-
-    with open(configs.ARGS.output, 'wb') as outfile:
-        xml_string = ElementTree.tostring(xml)
-        outfile.write(xml_string)
+    configs.ARGS.func()
 
 
 if __name__ == "__main__":
