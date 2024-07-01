@@ -69,8 +69,11 @@ def gen_header(dialogueLines: list[DialogueLine]):
 
 def gen_chars(dialogueLines: list[DialogueLine]):
     # figure out which characters are in the dialogue
+    names = set(map(lambda dl: dl.character.name, dialogueLines))
+
     # call gen_char with all those characters
-    print("gen_chars is not implemented yet")
+    for name in names:
+        gen_char(dialogueLines, name)
 
 
 def gen_char(dialogueLines: list[DialogueLine], character: str):
