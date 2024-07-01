@@ -83,6 +83,7 @@ def affineFilterArgs(rect: str, halign="center", valign="middle") -> dict:
         rect: The rect field in the filter. This includes timestamps and geometry
     """
     return {
+        'background': 'color:#00000000',
         'transition.fill': '1',
         'transition.rect': rect,
         'transition.valign': halign,

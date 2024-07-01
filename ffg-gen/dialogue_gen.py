@@ -38,6 +38,9 @@ def dialogue_gen():
 
 
 def write_xml(xml: Element, suffix: str = ''):
+    """Writes the xml to a file.
+    The suffix is appended to the output name given by the cli args
+    """
     path: Path = Path(configs.ARGS.output)
     path = path.with_stem(path.stem + suffix)
 

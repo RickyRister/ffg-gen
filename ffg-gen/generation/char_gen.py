@@ -27,7 +27,6 @@ def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
     """
     # double check that the character is actually in the scene
     names = set(map(lambda dl: dl.character.name, dialogueLines))
-    print(names)
     if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
 
