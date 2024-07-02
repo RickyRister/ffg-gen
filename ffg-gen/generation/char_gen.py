@@ -3,7 +3,7 @@ from xml.etree.ElementTree import Element, XML
 from enum import Enum
 from collections.abc import Generator
 from mlt_fix import fix_mlt
-from filters import affineFilterArgs, brightnessFilterArgs, fadeFilterArgs
+from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 from sysline import SysLine, SetExpr
 import configs
@@ -118,11 +118,11 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
-        clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=0;{configs.MOVEMENT.fadeInEnd}=1'))
+        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=0;{configs.MOVEMENT.fadeInEnd}=1'))
 
     # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
-        clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))
+        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))
 
     return clip
 

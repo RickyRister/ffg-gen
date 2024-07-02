@@ -104,13 +104,14 @@ def brightnessFilterArgs(level: str) -> dict:
     }
 
 
-def fadeFilterArgs(alpha: str) -> dict:
-    """Generates the args for the fade in/out filter. use with 'brightness' filter.
+def opacityFilterArgs(alpha: str) -> dict:
+    """Generates the args for the opacity filter. use with 'brightness' filter.
+    mlt_fix will handle converting this to a shotcut fade-in if able
 
     Args:
-        alpha: The alpha field in the filter. This includes timestamps and value
+        alpha: The alpha/opacity field in the filter. This includes timestamps and value
     """
 
     return {
-        'alpha': alpha
+        'alpha': alpha,
     }

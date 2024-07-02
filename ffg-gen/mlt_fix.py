@@ -56,7 +56,8 @@ def fix_filters(xml: Element) -> Element:
 
 
 def handle_possible_fades(brightness_filter: Element):
-    """Possibly adds the appropriate fade in/out shotcut filter tag to the known brightness filter
+    """Possibly adds the appropriate fade in/out shotcut filter tag to the known brightness filter.
+    Since we use pure opacity keyframes for fade outs, we only add fade-ins.
     """
 
     alpha = brightness_filter.find("./property[@name='alpha']")
@@ -65,16 +66,17 @@ def handle_possible_fades(brightness_filter: Element):
         matches: re.Match = pattern.match(alpha.text)
 
         match (matches.group('initial')):
-            case '1':
-                brightness_filter.append(createPropertyElement(
-                    'shotcut:filter', 'fadeOutBrightness'))
-                brightness_filter.append(createPropertyElement(
-                    'shotcut:animOut', matches.group('end')))
+            # initial=0 => fade-in; we do add shotcut fade-in
             case '0':
                 brightness_filter.append(createPropertyElement(
                     'shotcut:filter', 'fadeInBrightness'))
                 brightness_filter.append(createPropertyElement(
                     'shotcut:animIn', matches.group('end')))
+            # initial=1 => fade out; we add shotcut opacity filter tags
+            case '1':
+                brightness_filter.append(createPropertyElement(
+                    'shotcut:filter', 'brightnessOpacity'))
+                brightness_filter.append(createPropertyElement('opacity', alpha.text))
 
 
 def fix_out_timestamps(xml: Element) -> Element:

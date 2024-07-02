@@ -24,8 +24,8 @@
             "brightnessFadeEnd": "00:00:00.200",
             "moveEnd": "00:00:00.200",
             "exitDuration": 0.4,
-            "fadeInEnd": "00:00:00.167",
-            "fadeOutEnd": "00:00:00.167"
+            "fadeInEnd": "00:00:00.200",
+            "fadeOutEnd": "00:00:00.200"
         },
         "player": {
             "backGeometry": "-36 24 1280 960 1",
@@ -73,7 +73,7 @@
         "extraFixes": [
             {
                 "expectedFrames": 10,
-                "fix": "00:00:01.067"
+                "fix": "00:00:00.167"
             }
         ]
     },
