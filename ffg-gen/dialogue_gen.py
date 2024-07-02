@@ -57,6 +57,7 @@ def gen_all(lines: list[DialogueLine | SysLine]):
 
 
 def gen_text(lines: list[DialogueLine | SysLine]):
+    print(f"Generating text component")
     try:
         xml: Element = text_gen.generate(lines)
         write_xml(xml, '_text')
@@ -67,6 +68,7 @@ def gen_text(lines: list[DialogueLine | SysLine]):
 
 
 def gen_header(lines: list[DialogueLine | SysLine]):
+    print(f"Generating header component")
     try:
         raise RuntimeError("gen_header not implemented yet")
     except Exception as e:
@@ -76,6 +78,8 @@ def gen_header(lines: list[DialogueLine | SysLine]):
 
 
 def gen_chars(lines: list[DialogueLine | SysLine]):
+    print(f"Generating all character components...")
+
     # figure out which characters are in the dialogue
     names: set[str] = {line.character.name for line in lines if isinstance(line, DialogueLine)}
 
@@ -85,6 +89,7 @@ def gen_chars(lines: list[DialogueLine | SysLine]):
 
 
 def gen_char(lines: list[DialogueLine | SysLine], character: str):
+    print(f"Generating character component for {character}")
     try:
         xml: Element = char_gen.generate(lines, character)
         write_xml(xml, f'_{character}')
