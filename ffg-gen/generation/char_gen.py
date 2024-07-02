@@ -1,4 +1,3 @@
-from functools import partial
 from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element, XML
 from enum import Enum

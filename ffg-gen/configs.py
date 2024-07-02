@@ -1,4 +1,3 @@
-from typing import Union
 from argparse import Namespace
 from dataclasses import dataclass
 import json

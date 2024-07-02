@@ -1,5 +1,4 @@
 from xml.etree.ElementTree import Element
-from xml.etree import ElementTree
 import re
 import configs
 from configs import DurationFix

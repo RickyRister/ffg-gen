@@ -1,15 +1,10 @@
-from functools import partial
 from vidpy import Clip, Composition
-from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
-import re
 from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 from sysline import SysLine
 import configs
-
-# This is where most of the heavy lifting happens
 
 
 def filter_none(lines: list) -> list:

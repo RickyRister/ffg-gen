@@ -103,6 +103,7 @@ def brightnessFilterArgs(level: str) -> dict:
         'level': level
     }
 
+
 def fadeFilterArgs(alpha: str) -> dict:
     """Generates the args for the fade in/out filter. use with 'brightness' filter.
 
