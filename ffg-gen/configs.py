@@ -6,6 +6,9 @@ import json
 # parsed command line args
 ARGS: Namespace
 
+# loaded config json
+CONFIG_JSON: dict
+
 
 @dataclass
 class VideoModeConfigs:
@@ -89,14 +92,20 @@ CHARACTERS: dict[str, dict]
 
 
 def loadConfigJson(path: str):
-    """Reads the json file into appropriate configs
+    """Reads the json file into appropriate configs, then loads the json values into the globals
     path: path to the json file
     """
 
-    configJson: dict = None
+    global CONFIG_JSON
     with open(path) as configFile:
-        configJson = json.load(configFile)
+        CONFIG_JSON = json.load(configFile)
 
+    loadIntoGlobals(CONFIG_JSON)
+
+
+def loadIntoGlobals(configJson: dict):
+    """Load the json config values into the global variables
+    """
     # bring globals into scope
     global DIALOGUE_REGEX
     global VIDEO_MODE
