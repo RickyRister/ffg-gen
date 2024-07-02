@@ -27,6 +27,18 @@ class Transition(Enum):
     STAY_IN = 7
     STAY_OUT = 8
 
+    def state_after(transition):
+        match(transition):
+            case Transition.IN: return State.FRONT
+            case Transition.OUT: return State.BACK
+            case Transition.FULL_ENTER: return State.FRONT
+            case Transition.HALF_ENTER: return State.BACK
+            case Transition.FULL_EXIT: return State.OFFSCREEN
+            case Transition.HALF_EXIT: return State.OFFSCREEN
+            case Transition.STAY_IN: return State.FRONT
+            case Transition.STAY_OUT: return State.BACK
+
+
 
 def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     """Processes the list of lines into a completed mlt for the given character
@@ -49,25 +61,29 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     return fixedXml
 
 
-def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Clip]:
+def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[Clip]:
     """Returns a generator that returns a stream of Clips
     """
 
-    charInfo = CharacterInfo.ofName(name)
+    print(targetName)
+    charInfo = CharacterInfo.ofName(targetName)
 
     # Initialize state to offscreen
     curr_state: State = State.OFFSCREEN
     curr_expression: str = charInfo.defaultExpression
     curr_speaker: str = None
+    pending_transition: Transition = None
 
     for line in lines:
         # messy processing depending on line type
         match(line):
             case DialogueLine(character=character, expression=expression):
                 # store the new values from the dialogueLine
-                curr_speaker: str = character.name
-                if curr_speaker == name:
+                curr_speaker = character.name
+                print(f"curr speaker {curr_speaker}; {targetName}")
+                if curr_speaker == targetName:
                     curr_expression = expression
+                    print(f"new curr expression {curr_expression}")
 
             case Wait(duration=duration):
                 # if no one is on screen yet, then we leave a gap
@@ -76,40 +92,42 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Cl
                     continue
                 # otherwise, we fall through and generate a clip using the previous line's state
 
-            case SetExpr(name=name, expression=expr):
+            case SetExpr(name=name, expression=expression) if name == targetName:
                 # set the expression, then continue to next line
-                curr_expression = expr
+                curr_expression = expression
                 continue
 
             case _: continue
 
         # this part will get run unless continue got called in the match statement
         # make sure whatever line makes it down here has a duration field
-        transition: Transition = None
-        match(curr_state):
-            case State.OFFSCREEN:
-                if (curr_speaker == name):
-                    transition = Transition.FULL_ENTER
-                    curr_state = State.FRONT
-                else:
-                    transition = Transition.HALF_ENTER
-                    curr_state = State.BACK
-            case State.BACK:
-                if (curr_speaker == name):
-                    transition = Transition.IN
-                    curr_state = State.FRONT
-                else:
-                    transition = Transition.STAY_OUT
-                    curr_state = State.BACK
-            case State.FRONT:
-                if (curr_speaker == name):
-                    transition = Transition.STAY_IN
-                    curr_state = State.FRONT
-                else:
-                    transition = Transition.OUT
-                    curr_state = State.BACK
 
-        yield create_clip(transition, charInfo, curr_expression, line.duration)
+        # if no pending transition, then determine transition depending on current conditions
+        if pending_transition is None:
+            match(curr_state):
+                case State.OFFSCREEN:
+                    if (curr_speaker == targetName):
+                        pending_transition = Transition.FULL_ENTER
+                    else:
+                        pending_transition = Transition.HALF_ENTER
+                case State.BACK:
+                    if (curr_speaker == targetName):
+                        pending_transition = Transition.IN
+                    else:
+                        pending_transition = Transition.STAY_OUT
+                case State.FRONT:
+                    if (curr_speaker == targetName):
+                        pending_transition = Transition.STAY_IN
+                    else:
+                        pending_transition = Transition.OUT
+
+        # generate clip using the transition
+        print(curr_state, pending_transition)
+        yield create_clip(pending_transition, charInfo, curr_expression, line.duration)
+
+        # update state and reset pending transition
+        curr_state = Transition.state_after(pending_transition)
+        pending_transition = None
 
     # final exit
     match(curr_state):
