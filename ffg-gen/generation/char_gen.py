@@ -5,6 +5,7 @@ from enum import Enum
 from mlt_fix import fix_mlt
 from filters import affineFilterArgs, brightnessFilterArgs, fadeFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
+from sysline import SysLine, SetExpr
 import configs
 from configs import CharacterMovementConfigs
 
@@ -22,15 +23,22 @@ class Transition(Enum):
     STAY_OUT = 8
 
 
-def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
-    """Processes the list of DialogueLines into a completed mlt for the given character
+def extractNames(lines: list[DialogueLine | SysLine]) -> set[str]:
+    """Extracts all names that appear in the lines.
+    Handles SysLines by filtering them out first.
+    """
+    dialogueLines: list[DialogueLine] = [line for line in lines if isinstance(line, DialogueLine)]
+    return set(map(lambda line: line.character.name, dialogueLines))
+
+
+def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
+    """Processes the list of lines into a completed mlt for the given character
     """
     # double check that the character is actually in the scene
-    names = set(map(lambda dl: dl.character.name, dialogueLines))
-    if name not in names:
+    if name not in extractNames(lines):
         raise ValueError(f'{name} does not appear in the dialogue')
 
-    clips: list[Clip] = processDialogueLines(dialogueLines, name)
+    clips: list[Clip] = processLines(lines, name)
 
     composition = Composition(
         clips,
@@ -45,7 +53,7 @@ def generate(dialogueLines: list[DialogueLine], name: str) -> Element:
     return fixedXml
 
 
-def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[Clip]:
+def processLines(lines: list[DialogueLine | SysLine], name: str) -> list[Clip]:
 
     clips: list[Clip] = []
 
@@ -55,39 +63,46 @@ def processDialogueLines(dialogueLines: list[DialogueLine], name: str) -> list[C
     state: State = State.OFFSTAGE
     curr_expression: str = charInfo.defaultExpression
 
-    for dialogueLine in dialogueLines:
-        speaker: str = dialogueLine.character.name
+    for line in lines:
+        # process possible SysLine
+        if isinstance(line, SysLine):
+            if isinstance(line, SetExpr) and line.name == name:
+                curr_expression = line.expression
+            continue
+
+        # otherwise we're processing a DialogueLine    
+        speaker: str = line.character.name
 
         if speaker == name:
-            curr_expression = dialogueLine.expression
+            curr_expression = line.expression
 
         match(state):
             case State.OFFSTAGE:
                 if (speaker == name):
                     clips.append(create_clip(Transition.FULL_ENTER,
-                                 charInfo, curr_expression, dialogueLine.duration))
+                                 charInfo, curr_expression, line.duration))
                     state = State.FRONT
                 else:
                     clips.append(create_clip(Transition.HALF_ENTER,
-                                 charInfo, curr_expression, dialogueLine.duration))
+                                 charInfo, curr_expression, line.duration))
                     state = State.BACK
             case State.BACK:
                 if (speaker == name):
                     clips.append(create_clip(Transition.IN,
-                                             charInfo, curr_expression, dialogueLine.duration))
+                                             charInfo, curr_expression, line.duration))
                     state = State.FRONT
                 else:
                     clips.append(create_clip(Transition.STAY_OUT,
-                                 charInfo, curr_expression, dialogueLine.duration))
+                                 charInfo, curr_expression, line.duration))
                     state = State.BACK
             case State.FRONT:
                 if (speaker == name):
                     clips.append(create_clip(Transition.STAY_IN,
-                                 charInfo, curr_expression, dialogueLine.duration))
+                                 charInfo, curr_expression, line.duration))
                     state = State.FRONT
                 else:
                     clips.append(create_clip(Transition.OUT,
-                                             charInfo, curr_expression, dialogueLine.duration))
+                                             charInfo, curr_expression, line.duration))
                     state = State.BACK
 
     # final exit
@@ -123,7 +138,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # apply fade out
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
-        clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))    
+        clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))
 
     return clip
 

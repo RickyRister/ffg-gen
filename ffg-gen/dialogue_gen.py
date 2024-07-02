@@ -4,6 +4,7 @@ from xml.etree.ElementTree import Element
 from pathlib import Path
 import configs
 from dialogueline import DialogueLine, parseDialogueFile
+from sysline import SysLine
 from generation import text_gen, char_gen
 
 
@@ -23,17 +24,17 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 def dialogue_gen():
     configs.loadConfigJson(configs.ARGS.config)
 
-    dialogueLines = None
+    lines = None
     with open(configs.ARGS.input) as inputFile:
-        dialogueLines = parseDialogueFile(inputFile)
+        lines = parseDialogueFile(inputFile)
 
     for component in configs.ARGS.components:
         match (str.lower(component)):
-            case 'all': gen_all(dialogueLines)
-            case 'text': gen_text(dialogueLines)
-            case 'header': gen_header(dialogueLines)
-            case 'chars': gen_chars(dialogueLines)
-            case x if x.startswith('char:'): gen_char(dialogueLines, x.removeprefix('char:'))
+            case 'all': gen_all(lines)
+            case 'text': gen_text(lines)
+            case 'header': gen_header(lines)
+            case 'chars': gen_chars(lines)
+            case x if x.startswith('char:'): gen_char(lines, x.removeprefix('char:'))
             case _: print(f'{component} is not a valid option; skipping')
 
 
@@ -49,15 +50,15 @@ def write_xml(xml: Element, suffix: str = ''):
         outfile.write(xml_string)
 
 
-def gen_all(dialogueLines: list[DialogueLine]):
-    gen_text(dialogueLines)
-    gen_header(dialogueLines)
-    gen_chars(dialogueLines)
+def gen_all(lines: list[DialogueLine | SysLine]):
+    gen_text(lines)
+    gen_header(lines)
+    gen_chars(lines)
 
 
-def gen_text(dialogueLines: list[DialogueLine]):
+def gen_text(lines: list[DialogueLine | SysLine]):
     try:
-        xml: Element = text_gen.processDialogueLines(dialogueLines)
+        xml: Element = text_gen.generate(lines)
         write_xml(xml, '_text')
     except Exception as e:
         print('Encountered exception while generating text:', e)
@@ -65,7 +66,7 @@ def gen_text(dialogueLines: list[DialogueLine]):
             raise e
 
 
-def gen_header(dialogueLines: list[DialogueLine]):
+def gen_header(lines: list[DialogueLine | SysLine]):
     try:
         raise RuntimeError("gen_header not implemented yet")
     except Exception as e:
@@ -74,21 +75,21 @@ def gen_header(dialogueLines: list[DialogueLine]):
             raise e
 
 
-def gen_chars(dialogueLines: list[DialogueLine]):
+def gen_chars(lines: list[DialogueLine | SysLine]):
     # figure out which characters are in the dialogue
-    names = set(map(lambda dl: dl.character.name, dialogueLines))
+    dialogueLines = [line for line in lines if isinstance(line, DialogueLine)]
+    names = set(map(lambda dialogueLine: dialogueLine.character.name, dialogueLines))
 
     # call gen_char with all those characters
     for name in names:
-        gen_char(dialogueLines, name)
+        gen_char(lines, name)
 
 
-def gen_char(dialogueLines: list[DialogueLine], character: str):
+def gen_char(lines: list[DialogueLine | SysLine], character: str):
     try:
-        xml: Element = char_gen.generate(dialogueLines, character)
+        xml: Element = char_gen.generate(lines, character)
         write_xml(xml, f'_{character}')
     except Exception as e:
-        print(f'Encountered exception while generating character {character}:',
-              e)
+        print(f'Encountered exception while generating character {character}:', e)
         if (configs.ARGS.debug):
             raise e

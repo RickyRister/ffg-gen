@@ -6,15 +6,39 @@ import re
 from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
+from sysline import SysLine
 import configs
 
 # This is where most of the heavy lifting happens
 
 
+def filter_none(lines: list) -> list:
+    return [line for line in lines if line is not None]
 
-def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
 
-    characterInfo: CharacterInfo = dialogueLine.character
+def generate(lines: list[DialogueLine | SysLine]) -> Element:
+    """Processes the list of lines into a completed mlt for the dialogue
+    """
+    clips: list[Clip] = filter_none([lineToClip(line) for line in lines])
+
+    composition = Composition(
+        clips,
+        singletrack=True,
+        width=configs.VIDEO_MODE.width,
+        height=configs.VIDEO_MODE.height,
+        fps=configs.VIDEO_MODE.fps)
+
+    xml: str = composition.xml()
+    fixedXml: Element = fix_mlt(XML(xml))
+
+    return fixedXml
+
+
+def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
+    if isinstance(line, SysLine):
+        return None
+
+    characterInfo: CharacterInfo = line.character
 
     headerFilter: dict = textFilterArgs(
         text=characterInfo.displayName,
@@ -29,28 +53,13 @@ def dialogueLineToClip(dialogueLine: DialogueLine) -> Clip:
         end=configs.DIALOGUE_BOX.dropTextEnd)
 
     richTextFilter = richTextFilterArgs(
-        text=dialogueLine.text,
+        text=line.text,
         geometry=configs.DIALOGUE_BOX.geometry,
         font=configs.DIALOGUE_BOX.font,
         fontSize=configs.DIALOGUE_BOX.fontSize,
         color=characterInfo.color.dialogue)
 
-    return Clip('color:#00000000').set_duration(dialogueLine.duration)\
+    return Clip('color:#00000000').set_duration(line.duration)\
         .fx('qtext', richTextFilter)\
         .fx('mask_start', dropTextFilter)\
         .fx('dynamictext', headerFilter)
-
-
-def processDialogueLines(dialogueLines: list[DialogueLine]) -> Element:
-    clips: list[Clip] = [dialogueLineToClip(line) for line in dialogueLines]
-    composition = Composition(
-        clips,
-        singletrack=True,
-        width=configs.VIDEO_MODE.width,
-        height=configs.VIDEO_MODE.height,
-        fps=configs.VIDEO_MODE.fps)
-
-    xml: str = composition.xml()
-    fixedXml: Element = fix_mlt(XML(xml))
-
-    return fixedXml
