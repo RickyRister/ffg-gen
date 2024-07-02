@@ -2,3 +2,4 @@
 *.mlt
 
 __pycache__
+*.venv
