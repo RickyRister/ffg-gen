@@ -2,6 +2,8 @@
 @expression sameika 2
 @exit kiko
 
+@wait 1
+
 Sameika3: Eh? Someone's playing some kind of koto.
 Reimu3: I'm only more cautious from that.
 Reimu1: It takes a lot of idiocy to make so much noise in a forest,
@@ -11,6 +13,8 @@ Sameika1: I'm sure nothing here is that threatening to you..
 
 (Kiko comes on screen, guitar part stops)
 @wait 2
+
+Sameika2: does wait work?
 
 Kiko1: Ah! It looks like I attracted some visitors.
 Reimu7: (So it was idiocy.. a kodama of all things.)

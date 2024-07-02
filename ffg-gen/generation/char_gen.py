@@ -5,9 +5,10 @@ from collections.abc import Generator
 from mlt_fix import fix_mlt
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
-from sysline import SysLine, SetExpr
+from sysline import SysLine, SetExpr, Wait
 import configs
 from configs import CharacterMovementConfigs
+from vidpy_extension.blankclip import BlankClip
 
 State = Enum('State', ['OFFSTAGE', 'FRONT', 'BACK'])
 
@@ -51,48 +52,60 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Cl
     charInfo = CharacterInfo.ofName(name)
 
     # Initialize state to offstage
-    state: State = State.OFFSTAGE
+    curr_state: State = State.OFFSTAGE
     curr_expression: str = charInfo.defaultExpression
+    curr_speaker: str = None
 
     for line in lines:
-        # process possible SysLine
-        if isinstance(line, SysLine):
-            match (line):
-                case SetExpr(name=name, expression=expr): curr_expression = expr
+        # messy processing depending on line type
+        match(line):
+            case DialogueLine(character=character, expression=expression):
+                # store the new values from the dialogueLine
+                curr_speaker: str = character.name
+                if curr_speaker == name:
+                    curr_expression = expression
 
-            continue
+            case Wait(duration=duration):
+                # if no one is on screen yet, then we leave a gap
+                if curr_speaker is None:
+                    yield BlankClip().set_offset(duration)
+                    continue
+                # otherwise, we fall through and generate a clip using the previous line's state
 
-        # otherwise we're processing a DialogueLine
-        speaker: str = line.character.name
+            case SetExpr(name=name, expression=expr):
+                # set the expression, then continue to next line
+                curr_expression = expr
+                continue
 
-        if speaker == name:
-            curr_expression = line.expression
+            case _: continue
 
-        match(state):
+        # this part will get run unless continue got called in the match statement
+        # make sure whatever line makes it down here has a duration field
+        match(curr_state):
             case State.OFFSTAGE:
-                if (speaker == name):
-                    state = State.FRONT
+                if (curr_speaker == name):
+                    curr_state = State.FRONT
                     yield create_clip(Transition.FULL_ENTER, charInfo, curr_expression, line.duration)
                 else:
-                    state = State.BACK
+                    curr_state = State.BACK
                     yield create_clip(Transition.HALF_ENTER, charInfo, curr_expression, line.duration)
             case State.BACK:
-                if (speaker == name):
-                    state = State.FRONT
+                if (curr_speaker == name):
+                    curr_state = State.FRONT
                     yield create_clip(Transition.IN, charInfo, curr_expression, line.duration)
                 else:
-                    state = State.BACK
+                    curr_state = State.BACK
                     yield create_clip(Transition.STAY_OUT, charInfo, curr_expression, line.duration)
             case State.FRONT:
-                if (speaker == name):
-                    state = State.FRONT
+                if (curr_speaker == name):
+                    curr_state = State.FRONT
                     yield create_clip(Transition.STAY_IN, charInfo, curr_expression, line.duration)
                 else:
-                    state = State.BACK
+                    curr_state = State.BACK
                     yield create_clip(Transition.OUT, charInfo, curr_expression, line.duration)
 
     # final exit
-    match(state):
+    match(curr_state):
         case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
         case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
 

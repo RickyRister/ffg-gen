@@ -66,13 +66,13 @@ class Wait(SysLine):
     Usage @wait [seconds]
     """
 
-    seconds: float
+    duration: float
 
     def parseArgs(args: str):
         splits = args.split()
         if len(splits) != 1:
             raise ValueError(f'Invalid args for command @wait: {args}')
-        return Wait(seconds=float(splits[0]))
+        return Wait(duration=float(splits[0]))
 
 
 def parse_sysline(line: str):
