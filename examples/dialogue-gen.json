@@ -80,6 +80,11 @@
                 "duration": 0.25,
                 "expectedFrames": 6,
                 "fix": "00:00:00.200"
+            },
+            {
+                "duration": 2,
+                "expectedFrames": 60,
+                "fix": "00:00:01.960"
             }
         ]
     },

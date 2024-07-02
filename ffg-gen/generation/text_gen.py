@@ -3,7 +3,8 @@ from xml.etree.ElementTree import Element, XML
 from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
-from sysline import SysLine
+from sysline import SysLine, Wait
+from vidpy_extension.blankclip import BlankClip
 import configs
 
 
@@ -31,7 +32,9 @@ def generate(lines: list[DialogueLine | SysLine]) -> Element:
 
 def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     if isinstance(line, SysLine):
-        return None
+        match(line):
+            case Wait(seconds=seconds): return BlankClip().set_offset(seconds)
+            case _: return None
 
     characterInfo: CharacterInfo = line.character
 

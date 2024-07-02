@@ -60,6 +60,21 @@ class CharExit(SysLine):
         return CharExit(name=splits[0].lower())
 
 
+@dataclass
+class Wait(SysLine):
+    """Makes nothing happen for the next x seconds.
+    Usage @wait [seconds]
+    """
+
+    seconds: float
+
+    def parseArgs(args: str):
+        splits = args.split()
+        if len(splits) != 1:
+            raise ValueError(f'Invalid args for command @wait: {args}')
+        return Wait(seconds=float(splits[0]))
+
+
 def parse_sysline(line: str):
     """Parses a sysline.
     Syslines should begin being @. This function will assume it's true and won't double check!
@@ -71,5 +86,6 @@ def parse_sysline(line: str):
         case '@expression': return SetExpr.parseArgs(args)
         case '@enter': return CharEnter.parseArgs(args)
         case '@exit': return CharExit.parseArgs(args)
+        case '@wait': return Wait.parseArgs(args)
         case _:
             raise ValueError(f'Failure while parsing: invalid command {command} in sysline: {line}')

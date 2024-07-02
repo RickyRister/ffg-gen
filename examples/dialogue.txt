@@ -10,7 +10,7 @@ Sameika1: Still, it's a lead, so let's follow it.
 Sameika1: I'm sure nothing here is that threatening to you..
 
 (Kiko comes on screen, guitar part stops)
-@enter kiko
+@wait 2
 
 Kiko1: Ah! It looks like I attracted some visitors.
 Reimu7: (So it was idiocy.. a kodama of all things.)
