@@ -13,7 +13,7 @@
     },
     "dialogueBox": {
         "geometry": "104 767 691 133 1",
-        "dropTextMaskPath": "_textless/common/drop text mask.png",
+        "dropTextMaskPath": "assets/common/drop text mask.png",
         "dropTextEnd": "00:00:00.160",
         "font": "Linux Biolinum O",
         "fontSize": 28
