@@ -14,7 +14,7 @@ class SysLine:
 @dataclass
 class SetExpr(SysLine):
     """Sets the expression for a character.
-    Usage: @expr [name] [expression]
+    Usage: @expression [name] [expression]
     """
 
     name: str
@@ -35,6 +35,6 @@ def parse_sysline(line: str):
     command, args = line.split(None, 1)
 
     match(command):
-        case '@expr': return SetExpr.parseArgs(args)
+        case '@expression': return SetExpr.parseArgs(args)
         case _:
             raise ValueError(f'Failure while parsing: invalid command {command} in sysline: {line}')
