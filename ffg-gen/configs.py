@@ -36,27 +36,32 @@ class DialogueBoxConfigs:
 
 @dataclass
 class DurationFix:
-    """Extra duration fixes that aren't covered by the thresholds
-    """
-
-    expectedFrames: int = None  # expected out frame
-    fix: str = None             # timestamp fix
-
-
-@dataclass
-class Threshold:
-    """Contains info about mapping count to duration, as well as info about converting frame durations to timestamp durations.
+    """Contains info about converting frame durations to timestamp durations.
     The expected out frame won't be known at first.
     We recommend you run the tool first to fill in the expected frame and the correct fix.
     """
 
+    expectedFrames: int     # expected out frame
+    fix: str                # timestamp fix
+
+
+@dataclass
+class Threshold:
+    """Contains info about mapping count to duration, as well as any info for converting that frame duration to timestamp duration
+    """
+
     count: int
     duration: float
-    expectedFrames: int = None  # expected out frame
-    fix: str = None             # timestamp fix
+    expectedFrames: int = None
+    fix: str = None
 
-    def toDurationFix(self) -> DurationFix:
-        DurationFix(self.expectedFrames, self.fix)
+    def toDurationFix(self) -> DurationFix | None:
+        """Returns the duration fix portion as a DurationFix object
+        Will return None if either of the values aren't present
+        """
+        if self.expectedFrames is None or self.fix is None:
+            return None
+        return DurationFix(self.expectedFrames, self.fix)
 
 
 @dataclass
@@ -69,7 +74,7 @@ class DurationConfigs:
         # convert dict to actual objects, if nessecary
         if isinstance(self.thresholds[0], dict):
             self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
-        if self.extraFixes is not None and isinstance(self.thresholds[0], dict):
+        if self.extraFixes is not None and isinstance(self.extraFixes[0], dict):
             self.extraFixes = [DurationFix(**fix) for fix in self.extraFixes]
 
 

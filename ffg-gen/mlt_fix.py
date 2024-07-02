@@ -2,6 +2,7 @@ from xml.etree.ElementTree import Element
 from xml.etree import ElementTree
 import re
 import configs
+from configs import DurationFix
 
 
 def createPropertyElement(property: str, value: str) -> Element:
@@ -81,9 +82,13 @@ def fix_out_timestamps(xml: Element) -> Element:
     """Replace the out timestamps on each producer with the equivalent timestamp, if known.
     """
 
-    fixes: dict[str, str] = {str(threshold.expectedFrames): threshold.fix
-                             for threshold in configs.DURATIONS.thresholds
-                             if threshold.expectedFrames is not None and threshold.fix is not None}
+    # load expected fixes from thresholds and extraFixes
+    durationFixes: list[DurationFix] = [threshold.toDurationFix()
+                                        for threshold in configs.DURATIONS.thresholds if threshold.toDurationFix() is not None]
+    if configs.DURATIONS.extraFixes is not None:
+        durationFixes += configs.DURATIONS.extraFixes
+
+    fixes: dict[str, str] = {str(dFix.expectedFrames): dFix.fix for dFix in durationFixes}
 
     for producer in xml.findall('.//*[@out]'):
         expectedFrames = producer.get('out')
