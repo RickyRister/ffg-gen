@@ -2,6 +2,7 @@ from functools import partial
 from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element, XML
 from enum import Enum
+from collections.abc import Generator
 from mlt_fix import fix_mlt
 from filters import affineFilterArgs, brightnessFilterArgs, fadeFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
@@ -31,10 +32,8 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
 
-    clips: list[Clip] = processLines(lines, name)
-
     composition = Composition(
-        clips,
+        list(processLines(lines, name)),
         singletrack=True,
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,
@@ -46,9 +45,9 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     return fixedXml
 
 
-def processLines(lines: list[DialogueLine | SysLine], name: str) -> list[Clip]:
-
-    clips: list[Clip] = []
+def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Clip]:
+    """Returns a generator that returns a stream of Clips
+    """
 
     charInfo = CharacterInfo.ofName(name)
 
@@ -72,38 +71,30 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> list[Clip]:
         match(state):
             case State.OFFSTAGE:
                 if (speaker == name):
-                    clips.append(create_clip(Transition.FULL_ENTER,
-                                 charInfo, curr_expression, line.duration))
                     state = State.FRONT
+                    yield create_clip(Transition.FULL_ENTER, charInfo, curr_expression, line.duration)
                 else:
-                    clips.append(create_clip(Transition.HALF_ENTER,
-                                 charInfo, curr_expression, line.duration))
                     state = State.BACK
+                    yield create_clip(Transition.HALF_ENTER, charInfo, curr_expression, line.duration)
             case State.BACK:
                 if (speaker == name):
-                    clips.append(create_clip(Transition.IN,
-                                             charInfo, curr_expression, line.duration))
                     state = State.FRONT
+                    yield create_clip(Transition.IN, charInfo, curr_expression, line.duration)
                 else:
-                    clips.append(create_clip(Transition.STAY_OUT,
-                                 charInfo, curr_expression, line.duration))
                     state = State.BACK
+                    yield create_clip(Transition.STAY_OUT, charInfo, curr_expression, line.duration)
             case State.FRONT:
                 if (speaker == name):
-                    clips.append(create_clip(Transition.STAY_IN,
-                                 charInfo, curr_expression, line.duration))
                     state = State.FRONT
+                    yield create_clip(Transition.STAY_IN, charInfo, curr_expression, line.duration)
                 else:
-                    clips.append(create_clip(Transition.OUT,
-                                             charInfo, curr_expression, line.duration))
                     state = State.BACK
+                    yield create_clip(Transition.OUT, charInfo, curr_expression, line.duration)
 
     # final exit
     match(state):
-        case State.FRONT: clips.append(create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration))
-        case State.BACK: clips.append(create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration))
-
-    return clips
+        case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
+        case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
 
 
 def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: float) -> Clip:
