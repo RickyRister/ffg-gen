@@ -129,7 +129,6 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                         pending_transition = Transition.OUT
 
         # generate clip using the transition
-        print(curr_state, pending_transition)
         yield create_clip(pending_transition, charInfo, curr_expression, line.duration)
 
         # update state and reset pending transition
