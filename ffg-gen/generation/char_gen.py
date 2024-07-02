@@ -10,7 +10,11 @@ import configs
 from configs import CharacterMovementConfigs
 from vidpy_extension.blankclip import BlankClip
 
-State = Enum('State', ['OFFSTAGE', 'FRONT', 'BACK'])
+
+class State(Enum):
+    OFFSCREEN = 0
+    FRONT = 1
+    BACK = 2
 
 
 class Transition(Enum):
@@ -51,8 +55,8 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Cl
 
     charInfo = CharacterInfo.ofName(name)
 
-    # Initialize state to offstage
-    curr_state: State = State.OFFSTAGE
+    # Initialize state to offscreen
+    curr_state: State = State.OFFSCREEN
     curr_expression: str = charInfo.defaultExpression
     curr_speaker: str = None
 
@@ -81,28 +85,31 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Cl
 
         # this part will get run unless continue got called in the match statement
         # make sure whatever line makes it down here has a duration field
+        transition: Transition = None
         match(curr_state):
-            case State.OFFSTAGE:
+            case State.OFFSCREEN:
                 if (curr_speaker == name):
+                    transition = Transition.FULL_ENTER
                     curr_state = State.FRONT
-                    yield create_clip(Transition.FULL_ENTER, charInfo, curr_expression, line.duration)
                 else:
+                    transition = Transition.HALF_ENTER
                     curr_state = State.BACK
-                    yield create_clip(Transition.HALF_ENTER, charInfo, curr_expression, line.duration)
             case State.BACK:
                 if (curr_speaker == name):
+                    transition = Transition.IN
                     curr_state = State.FRONT
-                    yield create_clip(Transition.IN, charInfo, curr_expression, line.duration)
                 else:
+                    transition = Transition.STAY_OUT
                     curr_state = State.BACK
-                    yield create_clip(Transition.STAY_OUT, charInfo, curr_expression, line.duration)
             case State.FRONT:
                 if (curr_speaker == name):
+                    transition = Transition.STAY_IN
                     curr_state = State.FRONT
-                    yield create_clip(Transition.STAY_IN, charInfo, curr_expression, line.duration)
                 else:
+                    transition = Transition.OUT
                     curr_state = State.BACK
-                    yield create_clip(Transition.OUT, charInfo, curr_expression, line.duration)
+
+        yield create_clip(transition, charInfo, curr_expression, line.duration)
 
     # final exit
     match(curr_state):
