@@ -1,5 +1,16 @@
 @expression reimu 3
 @expression sameika 2
+@exit kiko
+
+Sameika3: Eh? Someone's playing some kind of koto.
+Reimu3: I'm only more cautious from that.
+Reimu1: It takes a lot of idiocy to make so much noise in a forest,
+Reimu1: unless you have something to show or a reason to attract danger.
+Sameika1: Still, it's a lead, so let's follow it.
+Sameika1: I'm sure nothing here is that threatening to you..
+
+(Kiko comes on screen, guitar part stops)
+@enter kiko
 
 Kiko1: Ah! It looks like I attracted some visitors.
 Reimu7: (So it was idiocy.. a kodama of all things.)

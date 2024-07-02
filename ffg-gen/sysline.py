@@ -26,6 +26,40 @@ class SetExpr(SysLine):
         return SetExpr(name=splits[0].lower(), expression=splits[1])
 
 
+@dataclass
+class CharEnter(SysLine):
+    """Forces the character to enter the screen.
+    By default, all characters will enter at the start. 
+    Call @exit before the first line to make the character start offscreen.
+    Usage: @exit [name]
+    """
+
+    name: str
+
+    def parseArgs(args: str):
+        splits = args.split()
+        if len(splits) != 1:
+            raise ValueError(f'Invalid args for command @enter: {args}')
+        return CharExit(name=splits[0].lower())
+
+
+@dataclass
+class CharExit(SysLine):
+    """Forces the character to exit the screen.
+    By default, all characters will enter at the start. 
+    Call @exit before the first line to make the character start offscreen.
+    Usage: @exit [name]
+    """
+
+    name: str
+
+    def parseArgs(args: str):
+        splits = args.split()
+        if len(splits) != 1:
+            raise ValueError(f'Invalid args for command @exit: {args}')
+        return CharExit(name=splits[0].lower())
+
+
 def parse_sysline(line: str):
     """Parses a sysline.
     Syslines should begin being @. This function will assume it's true and won't double check!
@@ -35,5 +69,7 @@ def parse_sysline(line: str):
 
     match(command):
         case '@expression': return SetExpr.parseArgs(args)
+        case '@enter': return CharEnter.parseArgs(args)
+        case '@exit': return CharExit.parseArgs(args)
         case _:
             raise ValueError(f'Failure while parsing: invalid command {command} in sysline: {line}')
