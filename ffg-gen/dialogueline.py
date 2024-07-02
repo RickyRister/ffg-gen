@@ -115,7 +115,7 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
     # process match into a dialogueLine
     return DialogueLine(
         text=match.group('text').strip(),
-        character=CharacterInfo.ofName(match.group('character').strip()),
+        character=CharacterInfo.ofName(match.group('character').strip().lower()),
         expression=int(match.group('expression').strip()))
 
 

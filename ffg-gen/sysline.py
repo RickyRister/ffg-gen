@@ -24,7 +24,7 @@ class SetExpr(SysLine):
         splits = args.split()
         if len(splits) != 2:
             raise ValueError(f'Invalid args for command @expr: {args}')
-        return SetExpr(name=splits[0], expression=splits[1])
+        return SetExpr(name=splits[0].lower(), expression=splits[1])
 
 
 def parse_sysline(line: str):
