@@ -26,6 +26,7 @@ class Transition(Enum):
     HALF_EXIT = 6
     STAY_IN = 7
     STAY_OUT = 8
+    STAY_OFFSCREEN = 9
 
     def state_after(transition):
         match(transition):
@@ -37,6 +38,7 @@ class Transition(Enum):
             case Transition.HALF_EXIT: return State.OFFSCREEN
             case Transition.STAY_IN: return State.FRONT
             case Transition.STAY_OUT: return State.BACK
+            case Transition.STAY_OFFSCREEN: return State.OFFSCREEN
 
 
 def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
@@ -143,6 +145,9 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
 
 def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: float) -> Clip:
+    # return early if we're still staying offscreen
+    if transition is Transition.STAY_OFFSCREEN:
+        return BlankClip().set_offset(duration)
 
     # determine which character config to use
     moveConfigs: CharacterMovementConfigs = configs.PLAYER_MOVEMENT if charInfo.isPlayer else configs.ENEMY_MOVEMENT
