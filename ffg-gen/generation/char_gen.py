@@ -23,19 +23,12 @@ class Transition(Enum):
     STAY_OUT = 8
 
 
-def extractNames(lines: list[DialogueLine | SysLine]) -> set[str]:
-    """Extracts all names that appear in the lines.
-    Handles SysLines by filtering them out first.
-    """
-    dialogueLines: list[DialogueLine] = [line for line in lines if isinstance(line, DialogueLine)]
-    return set(map(lambda line: line.character.name, dialogueLines))
-
-
 def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     """Processes the list of lines into a completed mlt for the given character
     """
     # double check that the character is actually in the scene
-    if name not in extractNames(lines):
+    names: set[str] = {line.character.name for line in lines if isinstance(line, DialogueLine)}
+    if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
 
     clips: list[Clip] = processLines(lines, name)
@@ -70,7 +63,7 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> list[Clip]:
                 curr_expression = line.expression
             continue
 
-        # otherwise we're processing a DialogueLine    
+        # otherwise we're processing a DialogueLine
         speaker: str = line.character.name
 
         if speaker == name:

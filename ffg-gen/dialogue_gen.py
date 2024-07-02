@@ -77,8 +77,7 @@ def gen_header(lines: list[DialogueLine | SysLine]):
 
 def gen_chars(lines: list[DialogueLine | SysLine]):
     # figure out which characters are in the dialogue
-    dialogueLines = [line for line in lines if isinstance(line, DialogueLine)]
-    names = set(map(lambda dialogueLine: dialogueLine.character.name, dialogueLines))
+    names: set[str] = {line.character.name for line in lines if isinstance(line, DialogueLine)}
 
     # call gen_char with all those characters
     for name in names:
