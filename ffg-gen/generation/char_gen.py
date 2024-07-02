@@ -125,11 +125,11 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # apply brightness
     clip.fx('brightness', brightnessFilterArgs(determine_brightness_levels(transition)))
 
-    # apply fade in
+    # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
         clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=0;{configs.MOVEMENT.fadeInEnd}=1'))
 
-    # apply fade out
+    # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
         clip.fx('brightness', fadeFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))
 
