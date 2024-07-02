@@ -5,7 +5,7 @@ from collections.abc import Generator
 from mlt_fix import fix_mlt
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
-from sysline import SysLine, SetExpr, Wait
+from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
 from configs import CharacterMovementConfigs
 from vidpy_extension.blankclip import BlankClip
@@ -37,7 +37,6 @@ class Transition(Enum):
             case Transition.HALF_EXIT: return State.OFFSCREEN
             case Transition.STAY_IN: return State.FRONT
             case Transition.STAY_OUT: return State.BACK
-
 
 
 def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
@@ -97,6 +96,14 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                 curr_expression = expression
                 continue
 
+            case CharEnter(name=name) if name == targetName:
+                # force an enter transition on the next dialogue line
+                continue
+
+            case CharExit(name=name) if name == targetName:
+                # force an exit transition on the next dialogue line
+                continue
+
             case _: continue
 
         # this part will get run unless continue got called in the match statement
@@ -131,6 +138,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # final exit
     match(curr_state):
+        case State.OFFSCREEN: yield BlankClip().set_offset(configs.MOVEMENT.exitDuration)
         case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
         case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
 
