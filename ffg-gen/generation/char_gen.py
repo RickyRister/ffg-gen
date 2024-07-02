@@ -57,8 +57,9 @@ def processLines(lines: list[DialogueLine | SysLine], name: str) -> Generator[Cl
     for line in lines:
         # process possible SysLine
         if isinstance(line, SysLine):
-            if isinstance(line, SetExpr) and line.name == name:
-                curr_expression = line.expression
+            match (line):
+                case SetExpr(name=name, expression=expr): curr_expression = expr
+
             continue
 
         # otherwise we're processing a DialogueLine
