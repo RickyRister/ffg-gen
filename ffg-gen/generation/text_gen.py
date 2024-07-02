@@ -33,7 +33,7 @@ def generate(lines: list[DialogueLine | SysLine]) -> Element:
 def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     if isinstance(line, SysLine):
         match(line):
-            case Wait(seconds=seconds): return BlankClip().set_offset(seconds)
+            case Wait(duration=duration): return BlankClip().set_offset(duration)
             case _: return None
 
     characterInfo: CharacterInfo = line.character
