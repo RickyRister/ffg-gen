@@ -1,11 +1,21 @@
-tenmu 1: bird! bird bird bird
-fujioki 1: bird?
-tenmu 1: bird bird bird
-fujioki 3: "bird" bird bird?
-tenmu 2: this part suddenly has way more 
-tenmu 2: this part should be 4 duration long i hope here some more text and stuff
-tenmu 2: this part should be 4.5 duration long i hope here some more text and stuff and stuff
-tenmu 2: this part suddenly has way more text than before. Is this a problem? I don't really care either ways
-tenmu 2: this part suddenly has way more text than before. Is this a problem? I don't really care either ways. There is even more text following it
+@expression reimu 3
+@expression sameika 2
 
+Kiko1: Ah! It looks like I attracted some visitors.
+Reimu7: (So it was idiocy.. a kodama of all things.)
+Reimu1: Was that music coming from you? I don't see any instruments around here.
+Kiko1: Yep. I just put it away.
+Sameika3: (For some reason, I don't believe it. Where would she even keep it..?)
+Kiko3: I don't recognise you, though. Are you lost?
+Reimu1: No, we're looking for whoever's causing this darkness.
+Kiko8: Really..? That's so bothersome.
+Kiko8: I was just getting to enjoy the cool air and the shade..
+Kiko8: The forest is much less noisy too, since all of the youkai are off somewhere else.
+Kiko8: I don't really want you to ruin that..
+Sameika5: It's too gloomy and pathetic here for silence to be relaxing.
+Reimu6: Well, we're not stopping.
+Reimu7: (..Doesn't her tree need sunlight anyway?)
 
+(Boss theme starts)
+
+Kiko1: I guess I'll have to fight you, so here I go.
