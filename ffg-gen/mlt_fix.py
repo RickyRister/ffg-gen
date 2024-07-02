@@ -61,7 +61,7 @@ def handle_possible_fades(brightness_filter: Element):
 
     alpha = brightness_filter.find("./property[@name='alpha']")
     if alpha is not None:
-        pattern = re.compile('00:00:00\.000=(?P<initial>\d);(?P<end>.+)=\d')
+        pattern = re.compile(r'00:00:00\.000=(?P<initial>\d);(?P<end>.+)=\d')
         matches: re.Match = pattern.match(alpha.text)
 
         match (matches.group('initial')):
