@@ -35,6 +35,15 @@ class DialogueBoxConfigs:
 
 
 @dataclass
+class DurationFix:
+    """Extra duration fixes that aren't covered by the thresholds
+    """
+
+    expectedFrames: int = None  # expected out frame
+    fix: str = None             # timestamp fix
+
+
+@dataclass
 class Threshold:
     """Contains info about mapping count to duration, as well as info about converting frame durations to timestamp durations.
     The expected out frame won't be known at first.
@@ -46,16 +55,22 @@ class Threshold:
     expectedFrames: int = None  # expected out frame
     fix: str = None             # timestamp fix
 
+    def toDurationFix(self) -> DurationFix:
+        DurationFix(self.expectedFrames, self.fix)
+
 
 @dataclass
 class DurationConfigs:
     mode: str
     thresholds: list[Threshold]
+    extraFixes: list[DurationFix] = None
 
     def __post_init__(self):
+        # convert dict to actual objects, if nessecary
         if isinstance(self.thresholds[0], dict):
-            self.thresholds = [Threshold(**threshold)
-                               for threshold in self.thresholds]
+            self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
+        if self.extraFixes is not None and isinstance(self.thresholds[0], dict):
+            self.extraFixes = [DurationFix(**fix) for fix in self.extraFixes]
 
 
 @dataclass
