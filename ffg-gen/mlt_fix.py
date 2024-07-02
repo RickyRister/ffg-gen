@@ -83,23 +83,17 @@ def fix_out_timestamps(xml: Element) -> Element:
     """Replace the out timestamps on each producer with the equivalent timestamp, if known.
     """
 
-    # load expected fixes from thresholds and extraFixes
-    durationFixes: list[DurationFix] = [threshold.toDurationFix()
-                                        for threshold in configs.DURATIONS.thresholds if threshold.toDurationFix() is not None]
-    if configs.DURATIONS.extraFixes is not None:
-        durationFixes += configs.DURATIONS.extraFixes
-
-    fixes: dict[str, str] = {str(dFix.expectedFrames): dFix.fix for dFix in durationFixes}
+    # load fixes from config
+    fixes: dict[str, str] = {str(durationFix.expectedFrames): durationFix.fix for durationFix in configs.DURATION_FIXES}
 
     for producer in xml.findall('.//*[@out]'):
         expectedFrames = producer.get('out')
         fix = fixes.get(expectedFrames)
 
-        if fix is None:
-            print(f"No fix found for out frame {expectedFrames}")
-            continue
-
-        producer.set('out', fix)
+        if fix is not None:
+            producer.set('out', fix)
+        else:
+            print(f"No duration fix found for out frame {expectedFrames}")
 
     return xml
 

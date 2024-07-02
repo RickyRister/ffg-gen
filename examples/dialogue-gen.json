@@ -41,53 +41,68 @@
         "thresholds": [
             {
                 "count": 0,
-                "duration": 3.5,
-                "expectedFrames": 88,
-                "fix": "00:00:03.467"
+                "seconds": 3.5
             },
             {
                 "count": 60,
-                "duration": 4,
-                "expectedFrames": 100,
-                "fix": "00:00:03.960"
+                "seconds": 4
             },
             {
                 "count": 80,
-                "duration": 4.5,
-                "expectedFrames": 112,
-                "fix": "00:00:04.467"
+                "seconds": 4.5
             },
             {
                 "count": 100,
-                "duration": 5,
-                "expectedFrames": 125,
-                "fix": "00:00:04.960"
+                "seconds": 5
             },
             {
                 "count": 120,
-                "duration": 6,
-                "expectedFrames": 150,
-                "fix": "00:00:05.960"
-            }
-        ],
-        "extraFixes": [
-            {
-                "duration": 0.2,
-                "expectedFrames": 5,
-                "fix": "00:00:00.167"
-            },
-            {
-                "duration": 0.25,
-                "expectedFrames": 6,
-                "fix": "00:00:00.200"
-            },
-            {
-                "duration": 2,
-                "expectedFrames": 60,
-                "fix": "00:00:01.960"
+                "seconds": 6
             }
         ]
     },
+    "durationFixes": [
+        {
+            "seconds": 0.2,
+            "expectedFrames": 5,
+            "fix": "00:00:00.167"
+        },
+        {
+            "seconds": 0.25,
+            "expectedFrames": 6,
+            "fix": "00:00:00.200"
+        },
+        {
+            "seconds": 2,
+            "expectedFrames": 60,
+            "fix": "00:00:01.960"
+        },
+        {
+            "seconds": 3.5,
+            "expectedFrames": 88,
+            "fix": "00:00:03.467"
+        },
+        {
+            "seconds": 4,
+            "expectedFrames": 100,
+            "fix": "00:00:03.960"
+        },
+        {
+            "seconds": 4.5,
+            "expectedFrames": 112,
+            "fix": "00:00:04.467"
+        },
+        {
+            "seconds": 5,
+            "expectedFrames": 125,
+            "fix": "00:00:04.960"
+        },
+        {
+            "seconds": 6,
+            "expectedFrames": 150,
+            "fix": "00:00:05.960"
+        }
+    ],
     "characters": {
         "reimu": {
             "isPlayer": true,

@@ -42,40 +42,27 @@ class DurationFix:
 
     expectedFrames: int     # expected out frame
     fix: str                # timestamp fix
-    duration: str = None    # optional field to leave comment      
+    seconds: str = None     # optional field to leave comment      
 
 
 @dataclass
 class Threshold:
-    """Contains info about mapping count to duration, as well as any info for converting that frame duration to timestamp duration
+    """Contains info about mapping count to duration
     """
 
     count: int
-    duration: float
-    expectedFrames: int = None
-    fix: str = None
-
-    def toDurationFix(self) -> DurationFix | None:
-        """Returns the duration fix portion as a DurationFix object
-        Will return None if either of the values aren't present
-        """
-        if self.expectedFrames is None or self.fix is None:
-            return None
-        return DurationFix(self.expectedFrames, self.fix)
+    seconds: float
 
 
 @dataclass
 class DurationConfigs:
     mode: str
     thresholds: list[Threshold]
-    extraFixes: list[DurationFix] = None
 
     def __post_init__(self):
         # convert dict to actual objects, if nessecary
         if isinstance(self.thresholds[0], dict):
             self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
-        if self.extraFixes is not None and isinstance(self.extraFixes[0], dict):
-            self.extraFixes = [DurationFix(**fix) for fix in self.extraFixes]
 
 
 @dataclass
@@ -103,6 +90,7 @@ VIDEO_MODE: VideoModeConfigs
 HEADER: HeaderConfigs
 DIALOGUE_BOX: DialogueBoxConfigs
 DURATIONS: DurationConfigs
+DURATION_FIXES: list[DurationFix]
 MOVEMENT: CommonMovementConfigs
 PLAYER_MOVEMENT: CharacterMovementConfigs
 ENEMY_MOVEMENT: CharacterMovementConfigs
@@ -132,6 +120,7 @@ def loadIntoGlobals(configJson: dict):
     global HEADER
     global DIALOGUE_BOX
     global DURATIONS
+    global DURATION_FIXES
     global MOVEMENT
     global PLAYER_MOVEMENT
     global ENEMY_MOVEMENT
@@ -143,6 +132,7 @@ def loadIntoGlobals(configJson: dict):
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
     DURATIONS = DurationConfigs(**configJson.get('durations'))
+    DURATION_FIXES = [DurationFix(**fix) for fix in configJson.get('durationFixes')]
     MOVEMENT = CommonMovementConfigs(**configJson.get('movement').get('common'))
     PLAYER_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('player'))
     ENEMY_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('enemy'))
