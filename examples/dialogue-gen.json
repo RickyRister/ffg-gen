@@ -23,7 +23,7 @@
             "brightnessFadeLevel": 0.7,
             "brightnessFadeEnd": "00:00:00.200",
             "moveEnd": "00:00:00.200",
-            "exitDuration": 0.2,
+            "exitDuration": 0.25,
             "fadeInEnd": "00:00:00.200",
             "fadeOutEnd": "00:00:00.200"
         },
@@ -75,6 +75,11 @@
                 "duration": 0.2,
                 "expectedFrames": 5,
                 "fix": "00:00:00.167"
+            },
+            {
+                "duration": 0.25,
+                "expectedFrames": 6,
+                "fix": "00:00:00.200"
             }
         ]
     },
