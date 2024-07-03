@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import cache
-from bisect import bisect
+from typing import Any
 import configs
 
 
@@ -24,7 +24,7 @@ class CharacterInfo:
     dialogueFontSize: int = None
     dialogueColor: str = None
 
-    # movement configs
+    # portrait geometry configs
     geometry: str | None = None             # in case the character's base portrait needs to repositioned
     frontGeometry: str = None
     backGeometry: str = None
@@ -42,50 +42,47 @@ class CharacterInfo:
     def __post_init__(self):
         '''All unfilled properties will fall through to the global configs
         '''
-        # header configs
-        if self.headerFont is None:
-            self.headerFont = configs.HEADER.font
-        if self.headerFontSize is None:
-            self.headerFontSize = configs.HEADER.fontSize
-        if self.headerOutlineColor is None:
-            self.headerOutlineColor = configs.HEADER.outlineColor
-        if self.headerFillColor is None:
-            self.headerFillColor = configs.HEADER.fillColor
+        # fill all unset fields with the fall-through default
+        for attr, value in vars(self).items():
+            if value is None:
+                setattr(self, attr, self._find_default_value(attr))
 
-        # dialogue box configs
-        if self.dialogueFont is None:
-            self.dialogueFont = configs.DIALOGUE_BOX.font
-        if self.dialogueFontSize is None:
-            self.dialogueFontSize = configs.DIALOGUE_BOX.fontSize
-        if self.dialogueColor is None:
-            self.dialogueColor = configs.DIALOGUE_BOX.fontColor
+    def _find_default_value(self, attr: str) -> Any:
+        '''Returns the fall-through default value for the given attr.
+        '''
+        match attr:
+            # exclusive attributes
+            # we make them always return themselves, since they should always be set
+            case 'name': return self.name
+            case 'displayName': return self.displayName
+            case 'portraitPathFormat': return self.portraitPathFormat
+            case 'isPlayer': return self.isPlayer
 
-        # movement configs
-        if self.geometry is None:
-            self.geometry = configs.get_char_move(self.isPlayer).geometry
-        if self.frontGeometry is None:
-            self.frontGeometry = configs.get_char_move(self.isPlayer).frontGeometry
-        if self.backGeometry is None:
-            self.backGeometry = configs.get_char_move(self.isPlayer).backGeometry
-        if self.offstageGeometry is None:
-            self.offstageGeometry = configs.get_char_move(self.isPlayer).offstageGeometry
-        if self.offstageBackGeometry is None:
-            self.offstageBackGeometry = configs.get_char_move(self.isPlayer).offstageBackGeometry
+            # header configs
+            case 'headerFont': return configs.HEADER.font
+            case 'headerFontSize': return configs.HEADER.fontSize
+            case 'headerOutlineColor': return configs.HEADER.outlineColor
+            case 'headerFillColor': return configs.HEADER.fillColor
 
-        # movement timing configs
-        if self.brightnessFadeEnd is None:
-            self.brightnessFadeEnd = configs.MOVEMENT.brightnessFadeEnd
-        if self.brightnessFadeLevel is None:
-            self.brightnessFadeLevel = configs.MOVEMENT.brightnessFadeLevel
-        if self.moveEnd is None:
-            self.moveEnd = configs.MOVEMENT.moveEnd
-        if self.exitDuration is None:
-            self.exitDuration = configs.MOVEMENT.exitDuration   
-        if self.fadeInEnd is None:
-            self.fadeInEnd = configs.MOVEMENT.fadeInEnd   
-        if self.fadeOutEnd is None:
-            self.fadeOutEnd = configs.MOVEMENT.fadeOutEnd    
+            # dialogue box configs
+            case 'dialogueFont': return configs.DIALOGUE_BOX.font
+            case 'dialogueFontSize': return configs.DIALOGUE_BOX.fontSize
+            case 'dialogueColor': return configs.DIALOGUE_BOX.fontColor
 
+            # portrait geometry configs
+            case 'geometry': return configs.get_char_move(self.isPlayer).geometry
+            case 'frontGeometry': return configs.get_char_move(self.isPlayer).frontGeometry
+            case 'backGeometry': return configs.get_char_move(self.isPlayer).backGeometry
+            case 'offstageGeometry': return configs.get_char_move(self.isPlayer).offstageGeometry
+            case 'offstageBackGeometry': return configs.get_char_move(self.isPlayer).offstageBackGeometry
+
+            # movement timing configs
+            case 'brightnessFadeEnd': return configs.MOVEMENT.brightnessFadeEnd
+            case 'brightnessFadeLevel': return configs.MOVEMENT.brightnessFadeLevel
+            case 'moveEnd': return configs.MOVEMENT.moveEnd
+            case 'exitDuration': return configs.MOVEMENT.exitDuration
+            case 'fadeInEnd': return configs.MOVEMENT.fadeInEnd
+            case 'fadeOutEnd': return configs.MOVEMENT.fadeOutEnd
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that
