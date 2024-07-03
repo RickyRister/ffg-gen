@@ -67,7 +67,7 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
 
     # process this line as a sysline if it beings with @
     if (line.startswith('@')):
-        return sysline.parse_sysline(line)
+        return sysline.parse_sysline(line[1:])
 
     text: str = None
     name: str = None

@@ -34,7 +34,7 @@ class SetExpr(SysLine):
                 name=matches.group('name').lower().strip(),
                 expression=matches.group('expression').strip())
         else:
-            raise ValueError(f'Invalid args for command @expr: {args}')
+            raise ValueError(f'Invalid args for @expr: {args}')
 
 
 @dataclass
@@ -48,10 +48,9 @@ class CharEnter(SysLine):
     name: str
 
     def parseArgs(args: str):
-        splits = args.split()
-        if len(splits) != 1:
-            raise ValueError(f'Invalid args for command @enter: {args}')
-        return CharEnter(name=splits[0].lower())
+        match args.split():
+            case [name]: return CharEnter(name=name.lower())
+            case _: raise ValueError(f'Invalid args for @enter: {args}')
 
 
 @dataclass
@@ -65,10 +64,9 @@ class CharExit(SysLine):
     name: str
 
     def parseArgs(args: str):
-        splits = args.split()
-        if len(splits) != 1:
-            raise ValueError(f'Invalid args for command @exit: {args}')
-        return CharExit(name=splits[0].lower())
+        match args.split():
+            case [name]: return CharEnter(name=name.lower())
+            case _: raise ValueError(f'Invalid args for @exit: {args}')
 
 
 @dataclass
@@ -80,23 +78,22 @@ class Wait(SysLine):
     duration: float
 
     def parseArgs(args: str):
-        splits = args.split()
-        if len(splits) != 1:
-            raise ValueError(f'Invalid args for command @wait: {args}')
-        return Wait(duration=float(splits[0]))
+        match args.split():
+            case [duration]: return Wait(duration=float(duration))
+            case _: raise ValueError(f'Invalid args for @wait: {args}')
 
 
 def parse_sysline(line: str):
     """Parses a sysline.
-    Syslines should begin being @. This function will assume it's true and won't double check!
+
+    args:
+        line - a sysline with the @ stripped off already
     """
 
-    command, args = line.split(None, 1)
-
-    match(command):
-        case '@expression': return SetExpr.parseArgs(args)
-        case '@enter': return CharEnter.parseArgs(args)
-        case '@exit': return CharExit.parseArgs(args)
-        case '@wait': return Wait.parseArgs(args)
+    match(line.split(None, 1)):
+        case ('expression', args): return SetExpr.parseArgs(args.strip())
+        case ('enter', args): return CharEnter.parseArgs(args.strip())
+        case ('exit', args): return CharExit.parseArgs(args.strip())
+        case ('wait', args): return Wait.parseArgs(args.strip())
         case _:
-            raise ValueError(f'Failure while parsing: invalid command {command} in sysline: {line}')
+            raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
