@@ -65,7 +65,7 @@ class CharExit(SysLine):
 
     def parseArgs(args: str):
         match args.split():
-            case [name]: return CharEnter(name=name.lower())
+            case [name]: return CharExit(name=name.lower())
             case _: raise ValueError(f'Invalid args for @exit: {args}')
 
 
