@@ -84,11 +84,14 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                     curr_expression = expression
 
             case Wait(duration=duration):
-                # if no one is on screen yet, then we leave a gap
                 if curr_speaker is None:
+                    # if no one is on screen yet, then we leave a gap
                     yield BlankClip().set_offset(duration)
                     continue
-                # otherwise, we fall through and generate a clip using the previous line's state
+                else:
+                    # otherwise, we fall through and generate a clip using the previous line's state,
+                    # except there is no speaker
+                    curr_speaker = None
 
             case SetExpr(name=name, expression=expression) if name == targetName:
                 # set the expression, then continue to next line
