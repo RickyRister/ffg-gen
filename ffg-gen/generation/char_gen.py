@@ -66,7 +66,6 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
     """Returns a generator that returns a stream of Clips
     """
 
-    print(targetName)
     charInfo = CharacterInfo.ofName(targetName)
 
     # Initialize state to offscreen
@@ -81,10 +80,8 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
             case DialogueLine(character=character, expression=expression):
                 # store the new values from the dialogueLine
                 curr_speaker = character.name
-                print(f"curr speaker {curr_speaker}; {targetName}")
                 if curr_speaker == targetName:
                     curr_expression = expression
-                    print(f"new curr expression {curr_expression}")
 
             case Wait(duration=duration):
                 # if no one is on screen yet, then we leave a gap
