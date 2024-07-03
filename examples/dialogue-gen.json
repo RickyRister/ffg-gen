@@ -47,6 +47,16 @@
             "fix": "00:00:00.200"
         },
         {
+            "seconds": "0:25",
+            "expectedFrames": 25,
+            "fix": "00:00:00.800"
+        },
+        {
+            "seconds": "1:20",
+            "expectedFrames": 50,
+            "fix": "00:00:01.633"
+        },
+        {
             "seconds": 2,
             "expectedFrames": 60,
             "fix": "00:00:01.960"
