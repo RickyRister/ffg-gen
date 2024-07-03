@@ -31,6 +31,14 @@ class CharacterInfo:
     offstageGeometry: str = None
     offstageBackGeometry: str = None
 
+    # movement timing configs
+    brightnessFadeEnd: str = None
+    brightnessFadeLevel: float = None
+    moveEnd: str = None
+    exitDuration: float = None
+    fadeInEnd: str = None
+    fadeOutEnd: str = None
+
     def __post_init__(self):
         '''All unfilled properties will fall through to the global configs
         '''
@@ -63,6 +71,21 @@ class CharacterInfo:
             self.offstageGeometry = configs.get_char_move(self.isPlayer).offstageGeometry
         if self.offstageBackGeometry is None:
             self.offstageBackGeometry = configs.get_char_move(self.isPlayer).offstageBackGeometry
+
+        # movement timing configs
+        if self.brightnessFadeEnd is None:
+            self.brightnessFadeEnd = configs.MOVEMENT.brightnessFadeEnd
+        if self.brightnessFadeLevel is None:
+            self.brightnessFadeLevel = configs.MOVEMENT.brightnessFadeLevel
+        if self.moveEnd is None:
+            self.moveEnd = configs.MOVEMENT.moveEnd
+        if self.exitDuration is None:
+            self.exitDuration = configs.MOVEMENT.exitDuration   
+        if self.fadeInEnd is None:
+            self.fadeInEnd = configs.MOVEMENT.fadeInEnd   
+        if self.fadeOutEnd is None:
+            self.fadeOutEnd = configs.MOVEMENT.fadeOutEnd    
+
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that

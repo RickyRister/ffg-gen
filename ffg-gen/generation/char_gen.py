@@ -174,21 +174,21 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, charInfo)))
 
     # apply brightness
-    clip.fx('brightness', brightnessFilterArgs(determine_brightness_levels(transition)))
+    clip.fx('brightness', brightnessFilterArgs(determine_brightness_levels(transition, charInfo)))
 
     # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
-        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=0;{configs.MOVEMENT.fadeInEnd}=1'))
+        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=0;{charInfo.fadeInEnd}=1'))
 
     # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
-        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=1;{configs.MOVEMENT.fadeOutEnd}=0'))
+        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=1;{charInfo.fadeOutEnd}=0'))
 
     return clip
 
 
 def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
-    moveEnd: str = configs.MOVEMENT.moveEnd
+    moveEnd: str = charInfo.moveEnd
 
     frontGeometry: str = charInfo.frontGeometry
     backGeometry: str = charInfo.backGeometry
@@ -214,10 +214,10 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
             return backGeometry
 
 
-def determine_brightness_levels(transition: Transition) -> str:
-    fade_end = configs.MOVEMENT.brightnessFadeEnd
+def determine_brightness_levels(transition: Transition, charInfo: CharacterInfo) -> str:
+    fade_end = charInfo.brightnessFadeEnd
     full_level = '1'
-    dim_level = configs.MOVEMENT.brightnessFadeLevel
+    dim_level = charInfo.brightnessFadeLevel
 
     match transition:
         case Transition.IN:
