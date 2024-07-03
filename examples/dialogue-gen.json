@@ -10,37 +10,6 @@
         "height": 960,
         "fps": 30
     },
-    "header": {
-        "geometry": "108 717 350 42 1",
-        "font": "MF KeKe (Noncommercial)",
-        "fontSize": 28,
-        "weight": 500
-    },
-    "dialogueBox": {
-        "geometry": "104 767 691 133 1",
-        "dropTextMaskPath": "assets/common/drop text mask.png",
-        "dropTextEnd": "00:00:00.160",
-        "font": "Linux Biolinum O",
-        "fontSize": 28
-    },
-    "movement": {
-        "common": {
-            "brightnessFadeLevel": 0.7,
-            "brightnessFadeEnd": "00:00:00.200",
-            "moveEnd": "00:00:00.200",
-            "exitDuration": 0.25,
-            "fadeInEnd": "00:00:00.200",
-            "fadeOutEnd": "00:00:00.200"
-        },
-        "player": {
-            "backGeometry": "-36 24 1280 960 1",
-            "offstageGeometry": "-72 48 1280 960 1"
-        },
-        "enemy": {
-            "backGeometry": "36 24 1280 960 1",
-            "offstageGeometry": "72 48 1280 960"
-        }
-    },
     "durations": {
         "mode": "char",
         "thresholds": [
@@ -108,6 +77,37 @@
             "fix": "00:00:05.960"
         }
     ],
+    "header": {
+        "geometry": "108 717 350 42 1",
+        "font": "MF KeKe (Noncommercial)",
+        "fontSize": 28,
+        "weight": 500
+    },
+    "dialogueBox": {
+        "geometry": "104 767 691 133 1",
+        "dropTextMaskPath": "assets/common/drop text mask.png",
+        "dropTextEnd": "00:00:00.160",
+        "font": "Linux Biolinum O",
+        "fontSize": 28
+    },
+    "movement": {
+        "common": {
+            "brightnessFadeLevel": 0.7,
+            "brightnessFadeEnd": "00:00:00.200",
+            "moveEnd": "00:00:00.200",
+            "exitDuration": 0.25,
+            "fadeInEnd": "00:00:00.200",
+            "fadeOutEnd": "00:00:00.200"
+        },
+        "player": {
+            "backGeometry": "-36 24 1280 960 1",
+            "offstageGeometry": "-72 48 1280 960 1"
+        },
+        "enemy": {
+            "backGeometry": "36 24 1280 960 1",
+            "offstageGeometry": "72 48 1280 960"
+        }
+    },
     "characters": {
         "reimu": {
             "isPlayer": true,
