@@ -7,11 +7,18 @@
 Sameika3: Eh? Someone's playing some kind of koto.
 Reimu3: I'm only more cautious from that.
 Reimu1: It takes a lot of idiocy to make so much noise in a forest,
+
+@enter reimu
+
 Reimu1: unless you have something to show or a reason to attract danger.
+
+@enter sameika
+
 Sameika1: Still, it's a lead, so let's follow it.
 Sameika1: I'm sure nothing here is that threatening to you..
 
 (Kiko comes on screen, guitar part stops)
+@enter kiko
 @wait 2
 
 Sameika2: does wait work?
@@ -19,11 +26,17 @@ Sameika2: does wait work?
 Kiko1: Ah! It looks like I attracted some visitors.
 Reimu7: (So it was idiocy.. a kodama of all things.)
 Reimu1: Was that music coming from you? I don't see any instruments around here.
+
+@exit reimu
+
 Kiko1: Yep. I just put it away.
 Sameika3: (For some reason, I don't believe it. Where would she even keep it..?)
 Kiko3: I don't recognise you, though. Are you lost?
 Reimu1: No, we're looking for whoever's causing this darkness.
 Kiko8: Really..? That's so bothersome.
+
+@enter reimu
+
 Kiko8: I was just getting to enjoy the cool air and the shade..
 Kiko8: The forest is much less noisy too, since all of the youkai are off somewhere else.
 Kiko8: I don't really want you to ruin that..

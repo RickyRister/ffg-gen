@@ -29,8 +29,8 @@ class SetExpr(SysLine):
 @dataclass
 class CharEnter(SysLine):
     """Forces the character to enter the screen.
-    By default, all characters will enter at the start. 
-    Call @exit before the first line to make the character start offscreen.
+    By default, all characters will start offscreen and won't enter until explicitly declared
+
     Usage: @exit [name]
     """
 
@@ -40,14 +40,14 @@ class CharEnter(SysLine):
         splits = args.split()
         if len(splits) != 1:
             raise ValueError(f'Invalid args for command @enter: {args}')
-        return CharExit(name=splits[0].lower())
+        return CharEnter(name=splits[0].lower())
 
 
 @dataclass
 class CharExit(SysLine):
     """Forces the character to exit the screen.
-    By default, all characters will enter at the start. 
-    Call @exit before the first line to make the character start offscreen.
+    By default, all characters will automatically exit at the end of the scene
+
     Usage: @exit [name]
     """
 

@@ -15,6 +15,7 @@ class State(Enum):
     OFFSCREEN = 0
     FRONT = 1
     BACK = 2
+    PENDING_ENTER = 3
 
 
 class Transition(Enum):
@@ -94,16 +95,20 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                     curr_speaker = None
 
             case SetExpr(name=name, expression=expression) if name == targetName:
-                # set the expression, then continue to next line
+                # set the expression, then continue to next dialogue line
                 curr_expression = expression
                 continue
 
             case CharEnter(name=name) if name == targetName:
                 # force an enter transition on the next dialogue line
+                curr_state = State.PENDING_ENTER
                 continue
 
             case CharExit(name=name) if name == targetName:
                 # force an exit transition on the next dialogue line
+                match curr_state:
+                    case State.FRONT: pending_transition = Transition.FULL_EXIT
+                    case State.BACK: pending_transition = Transition.HALF_EXIT
                 continue
 
             case _: continue
@@ -133,8 +138,10 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
     """Determines the current transition, given the current State and the current speaker
     """
     match(curr_state, is_speaker):
-        case(State.OFFSCREEN, True): return Transition.FULL_ENTER
-        case(State.OFFSCREEN, False): return Transition.HALF_ENTER
+        case(State.OFFSCREEN, True): return Transition.STAY_OFFSCREEN
+        case(State.OFFSCREEN, False): return Transition.STAY_OFFSCREEN
+        case(State.PENDING_ENTER, True): return Transition.FULL_ENTER
+        case(State.PENDING_ENTER, False): return Transition.HALF_ENTER
         case(State.BACK, True): return Transition.IN
         case(State.BACK, False): return Transition.STAY_OUT
         case(State.FRONT, True): return Transition.STAY_IN
@@ -184,7 +191,7 @@ def determine_movement_rect(transition: Transition, movementConfigs: CharacterMo
     if not movementConfigs.frontGeometry:
         frontGeometry = f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height} 1'
 
-    match(transition):
+    match transition:
         case Transition.IN:
             return f'00:00:00.000={backGeometry};{moveEnd}={frontGeometry}'
         case Transition.OUT:
