@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from functools import cache
+import re
+import configs
 
 
 @dataclass
@@ -19,11 +22,19 @@ class SetExpr(SysLine):
     name: str
     expression: str
 
+    @cache
+    def getExpressionRegex() -> re.Pattern:
+        """We have this in a separate function so we can cache the result and don't have to recompile every time
+        """
+        return re.compile(configs.PARSING.expressionRegex)
+
     def parseArgs(args: str):
-        splits = args.split()
-        if len(splits) != 2:
+        if (matches := SetExpr.getExpressionRegex().match(args)):
+            return SetExpr(
+                name=matches.group('name').lower().strip(),
+                expression=matches.group('expression').strip())
+        else:
             raise ValueError(f'Invalid args for command @expr: {args}')
-        return SetExpr(name=splits[0].lower(), expression=splits[1])
 
 
 @dataclass
