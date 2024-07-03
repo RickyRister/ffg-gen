@@ -1,5 +1,10 @@
 {
-    "dialogueRegex": "(?P<name>.+)(?P<expression>\\d+): (?P<text>.+)",
+    "parsing": {
+        "dialogueRegex": "(?P<name>.+)(?P<expression>\\d+): (?P<text>.+)",
+        "shortDialogueRegex": "(?P<name>.+): (?P<text>.+)",
+        "expressionRegex": "(?P<name>.+)(?P<expression>\\d+)",
+        "assignmentDelimiter": "="
+    },
     "videoMode": {
         "width": 1280,
         "height": 960,

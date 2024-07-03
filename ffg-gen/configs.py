@@ -10,6 +10,14 @@ CONFIG_JSON: dict
 
 
 @dataclass
+class ParsingConfigs:
+    dialogueRegex: str
+    shortDialogueRegex: str
+    expressionRegex: str
+    assignmentDelimiter: str
+
+
+@dataclass
 class VideoModeConfigs:
     width: int
     height: int
@@ -42,7 +50,7 @@ class DurationFix:
 
     expectedFrames: int     # expected out frame
     fix: str                # timestamp fix
-    seconds: str = None     # optional field to leave comment      
+    seconds: str = None     # optional field to leave comment
 
 
 @dataclass
@@ -82,10 +90,8 @@ class CharacterMovementConfigs:
     frontGeometry: str = None
 
 
-# dialogue regex
-DIALOGUE_REGEX: str
-
 # more specific configs
+PARSING: ParsingConfigs
 VIDEO_MODE: VideoModeConfigs
 HEADER: HeaderConfigs
 DIALOGUE_BOX: DialogueBoxConfigs
@@ -115,7 +121,7 @@ def loadIntoGlobals(configJson: dict):
     """Load the json config values into the global variables
     """
     # bring globals into scope
-    global DIALOGUE_REGEX
+    global PARSING
     global VIDEO_MODE
     global HEADER
     global DIALOGUE_BOX
@@ -126,8 +132,8 @@ def loadIntoGlobals(configJson: dict):
     global ENEMY_MOVEMENT
     global CHARACTERS
 
-    # assigne globals
-    DIALOGUE_REGEX = configJson.get('dialogueRegex')
+    # assign globals
+    PARSING = ParsingConfigs(**configJson.get('parsing'))
     VIDEO_MODE = VideoModeConfigs(**configJson.get('videoMode'))
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))

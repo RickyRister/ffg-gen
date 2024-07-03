@@ -87,7 +87,7 @@ class DialogueLine:
 def getDialoguePattern() -> re.Pattern:
     """We have this in a separate function so we can cache the result and don't have to recompile every time
     """
-    return re.compile(configs.DIALOGUE_REGEX)
+    return re.compile(configs.PARSING.dialogueRegex)
 
 
 def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine | SysLine]:
