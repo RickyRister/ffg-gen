@@ -103,3 +103,15 @@ class CharacterInfo:
         '''
         character_json: dict = configs.CHARACTERS.get(name)
         return CharacterInfo(name=name, **character_json)
+
+    def reset_attr(self, attr: str):
+        '''Resets the given field to what would've been loaded on startup.
+        Checks the characters in the config json, then falls back to the defaults
+        '''
+
+        # This shouldn't raise exception because we know name already exists in the first dict
+        value = configs.CHARACTERS.get(self.name).get(attr)
+        if value is None:
+            setattr(self, attr, self._find_default_value(attr))
+        else:
+            setattr(self, attr, value)
