@@ -37,52 +37,52 @@
     },
     "durationFixes": [
         {
-            "seconds": 0.2,
+            "comment": 0.2,
             "expectedFrames": 5,
             "fix": "00:00:00.167"
         },
         {
-            "seconds": 0.25,
+            "comment": 0.25,
             "expectedFrames": 6,
             "fix": "00:00:00.200"
         },
         {
-            "seconds": "0:25",
+            "comment": "0:25",
             "expectedFrames": 25,
             "fix": "00:00:00.800"
         },
         {
-            "seconds": "1:20",
+            "comment": "1:20",
             "expectedFrames": 50,
             "fix": "00:00:01.633"
         },
         {
-            "seconds": 2,
+            "comment": 2,
             "expectedFrames": 60,
             "fix": "00:00:01.960"
         },
         {
-            "seconds": 3.5,
+            "comment": 3.5,
             "expectedFrames": 88,
             "fix": "00:00:03.467"
         },
         {
-            "seconds": 4,
+            "comment": 4,
             "expectedFrames": 100,
             "fix": "00:00:03.960"
         },
         {
-            "seconds": 4.5,
+            "comment": 4.5,
             "expectedFrames": 112,
             "fix": "00:00:04.467"
         },
         {
-            "seconds": 5,
+            "comment": 5,
             "expectedFrames": 125,
             "fix": "00:00:04.960"
         },
         {
-            "seconds": 6,
+            "comment": 6,
             "expectedFrames": 150,
             "fix": "00:00:05.960"
         }

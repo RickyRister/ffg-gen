@@ -9,7 +9,7 @@ class DurationFix:
 
     expectedFrames: int     # expected out frame
     fix: str                # timestamp fix
-    seconds: str = None     # optional field to leave comment
+    comment: str = ""       # optional field to leave comment
 
 
 @dataclass
