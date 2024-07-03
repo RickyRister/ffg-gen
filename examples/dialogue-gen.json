@@ -1,5 +1,5 @@
 {
-    "dialogueRegex": "(?P<character>.+)(?P<expression>\\d+): (?P<text>.+)",
+    "dialogueRegex": "(?P<name>.+)(?P<expression>\\d+): (?P<text>.+)",
     "videoMode": {
         "width": 1280,
         "height": 960,

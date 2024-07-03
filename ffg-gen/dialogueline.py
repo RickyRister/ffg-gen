@@ -53,8 +53,14 @@ class DialogueLine:
     only the expression field is optional
     """
     text: str
-    character: CharacterInfo
+    name: str
     expression: str | None
+
+    @property
+    def character(self) -> CharacterInfo:
+        """Looks up the CharacterInfo corresponding to this line's character's name
+        """
+        return CharacterInfo.ofName(self.name)
 
     @property
     def duration(self) -> float:
@@ -115,7 +121,7 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
     # process match into a dialogueLine
     return DialogueLine(
         text=match.group('text').strip(),
-        character=CharacterInfo.ofName(match.group('character').strip().lower()),
+        name=match.group('name').strip().lower(),
         expression=int(match.group('expression').strip()))
 
 
