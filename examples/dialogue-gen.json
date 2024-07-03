@@ -15,23 +15,23 @@
         "thresholds": [
             {
                 "count": 0,
-                "seconds": 3.5
+                "seconds": 2
             },
             {
                 "count": 60,
-                "seconds": 4
+                "seconds": 3
             },
             {
                 "count": 80,
-                "seconds": 4.5
+                "seconds": 3.5
             },
             {
                 "count": 100,
-                "seconds": 5
+                "seconds": 4.5
             },
             {
                 "count": 120,
-                "seconds": 6
+                "seconds": 5
             }
         ]
     },
@@ -60,6 +60,16 @@
             "comment": 2,
             "expectedFrames": 60,
             "fix": "00:00:01.960"
+        },
+        {
+            "comment": 2.5,
+            "expectedFrames": 68,
+            "fix": "00:00:02.467"
+        },
+        {
+            "comment": 3,
+            "expectedFrames": 80,
+            "fix": "00:00:02.960"
         },
         {
             "comment": 3.5,
