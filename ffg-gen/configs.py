@@ -15,14 +15,14 @@ class ParsingConfigs:
     dialogueRegex: str
     shortDialogueRegex: str
     expressionRegex: str
-    assignmentDelimiter: str
+    assignmentDelimiter: str = '='
 
 
 @dataclass
 class VideoModeConfigs:
     width: int
     height: int
-    fps: int
+    fps: int = 30
 
 
 @dataclass
@@ -30,7 +30,9 @@ class HeaderConfigs:
     geometry: str
     font: str
     fontSize: int
-    weight: int
+    weight: int = 500
+    outlineColor: str = '#000000'
+    fillColor: str = '#ffffff'
 
 
 @dataclass
@@ -40,6 +42,7 @@ class DialogueBoxConfigs:
     dropTextEnd: str
     font: str
     fontSize: int
+    fontColor: str = '#ffffff'
 
 
 @dataclass
@@ -61,6 +64,7 @@ class CommonMovementConfigs:
     exitDuration: float
     fadeInEnd: str
     fadeOutEnd: str
+    geometry: str | None = None
 
 
 @dataclass
@@ -68,6 +72,13 @@ class CharacterMovementConfigs:
     backGeometry: str
     offstageGeometry: str
     frontGeometry: str = None
+    geometry: str | None = None
+
+    def __post_init__(self):
+        '''All unfilled properties will fall through to the common movement configs
+        '''
+        if self.geometry is None:
+            self.geometry = MOVEMENT.geometry
 
 
 # more specific configs
@@ -124,3 +135,7 @@ def loadIntoGlobals(configJson: dict):
     ENEMY_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('enemy'))
 
     CHARACTERS = configJson.get('characters')
+
+
+def get_char_move(is_player: bool) -> CharacterMovementConfigs:
+    return PLAYER_MOVEMENT if is_player else ENEMY_MOVEMENT

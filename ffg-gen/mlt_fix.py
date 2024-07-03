@@ -1,7 +1,7 @@
 from xml.etree.ElementTree import Element
 import re
 import configs
-from configs import DurationFix
+from duration import DurationFix
 
 
 def createPropertyElement(property: str, value: str) -> Element:

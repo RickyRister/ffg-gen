@@ -12,11 +12,32 @@ class CharacterInfo:
     displayName: str
     portraitPathFormat: str
     isPlayer: bool
-    headerOutlineColor: str
-    headerFillColor: str = '#ffffff'
-    dialogueColor: str = '#ffffff'
+    headerOutlineColor: str = None
+    headerFillColor: str = None
+    dialogueColor: str = None
     defaultExpression: str = None   # the default expression the character starts in
-    geometry: str = None            # in case the character's base portrait needs to repositioned
+    geometry: str | None = None            # in case the character's base portrait needs to repositioned
+    backGeometry: str = None
+    offstageGeometry: str = None
+    frontGeometry: str = None
+
+    def __post_init__(self):
+        '''All unfilled properties will fall through to the global configs
+        '''
+        if self.headerOutlineColor is None:
+            self.headerOutlineColor = configs.HEADER.outlineColor
+        if self.headerFillColor is None:
+            self.headerFillColor = configs.HEADER.fillColor
+        if self.dialogueColor is None:
+            self.dialogueColor = configs.DIALOGUE_BOX.fontColor
+        if self.geometry is None:
+            self.geometry = configs.MOVEMENT.geometry
+        if self.backGeometry is None:
+            self.backGeometry = configs.get_char_move(self.isPlayer).backGeometry
+        if self.offstageGeometry is None:
+            self.offstageGeometry = configs.get_char_move(self.isPlayer).offstageGeometry
+        if self.frontGeometry is None:
+            self.frontGeometry = configs.get_char_move(self.isPlayer).frontGeometry
 
     @cache
     def ofName(name: str):

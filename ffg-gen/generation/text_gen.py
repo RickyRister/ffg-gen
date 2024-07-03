@@ -37,14 +37,14 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
             case Wait(duration=duration): return transparent_clip(duration)
             case _: return None
 
-    characterInfo: CharacterInfo = line.character
+    charInfo: CharacterInfo = line.character
 
     headerFilter: dict = textFilterArgs(
-        text=characterInfo.displayName,
+        text=charInfo.displayName,
         geometry=configs.HEADER.geometry,
         size=configs.HEADER.fontSize,
-        color=characterInfo.headerFillColor,
-        olcolor=characterInfo.headerOutlineColor,
+        color=charInfo.headerFillColor,
+        olcolor=charInfo.headerOutlineColor,
         font=configs.HEADER.font)
 
     dropTextFilter = dropTextFilterArgs(
@@ -56,7 +56,7 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
         geometry=configs.DIALOGUE_BOX.geometry,
         font=configs.DIALOGUE_BOX.font,
         fontSize=configs.DIALOGUE_BOX.fontSize,
-        color=characterInfo.dialogueColor)
+        color=charInfo.dialogueColor)
 
     return Clip('color:#00000000').set_duration(line.duration)\
         .fx('qtext', richTextFilter)\

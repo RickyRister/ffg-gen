@@ -154,9 +154,6 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     if transition is Transition.STAY_OFFSCREEN:
         return transparent_clip(duration)
 
-    # determine which character config to use
-    moveConfigs: CharacterMovementConfigs = configs.PLAYER_MOVEMENT if charInfo.isPlayer else configs.ENEMY_MOVEMENT
-
     # create clip with portrait
     portraitPath = charInfo.portraitPathFormat.format(expression=expression)
     clip = Clip(portraitPath).set_duration(duration)
@@ -166,7 +163,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
         clip.fx('affine', affineFilterArgs(charInfo.geometry))
 
     # apply movement
-    clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, moveConfigs)))
+    clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, charInfo)))
 
     # apply brightness
     clip.fx('brightness', brightnessFilterArgs(determine_brightness_levels(transition)))
@@ -182,14 +179,14 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     return clip
 
 
-def determine_movement_rect(transition: Transition, movementConfigs: CharacterMovementConfigs) -> str:
+def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
     moveEnd: str = configs.MOVEMENT.moveEnd
-    offstageGeometry: str = movementConfigs.offstageGeometry
-    backGeometry: str = movementConfigs.backGeometry
+    offstageGeometry: str = charInfo.offstageGeometry
+    backGeometry: str = charInfo.backGeometry
 
     # calculate frontGeometry if not present
-    frontGeometry: str = movementConfigs.frontGeometry
-    if not movementConfigs.frontGeometry:
+    frontGeometry: str = charInfo.frontGeometry
+    if frontGeometry is None:
         frontGeometry = f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height} 1'
 
     match transition:
