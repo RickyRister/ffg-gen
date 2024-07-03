@@ -43,8 +43,8 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
         text=characterInfo.displayName,
         geometry=configs.HEADER.geometry,
         size=configs.HEADER.fontSize,
-        color=characterInfo.color.headerFill,
-        olcolor=characterInfo.color.headerOutline,
+        color=characterInfo.headerFillColor,
+        olcolor=characterInfo.headerOutlineColor,
         font=configs.HEADER.font)
 
     dropTextFilter = dropTextFilterArgs(
@@ -56,7 +56,7 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
         geometry=configs.DIALOGUE_BOX.geometry,
         font=configs.DIALOGUE_BOX.font,
         fontSize=configs.DIALOGUE_BOX.fontSize,
-        color=characterInfo.color.dialogue)
+        color=characterInfo.dialogueColor)
 
     return Clip('color:#00000000').set_duration(line.duration)\
         .fx('qtext', richTextFilter)\

@@ -115,9 +115,7 @@
             "geometry": "-315 99.7849 1280 960 1",
             "portraitPathFormat": "assets/common/reimu/player01{expression:0>2}.png",
             "defaultExpression": "01",
-            "color": {
-                "headerOutline": "#fd6666"
-            }
+            "headerOutlineColor": "#fd6666"
         },
         "sameika": {
             "isPlayer": true,
@@ -125,9 +123,7 @@
             "geometry": "-342 118.71 1280 960 1",
             "portraitPathFormat": "assets/common/sameika/spplayer01{expression:0>2}.png",
             "defaultExpression": "01",
-            "color": {
-                "headerOutline": "#ffff9300"
-            }
+            "headerOutlineColor": "#ffff9300"
         },
         "kiko": {
             "isPlayer": false,
@@ -135,9 +131,7 @@
             "geometry": "134 160 1280 960 1",
             "portraitPathFormat": "assets/s1/portraits/boss01{expression:0>2}.png",
             "defaultExpression": "01",
-            "color": {
-                "headerOutline": "#73FA79"
-            }
+            "headerOutlineColor": "#73FA79"
         }
     }
 }
