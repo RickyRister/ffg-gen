@@ -113,22 +113,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
         # if no pending transition, then determine transition depending on current conditions
         if pending_transition is None:
-            match(curr_state):
-                case State.OFFSCREEN:
-                    if (curr_speaker == targetName):
-                        pending_transition = Transition.FULL_ENTER
-                    else:
-                        pending_transition = Transition.HALF_ENTER
-                case State.BACK:
-                    if (curr_speaker == targetName):
-                        pending_transition = Transition.IN
-                    else:
-                        pending_transition = Transition.STAY_OUT
-                case State.FRONT:
-                    if (curr_speaker == targetName):
-                        pending_transition = Transition.STAY_IN
-                    else:
-                        pending_transition = Transition.OUT
+            pending_transition = determine_transition(curr_state, curr_speaker == targetName)
 
         # generate clip using the transition
         yield create_clip(pending_transition, charInfo, curr_expression, line.duration)
@@ -142,6 +127,18 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         case State.OFFSCREEN: yield BlankClip().set_offset(configs.MOVEMENT.exitDuration)
         case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
         case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
+
+
+def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
+    """Determines the current transition, given the current State and the current speaker
+    """
+    match(curr_state, is_speaker):
+        case(State.OFFSCREEN, True): return Transition.FULL_ENTER
+        case(State.OFFSCREEN, False): return Transition.HALF_ENTER
+        case(State.BACK, True): return Transition.IN
+        case(State.BACK, False): return Transition.STAY_OUT
+        case(State.FRONT, True): return Transition.STAY_IN
+        case(State.FRONT, False): return Transition.OUT
 
 
 def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: float) -> Clip:
