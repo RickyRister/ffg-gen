@@ -153,6 +153,10 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
         return transparent_clip(duration)
+    
+    # error checking empty expression
+    if expression is None:
+        raise ValueError(f"Character {charInfo.name} is trying to appear on-screen with missing expression.")
 
     # create clip with portrait
     portraitPath = charInfo.portraitPathFormat.format(expression=expression)

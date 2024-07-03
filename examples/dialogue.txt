@@ -9,19 +9,20 @@ Reimu3: I'm only more cautious from that.
 Reimu1: It takes a lot of idiocy to make so much noise in a forest,
 
 @enter reimu
+@enter sameika
 
 Reimu1: unless you have something to show or a reason to attract danger.
 
-@enter sameika
+Kiko: I don't need an expression if I'm not on screen yet
 
 Sameika1: Still, it's a lead, so let's follow it.
 Sameika1: I'm sure nothing here is that threatening to you..
 
+Kiko2: but i do need something to set my expression before i appear
+
 (Kiko comes on screen, guitar part stops)
 @enter kiko
 @wait 2
-
-Sameika2: does wait work?
 
 Kiko1: Ah! It looks like I attracted some visitors.
 Reimu7: (So it was idiocy.. a kodama of all things.)

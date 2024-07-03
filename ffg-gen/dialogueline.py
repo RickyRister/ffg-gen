@@ -15,9 +15,9 @@ class DialogueLine:
     The fields are parsed by using the regex in the config json.
     only the expression field is optional
     """
-    text: str
     name: str
     expression: str | None
+    text: str
 
     @property
     def character(self) -> CharacterInfo:
@@ -46,13 +46,6 @@ class DialogueLine:
         return configs.DURATIONS.thresholds[index-1].seconds
 
 
-@cache
-def getDialoguePattern() -> re.Pattern:
-    """We have this in a separate function so we can cache the result and don't have to recompile every time
-    """
-    return re.compile(configs.PARSING.dialogueRegex)
-
-
 def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine | SysLine]:
     """Parse the script into the internal representation
     """
@@ -76,17 +69,40 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
     if (line.startswith('@')):
         return sysline.parse_sysline(line)
 
-    # match regex and throw if match fails
+    text: str = None
+    name: str = None
+    expression: str = None
+
+    # try to match normal dialogue line
     match = getDialoguePattern().match(line)
-    if not match or len(match.groups()) != 3:
-        raise ValueError(f'line did not match regex exactly: {line}')
+    if match:
+        expression = match.group('expression').strip()  # normal dialogue line exclusive group
+    else:
+        # try to match shortened dialogue line and throw if that match also fails
+        if not (match := getShortDialoguePattern().match(line)):
+            raise ValueError(f'line did not match regex exactly: {line}')
+
+    # groups that appear in both dialogue line types
+    name = match.group('name').strip().lower()
+    text = match.group('text').strip()
 
     # process match into a dialogueLine
-    return DialogueLine(
-        text=match.group('text').strip(),
-        name=match.group('name').strip().lower(),
-        expression=int(match.group('expression').strip()))
+    return DialogueLine(name, expression, text)
 
 
 def isComment(line: str) -> bool:
     return len(line) == 0 or line.startswith('#') or line.startswith('//') or line.startswith('(')
+
+
+@cache
+def getDialoguePattern() -> re.Pattern:
+    """We have this in a separate function so we can cache the result and don't have to recompile every time
+    """
+    return re.compile(configs.PARSING.dialogueRegex)
+
+
+@cache
+def getShortDialoguePattern() -> re.Pattern:
+    """We have this in a separate function so we can cache the result and don't have to recompile every time
+    """
+    return re.compile(configs.PARSING.shortDialogueRegex)
