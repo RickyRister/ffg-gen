@@ -6,6 +6,7 @@ import configs
 from dialogueline import DialogueLine, parseDialogueFile
 from sysline import SysLine
 from generation import text_gen, char_gen
+from characterinfo import CharacterInfo
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
@@ -65,6 +66,8 @@ def gen_text(lines: list[DialogueLine | SysLine]):
         print('Encountered exception while generating text:', e)
         if (configs.ARGS.debug):
             raise e
+    finally:
+        reset_configs()
 
 
 def gen_header(lines: list[DialogueLine | SysLine]):
@@ -75,6 +78,8 @@ def gen_header(lines: list[DialogueLine | SysLine]):
         print('Encountered exception while generating headers:', e)
         if (configs.ARGS.debug):
             raise e
+    finally:
+        reset_configs()
 
 
 def gen_chars(lines: list[DialogueLine | SysLine]):
@@ -97,3 +102,11 @@ def gen_char(lines: list[DialogueLine | SysLine], character: str):
         print(f'Encountered exception while generating character {character}:', e)
         if (configs.ARGS.debug):
             raise e
+    finally:
+        reset_configs()
+
+
+def reset_configs():
+    '''Resets any global configs that might have gotten altered during a run
+    '''
+    CharacterInfo.get_cached.cache_clear()
