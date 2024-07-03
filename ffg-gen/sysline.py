@@ -129,6 +129,19 @@ class SetCharProperty(SysLine):
 
         setattr(charInfo, self.property, value)
 
+@dataclass
+class ResetAllCharProperties(SysLine):
+    '''Resets the character cache, causing all set properties to be reset.
+    Unfortunately, we aren't able to selective clear cache entries, so we can only reset all.
+
+    Usage: @resetall
+    '''
+
+    def pre_hook(self):
+        '''Executes this sysline; does the cache reset
+        '''
+        CharacterInfo.get_cached.cache_clear()
+
 
 def parse_sysline(line: str):
     """Parses a sysline.
@@ -143,5 +156,6 @@ def parse_sysline(line: str):
         case ['exit', args]: return CharExit.parseArgs(args.strip())
         case ['wait', args]: return Wait.parseArgs(args.strip())
         case ['set', args]: return SetCharProperty.parseArgs(args.strip())
+        case ['resetall']: return ResetAllCharProperties()
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')

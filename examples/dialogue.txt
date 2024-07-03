@@ -31,6 +31,9 @@ Kiko2: but i do need something to set my expression before i appear
 
 Kiko1: Ah! It looks like I attracted some visitors.
 Reimu7: (So it was idiocy.. a kodama of all things.)
+
+@resetall
+
 Reimu1: Was that music coming from you? I don't see any instruments around here.
 
 @exit reimu
