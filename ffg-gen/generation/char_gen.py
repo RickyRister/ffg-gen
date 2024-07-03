@@ -181,13 +181,11 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
 def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
     moveEnd: str = configs.MOVEMENT.moveEnd
-    offstageGeometry: str = charInfo.offstageGeometry
-    backGeometry: str = charInfo.backGeometry
 
-    # calculate frontGeometry if not present
     frontGeometry: str = charInfo.frontGeometry
-    if frontGeometry is None:
-        frontGeometry = f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height} 1'
+    backGeometry: str = charInfo.backGeometry
+    offstageGeometry: str = charInfo.offstageGeometry
+    offstageBackGeometry: str = charInfo.offstageBackGeometry
 
     match transition:
         case Transition.IN:
@@ -197,11 +195,11 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
         case Transition.FULL_ENTER:
             return f'00:00:00.000={offstageGeometry};{moveEnd}={frontGeometry}'
         case Transition.HALF_ENTER:
-            return f'00:00:00.000={offstageGeometry};{moveEnd}={backGeometry}'
+            return f'00:00:00.000={offstageBackGeometry};{moveEnd}={backGeometry}'
         case Transition.FULL_EXIT:
             return f'00:00:00.000={frontGeometry};{moveEnd}={offstageGeometry}'
         case Transition.HALF_EXIT:
-            return f'00:00:00.000={backGeometry};{moveEnd}={offstageGeometry}'
+            return f'00:00:00.000={backGeometry};{moveEnd}={offstageBackGeometry}'
         case Transition.STAY_IN:
             return frontGeometry
         case Transition.STAY_OUT:

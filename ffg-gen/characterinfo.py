@@ -30,6 +30,7 @@ class CharacterInfo:
     frontGeometry: str = None
     backGeometry: str = None
     offstageGeometry: str = None
+    offstageBackGeometry: str = None
 
     def __post_init__(self):
         '''All unfilled properties will fall through to the global configs
@@ -61,6 +62,8 @@ class CharacterInfo:
             self.backGeometry = configs.get_char_move(self.isPlayer).backGeometry
         if self.offstageGeometry is None:
             self.offstageGeometry = configs.get_char_move(self.isPlayer).offstageGeometry
+        if self.offstageBackGeometry is None:
+            self.offstageBackGeometry = configs.get_char_move(self.isPlayer).offstageBackGeometry
 
     @cache
     def ofName(name: str):

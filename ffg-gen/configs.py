@@ -65,20 +65,34 @@ class CommonMovementConfigs:
     fadeInEnd: str
     fadeOutEnd: str
     geometry: str | None = None
+    frontGeometry: str = None
+
+    def __post_init__(self):
+        # frontGeometry defaults to no transform
+        if self.frontGeometry is None:
+            self.frontGeometry = f'0 0 {VIDEO_MODE.width} {VIDEO_MODE.height} 1'
 
 
 @dataclass
 class CharacterMovementConfigs:
     backGeometry: str
     offstageGeometry: str
-    frontGeometry: str = None
     geometry: str | None = None
+    frontGeometry: str = None
+    offstageBackGeometry: str = None
 
     def __post_init__(self):
         '''All unfilled properties will fall through to the common movement configs
         '''
+        # offstageBackGeometry will default to the same as offstageGeometry if not set
+        if self.offstageBackGeometry is None:
+            self.offstageBackGeometry = self.offstageGeometry
+
+        # fall through to defaults
         if self.geometry is None:
             self.geometry = MOVEMENT.geometry
+        if self.frontGeometry is None:
+            self.frontGeometry = MOVEMENT.frontGeometry
 
 
 # more specific configs
