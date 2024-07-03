@@ -12,32 +12,55 @@ class CharacterInfo:
     displayName: str
     portraitPathFormat: str
     isPlayer: bool
+
+    # header configs
+    headerFont: str = None
+    headerFontSize: int = None
     headerOutlineColor: str = None
     headerFillColor: str = None
+
+    # dialogue box configs
+    dialogueFont: str = None
+    dialogueFontSize: int = None
     dialogueColor: str = None
-    defaultExpression: str = None   # the default expression the character starts in
-    geometry: str | None = None            # in case the character's base portrait needs to repositioned
+
+    # movement configs
+    defaultExpression: str = None           # the default expression the character starts in
+    geometry: str | None = None             # in case the character's base portrait needs to repositioned
+    frontGeometry: str = None
     backGeometry: str = None
     offstageGeometry: str = None
-    frontGeometry: str = None
 
     def __post_init__(self):
         '''All unfilled properties will fall through to the global configs
         '''
+        # header configs
+        if self.headerFont is None:
+            self.headerFont = configs.HEADER.font
+        if self.headerFontSize is None:
+            self.headerFontSize = configs.HEADER.fontSize
         if self.headerOutlineColor is None:
             self.headerOutlineColor = configs.HEADER.outlineColor
         if self.headerFillColor is None:
             self.headerFillColor = configs.HEADER.fillColor
+
+        # dialogue box configs
+        if self.dialogueFont is None:
+            self.dialogueFont = configs.DIALOGUE_BOX.font
+        if self.dialogueFontSize is None:
+            self.dialogueFontSize = configs.DIALOGUE_BOX.fontSize
         if self.dialogueColor is None:
             self.dialogueColor = configs.DIALOGUE_BOX.fontColor
+
+        # movement configs
         if self.geometry is None:
-            self.geometry = configs.MOVEMENT.geometry
+            self.geometry = configs.get_char_move(self.isPlayer).geometry
+        if self.frontGeometry is None:
+            self.frontGeometry = configs.get_char_move(self.isPlayer).frontGeometry
         if self.backGeometry is None:
             self.backGeometry = configs.get_char_move(self.isPlayer).backGeometry
         if self.offstageGeometry is None:
             self.offstageGeometry = configs.get_char_move(self.isPlayer).offstageGeometry
-        if self.frontGeometry is None:
-            self.frontGeometry = configs.get_char_move(self.isPlayer).frontGeometry
 
     @cache
     def ofName(name: str):

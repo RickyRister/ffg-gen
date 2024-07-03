@@ -42,20 +42,20 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     headerFilter: dict = textFilterArgs(
         text=charInfo.displayName,
         geometry=configs.HEADER.geometry,
-        size=configs.HEADER.fontSize,
+        font=charInfo.headerFont,
+        size=charInfo.headerFontSize,
         color=charInfo.headerFillColor,
-        olcolor=charInfo.headerOutlineColor,
-        font=configs.HEADER.font)
+        olcolor=charInfo.headerOutlineColor)
 
-    dropTextFilter = dropTextFilterArgs(
+    dropTextFilter: dict = dropTextFilterArgs(
         resource=configs.DIALOGUE_BOX.dropTextMaskPath,
         end=configs.DIALOGUE_BOX.dropTextEnd)
 
-    richTextFilter = richTextFilterArgs(
+    richTextFilter: dict = richTextFilterArgs(
         text=line.text,
         geometry=configs.DIALOGUE_BOX.geometry,
-        font=configs.DIALOGUE_BOX.font,
-        fontSize=configs.DIALOGUE_BOX.fontSize,
+        font=charInfo.dialogueFont,
+        fontSize=charInfo.dialogueFontSize,
         color=charInfo.dialogueColor)
 
     return Clip('color:#00000000').set_duration(line.duration)\
