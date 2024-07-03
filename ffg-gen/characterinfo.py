@@ -65,7 +65,6 @@ class CharacterInfo:
         if self.offstageBackGeometry is None:
             self.offstageBackGeometry = configs.get_char_move(self.isPlayer).offstageBackGeometry
 
-    @cache
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that
         """
@@ -75,4 +74,13 @@ class CharacterInfo:
         if not character_json:
             raise ValueError(f'{name} not found in characters in config json')
 
+        return CharacterInfo.get_cached(name)
+
+    @cache
+    def get_cached(name: str):
+        '''Caches the CharacterInfo by the name.
+        This way edits to the CharacterInfo can be remembered.
+        Remeber to reset this cache after finishing each component.
+        '''
+        character_json: dict = configs.CHARACTERS.get(name)
         return CharacterInfo(name=name, **character_json)
