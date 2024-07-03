@@ -124,7 +124,6 @@
             "displayName": "Reimu",
             "geometry": "-315 99.7849 1280 960 1",
             "portraitPathFormat": "assets/common/reimu/player01{expression:0>2}.png",
-            "defaultExpression": "01",
             "headerOutlineColor": "#fd6666"
         },
         "sameika": {
@@ -132,7 +131,6 @@
             "displayName": "Sameika",
             "geometry": "-342 118.71 1280 960 1",
             "portraitPathFormat": "assets/common/sameika/spplayer01{expression:0>2}.png",
-            "defaultExpression": "01",
             "headerOutlineColor": "#ffff9300"
         },
         "kiko": {
@@ -140,7 +138,6 @@
             "displayName": "Kiko",
             "geometry": "134 160 1280 960 1",
             "portraitPathFormat": "assets/s1/portraits/boss01{expression:0>2}.png",
-            "defaultExpression": "01",
             "headerOutlineColor": "#73FA79"
         }
     }

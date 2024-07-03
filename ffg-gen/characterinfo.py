@@ -25,7 +25,6 @@ class CharacterInfo:
     dialogueColor: str = None
 
     # movement configs
-    defaultExpression: str = None           # the default expression the character starts in
     geometry: str | None = None             # in case the character's base portrait needs to repositioned
     frontGeometry: str = None
     backGeometry: str = None

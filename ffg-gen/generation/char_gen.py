@@ -72,7 +72,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # Initialize state to offscreen
     curr_state: State = State.OFFSCREEN
-    curr_expression: str = charInfo.defaultExpression
+    curr_expression: str = None
     curr_speaker: str = None
     pending_transition: Transition = None
 
