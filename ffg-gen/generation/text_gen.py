@@ -36,7 +36,8 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
         # always run the pre_hook first if it's a sysline
         line.pre_hook()
 
-        match(line):
+        # match sysline
+        match line:
             case Wait(duration=duration): return transparent_clip(duration)
             case _: return None
 

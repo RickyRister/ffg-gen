@@ -137,11 +137,11 @@ def parse_sysline(line: str):
         line - a sysline with the @ stripped off already
     """
 
-    match(line.split(None, 1)):
-        case ('expression', args): return SetExpr.parseArgs(args.strip())
-        case ('enter', args): return CharEnter.parseArgs(args.strip())
-        case ('exit', args): return CharExit.parseArgs(args.strip())
-        case ('wait', args): return Wait.parseArgs(args.strip())
-        case ('set', args): return SetCharProperty.parseArgs(args.strip())
+    match line.split(None, 1):
+        case ['expression', args]: return SetExpr.parseArgs(args.strip())
+        case ['enter', args]: return CharEnter.parseArgs(args.strip())
+        case ['exit', args]: return CharExit.parseArgs(args.strip())
+        case ['wait', args]: return Wait.parseArgs(args.strip())
+        case ['set', args]: return SetCharProperty.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')

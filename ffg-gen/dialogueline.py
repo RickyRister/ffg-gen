@@ -32,14 +32,13 @@ class DialogueLine:
         """
 
         count: int = None
-        match(configs.DURATIONS.mode):
+        match configs.DURATIONS.mode:
             case 'char':
                 count = len(self.text)
             case 'word':
                 count = len(re.findall(r'\w+', self.text))
             case _:
-                raise ValueError(
-                    f'{configs.DURATIONS.mode} is not a valid durations mode')
+                raise ValueError(f'{configs.DURATIONS.mode} is not a valid durations mode')
 
         index = bisect(configs.DURATIONS.thresholds, count,
                        key=lambda threshold: threshold.count)
@@ -65,7 +64,7 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
     if (isComment(line)):
         return None
 
-    # process this line as a sysline if it beings with @
+    # process this line as a sysline if it begins with @
     if (line.startswith('@')):
         return sysline.parse_sysline(line[1:])
 

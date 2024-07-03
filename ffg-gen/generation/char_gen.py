@@ -31,7 +31,7 @@ class Transition(Enum):
     STAY_OFFSCREEN = 9
 
     def state_after(transition):
-        match(transition):
+        match transition:
             case Transition.IN: return State.FRONT
             case Transition.OUT: return State.BACK
             case Transition.FULL_ENTER: return State.FRONT
@@ -82,7 +82,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
             line.pre_hook()
 
         # messy processing depending on line type
-        match(line):
+        match line:
             case DialogueLine(character=character, expression=expression):
                 # store the new values from the dialogueLine
                 curr_speaker = character.name
@@ -133,7 +133,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         pending_transition = None
 
     # final exit
-    match(curr_state):
+    match curr_state:
         case State.OFFSCREEN: yield transparent_clip(configs.MOVEMENT.exitDuration)
         case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
         case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
@@ -142,7 +142,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
     """Determines the current transition, given the current State and the current speaker
     """
-    match(curr_state, is_speaker):
+    match (curr_state, is_speaker):
         case(State.OFFSCREEN, True): return Transition.STAY_OFFSCREEN
         case(State.OFFSCREEN, False): return Transition.STAY_OFFSCREEN
         case(State.PENDING_ENTER, True): return Transition.FULL_ENTER
@@ -219,7 +219,7 @@ def determine_brightness_levels(transition: Transition) -> str:
     full_level = '1'
     dim_level = configs.MOVEMENT.brightnessFadeLevel
 
-    match(transition):
+    match transition:
         case Transition.IN:
             return f'00:00:00.000={dim_level};{fade_end}={full_level}'
         case Transition.OUT:
