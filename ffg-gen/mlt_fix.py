@@ -86,6 +86,8 @@ def fix_out_timestamps(xml: Element) -> Element:
     # load fixes from config
     fixes: dict[str, str] = {str(durationFix.expectedFrames): durationFix.fix for durationFix in configs.DURATION_FIXES}
 
+    unfoundFrames: set[str] = set()
+
     for producer in xml.findall('.//*[@out]'):
         expectedFrames = producer.get('out')
         fix = fixes.get(expectedFrames)
@@ -93,7 +95,9 @@ def fix_out_timestamps(xml: Element) -> Element:
         if fix is not None:
             producer.set('out', fix)
         else:
-            print(f"No duration fix found for out frame {expectedFrames}")
+            unfoundFrames.add(expectedFrames)
+    
+    for expectedFrame in unfoundFrames: print(f"No duration fix found for frame count {expectedFrame}")
 
     return xml
 
