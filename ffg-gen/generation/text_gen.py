@@ -2,7 +2,8 @@ from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element, XML
 from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from dialogueline import DialogueLine, CharacterInfo
+from dialogueline import DialogueLine
+from characterinfo import CharacterInfo
 from sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 import configs

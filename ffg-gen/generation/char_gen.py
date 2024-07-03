@@ -4,7 +4,8 @@ from enum import Enum
 from collections.abc import Generator
 from mlt_fix import fix_mlt
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
-from dialogueline import DialogueLine, CharacterInfo
+from dialogueline import DialogueLine
+from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
 from configs import CharacterMovementConfigs
