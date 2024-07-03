@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from functools import cache
 import re
 import configs
+from characterinfo import CharacterInfo
 
 
 @dataclass
@@ -83,6 +84,49 @@ class Wait(SysLine):
             case _: raise ValueError(f'Invalid args for @wait: {args}')
 
 
+@dataclass
+class SetCharProperty(SysLine):
+    '''Directly modifies the CharacterInfo of a character.
+    The change will stick until a character cache reset happens.
+    The symbol to use instead of '=' can be changed in the configs
+
+    Usage: @set [name] [property]=[value]
+    '''
+
+    name: str       # character to modify for
+    property: str   # the CharacterInfo property to modify
+    value: str      # the value to set the property to
+
+    def parseArgs(args: str):
+        match args.split(1):
+            case [name, modification]:
+                match modification.split(configs.PARSING.assignmentDelimiter, 1):
+                    case [property, value]: return SetCharProperty(name, property, value)
+        ValueError(f'Invalid args for @set: {args}')
+
+    def execute(self):
+        '''Executes this sysline; does the modification
+        '''
+        charInfo = CharacterInfo.ofName(self.name)
+
+        # checks that the property actually exists, to safeguard against typos
+        if not hasattr(charInfo, self.property):
+            raise ValueError(
+                f'Failure with @set; CharacterInfo does not have property {self.property}')
+
+        # possible type conversions
+        # self.value starts as a string
+        curr_value = getattr(charInfo, self.property)
+        
+        value = self.value
+        if isinstance(curr_value, int):
+            value = int(value)
+        elif isinstance(curr_value, float):
+            value = float(value)
+
+        setattr(charInfo, self.property, value)
+
+
 def parse_sysline(line: str):
     """Parses a sysline.
 
@@ -95,5 +139,6 @@ def parse_sysline(line: str):
         case ('enter', args): return CharEnter.parseArgs(args.strip())
         case ('exit', args): return CharExit.parseArgs(args.strip())
         case ('wait', args): return Wait.parseArgs(args.strip())
+        case ('set', args): return SetCharProperty.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
