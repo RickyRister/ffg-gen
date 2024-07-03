@@ -33,6 +33,9 @@ def generate(lines: list[DialogueLine | SysLine]) -> Element:
 
 def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     if isinstance(line, SysLine):
+        # always run the pre_hook first if it's a sysline
+        line.pre_hook()
+
         match(line):
             case Wait(duration=duration): return transparent_clip(duration)
             case _: return None

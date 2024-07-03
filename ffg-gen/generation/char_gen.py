@@ -77,6 +77,10 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
     pending_transition: Transition = None
 
     for line in lines:
+        # always run the pre_hook first if it's a sysline
+        if isinstance(line, SysLine):
+            line.pre_hook()
+
         # messy processing depending on line type
         match(line):
             case DialogueLine(character=character, expression=expression):

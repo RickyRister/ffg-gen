@@ -13,6 +13,12 @@ class SysLine:
     Syslines begin with @
     """
 
+    def pre_hook(self):
+        '''Put code here that should always be run regardless of line processing logic.
+        Processors should always call this on every sysline, before line processing.
+        '''
+        pass
+
 
 @dataclass
 class SetExpr(SysLine):
@@ -88,9 +94,8 @@ class Wait(SysLine):
 class SetCharProperty(SysLine):
     '''Directly modifies the CharacterInfo of a character.
     The change will stick until a character cache reset happens.
-    The symbol to use instead of '=' can be changed in the configs
 
-    Usage: @set [name] [property]=[value]
+    Usage: @set [name] [property] [value]
     '''
 
     name: str       # character to modify for
@@ -98,13 +103,11 @@ class SetCharProperty(SysLine):
     value: str      # the value to set the property to
 
     def parseArgs(args: str):
-        match args.split(1):
-            case [name, modification]:
-                match modification.split(configs.PARSING.assignmentDelimiter, 1):
-                    case [property, value]: return SetCharProperty(name, property, value)
+        match args.split(None, 2):
+            case [name, property, value]: return SetCharProperty(name, property, value)
         ValueError(f'Invalid args for @set: {args}')
 
-    def execute(self):
+    def pre_hook(self):
         '''Executes this sysline; does the modification
         '''
         charInfo = CharacterInfo.ofName(self.name)
@@ -112,12 +115,12 @@ class SetCharProperty(SysLine):
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
             raise ValueError(
-                f'Failure with @set; CharacterInfo does not have property {self.property}')
+                f'@set {self.name} {self.property}{configs.PARSING.assignmentDelimiter}{self.value} failed; CharacterInfo does not have property {self.property}')
 
         # possible type conversions
         # self.value starts as a string
         curr_value = getattr(charInfo, self.property)
-        
+
         value = self.value
         if isinstance(curr_value, int):
             value = int(value)
