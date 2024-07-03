@@ -4,7 +4,7 @@ from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine, CharacterInfo
 from sysline import SysLine, Wait
-from vidpy_extension.blankclip import BlankClip
+from vidpy_extension.blankclip import transparent_clip
 import configs
 
 
@@ -33,7 +33,7 @@ def generate(lines: list[DialogueLine | SysLine]) -> Element:
 def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     if isinstance(line, SysLine):
         match(line):
-            case Wait(duration=duration): return BlankClip().set_offset(duration)
+            case Wait(duration=duration): return transparent_clip(duration)
             case _: return None
 
     characterInfo: CharacterInfo = line.character

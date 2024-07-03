@@ -8,7 +8,7 @@ from dialogueline import DialogueLine, CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
 from configs import CharacterMovementConfigs
-from vidpy_extension.blankclip import BlankClip
+from vidpy_extension.blankclip import transparent_clip
 
 
 class State(Enum):
@@ -87,7 +87,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
             case Wait(duration=duration):
                 if curr_speaker is None:
                     # if no one is on screen yet, then we leave a gap
-                    yield BlankClip().set_offset(duration)
+                    yield transparent_clip(duration)
                     continue
                 else:
                     # otherwise, we fall through and generate a clip using the previous line's state,
@@ -129,7 +129,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # final exit
     match(curr_state):
-        case State.OFFSCREEN: yield BlankClip().set_offset(configs.MOVEMENT.exitDuration)
+        case State.OFFSCREEN: yield transparent_clip(configs.MOVEMENT.exitDuration)
         case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
         case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
 
@@ -151,7 +151,7 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
 def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: float) -> Clip:
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
-        return BlankClip().set_offset(duration)
+        return transparent_clip(duration)
 
     # determine which character config to use
     moveConfigs: CharacterMovementConfigs = configs.PLAYER_MOVEMENT if charInfo.isPlayer else configs.ENEMY_MOVEMENT
