@@ -70,10 +70,10 @@ class CharacterInfo:
             case 'dialogueFontSize': return configs.DIALOGUE_BOX.fontSize
             case 'dialogueColor': return configs.DIALOGUE_BOX.fontColor
 
-            # portrait geometry configs 
+            # portrait geometry configs
             # movement timing configs
             case 'geometry' | 'frontGeometry' | 'backGeometry' | 'offstageGeometry' | 'offstageBackGeometry' \
-                    'brightnessFadeEnd' | 'brightnessFadeLevel' 'moveEnd' | 'exitDuration' | 'fadeInEnd' | 'fadeOutEnd': 
+                    'brightnessFadeEnd' | 'brightnessFadeLevel' 'moveEnd' | 'exitDuration' | 'fadeInEnd' | 'fadeOutEnd':
                 return getattr(MovementInfo.ofIsPlayer(self.isPlayer), attr)
 
     def ofName(name: str):
@@ -106,3 +106,9 @@ class CharacterInfo:
             setattr(self, attr, value)
         else:
             setattr(self, attr, self._find_default_value(attr))
+
+    def reset_all_attr(self):
+        '''Resets all fields in this instance to what would've been loaded on startup.
+        '''
+        for attr, _ in vars(self).items():
+            self.reset_attr(attr)

@@ -160,15 +160,35 @@ class UnsetCharProperty(SysLine):
 
 
 @dataclass
-class ResetAllCharProperties(SysLine):
-    '''Resets the character cache, causing all set properties to be reset.
-    Unfortunately, we aren't able to selective clear cache entries, so we can only reset all.
+class ResetCharProperties(SysLine):
+    '''Unsets all fields in the CharacterInfo of a character.
+    The value will be back to what it was when loaded from config
+
+    Usage: @reset [name]
+    '''
+
+    name: str       # character to reset
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name]: return ResetCharProperties(name)
+        ValueError(f'Invalid args for @unset: {args}')
+
+    def pre_hook(self):
+        '''Resets the CharacterInfo
+        '''
+        CharacterInfo.ofName(self.name).reset_all_attr()
+
+
+@dataclass
+class ResetAllChars(SysLine):
+    '''Resets the character cache, causing all set properties to be reset for all characters.
 
     Usage: @resetall
     '''
 
     def pre_hook(self):
-        '''Executes this sysline; does the cache reset
+        '''Does the cache reset
         '''
         CharacterInfo.get_cached.cache_clear()
 
@@ -187,6 +207,7 @@ def parse_sysline(line: str):
         case ['wait', args]: return Wait.parseArgs(args.strip())
         case ['set', args]: return SetCharProperty.parseArgs(args.strip())
         case ['unset', args]: return UnsetCharProperty.parseArgs(args.strip())
-        case ['resetall']: return ResetAllCharProperties()
+        case ['reset', args]: return ResetCharProperties.parseArgs(args.strip())
+        case ['resetall']: return ResetAllChars()
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
