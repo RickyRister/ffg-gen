@@ -41,6 +41,10 @@ class MovementInfo:
         # frontGeometry defaults to no transform
         if self.frontGeometry is None:
             self.frontGeometry = f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height} 1'
+        
+        # offstageBackGeometry defaults to the same as offstageGeometry
+        if self.offstageBackGeometry is None:
+            self.offstageBackGeometry = self.offstageGeometry
 
     @cache
     def ofCommon():
