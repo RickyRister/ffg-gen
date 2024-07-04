@@ -127,9 +127,9 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # final exit
     match curr_state:
-        case State.OFFSCREEN: yield transparent_clip(charInfo.exitDuration)
         case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, charInfo.exitDuration)
         case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, charInfo.exitDuration)
+        case _: yield transparent_clip(charInfo.exitDuration)
 
 
 def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
