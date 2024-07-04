@@ -1,5 +1,6 @@
 
 from vidpy import Clip
+import configs
 
 
 class BlankClip(Clip):
@@ -34,6 +35,10 @@ class BlankClip(Clip):
 
 def transparent_clip(duration: float) -> Clip:
     '''Creates a transparent clip with the given duration.
-    This is the best way of having a blank clip without causing durationFix issues
+    This is the best way of having a blank clip without causing durationFix issues.
+    If the option --use-blanks is on, this will return an actual blank clip 
     '''
-    return Clip('color:#00000000').set_duration(duration)
+    if configs.ARGS.use_blanks:
+        return BlankClip.ofDuration(duration)
+    else:
+        return Clip('color:#00000000').set_duration(duration)

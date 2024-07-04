@@ -18,7 +18,8 @@ def fix_mlt(xml: Element) -> Element:
 
     xml = make_mlt_editable(xml)
     xml = fix_filters(xml)
-    xml = fix_out_timestamps(xml)
+    if not configs.ARGS.no_duration_fix:
+        xml = fix_out_timestamps(xml)
     xml = fix_affine_out(xml)
 
     return xml
@@ -84,7 +85,8 @@ def fix_out_timestamps(xml: Element) -> Element:
     """
 
     # load fixes from config
-    fixes: dict[str, str] = {str(durationFix.expectedFrames): durationFix.fix for durationFix in configs.DURATION_FIXES}
+    fixes: dict[str, str] = {str(durationFix.expectedFrames)
+                                 : durationFix.fix for durationFix in configs.DURATION_FIXES}
 
     unfoundFrames: set[str] = set()
 
@@ -96,8 +98,9 @@ def fix_out_timestamps(xml: Element) -> Element:
             producer.set('out', fix)
         else:
             unfoundFrames.add(expectedFrames)
-    
-    for expectedFrame in unfoundFrames: print(f"No duration fix found for frame count {expectedFrame}")
+
+    for expectedFrame in unfoundFrames:
+        print(f"No duration fix found for frame count {expectedFrame}")
 
     return xml
 

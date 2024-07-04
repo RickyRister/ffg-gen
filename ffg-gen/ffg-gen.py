@@ -16,6 +16,8 @@ def createArgumentParser() -> ArgumentParser:
                               help='base name of the output file', default='output.mlt')
     parentparser.add_argument('--debug', '-d', action='store_const', const=True,
                               help='causes the program to throw on error instead of just printing and skipping', default=False)
+    parentparser.add_argument('--no-duration-fix', action='store_const', const=True, default=False, dest='no_duration_fix',
+                              help='Do not run the duration fix on the resulting mlt. This will mostly likely cause the keyframes to be broken, so no idea why you would enable this.')
 
     parser = ArgumentParser(
         description='Generates mlt files for Touhou-style album videos.', parents=[parentparser])
