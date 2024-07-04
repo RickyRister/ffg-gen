@@ -122,10 +122,11 @@ class SetCharProperty(SysLine):
         curr_value = getattr(charInfo, self.property)
 
         value = self.value
-        if isinstance(curr_value, int):
-            value = int(value)
-        elif isinstance(curr_value, float):
-            value = float(value)
+        if isinstance(curr_value, float) or isinstance(curr_value, int):
+            try:
+                value = int(value)
+            except ValueError:
+                value = float(value)
 
         setattr(charInfo, self.property, value)
 
