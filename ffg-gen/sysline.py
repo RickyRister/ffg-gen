@@ -105,10 +105,10 @@ class SetCharProperty(SysLine):
     def parseArgs(args: str):
         match args.split(None, 2):
             case [name, property, value]: return SetCharProperty(name, property, value)
-        ValueError(f'Invalid args for @set: {args}')
+            case _: raise ValueError(f'Invalid args for @set: {args}')
 
     def pre_hook(self):
-        '''Executes this sysline; does the modification
+        '''Does the modification
         '''
         charInfo = CharacterInfo.ofName(self.name)
 
@@ -144,7 +144,7 @@ class UnsetCharProperty(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name, property]: return UnsetCharProperty(name, property)
-        ValueError(f'Invalid args for @unset: {args}')
+            case _: raise ValueError(f'Invalid args for @unset: {args}')
 
     def pre_hook(self):
         '''Unsets the property
@@ -172,7 +172,7 @@ class ResetCharProperties(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name]: return ResetCharProperties(name)
-        ValueError(f'Invalid args for @unset: {args}')
+            case _: raise ValueError(f'Invalid args for @unset: {args}')
 
     def pre_hook(self):
         '''Resets the CharacterInfo
