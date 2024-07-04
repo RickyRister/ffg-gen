@@ -70,11 +70,11 @@ class CharacterInfo:
             case 'dialogueFontSize': return configs.DIALOGUE_BOX.fontSize
             case 'dialogueColor': return configs.DIALOGUE_BOX.fontColor
 
-            # portrait geometry configs
-            # movement timing configs
-            case 'geometry' | 'frontGeometry' | 'backGeometry' | 'offstageGeometry' | 'offstageBackGeometry' \
-                    'brightnessFadeEnd' | 'brightnessFadeLevel' 'moveEnd' | 'exitDuration' | 'fadeInEnd' | 'fadeOutEnd':
-                return getattr(MovementInfo.ofIsPlayer(self.isPlayer), attr)
+            # anything that is in MovementInfo
+            case other if hasattr(MovementInfo.ofIsPlayer(self.isPlayer), other):
+                return getattr(MovementInfo.ofIsPlayer(self.isPlayer), other)
+            
+            case _: raise ValueError(f'Cannot find default value for CharacterInfo attribute {attr}')
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that.
