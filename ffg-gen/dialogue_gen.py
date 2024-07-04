@@ -22,8 +22,9 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
         'components', nargs='+',
         help='"all" will generate all components. Otherwise, provide one or more options. Options: text, header, chars, char:[name]')
 
-    parser.add_argument('--use-blanks', action='store_const', const=True, dest='use_blanks',
-                        help='Use blanks for waits instead of transparent clips. May cause issues with durationFix if there are multiple consecutive blanks', default=False)
+    parser.add_argument(
+        '--use-blanks', action='store_const', const=True, default=False, dest='use_blanks',
+        help='Use blanks for waits instead of transparent clips. May cause issues with durationFix if there are multiple consecutive blanks')
 
     parser.set_defaults(func=dialogue_gen)
 
