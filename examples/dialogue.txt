@@ -4,6 +4,8 @@
 
 @wait 1
 
+@enter reimu
+
 Sameika3: Eh? Someone's playing some kind of koto.
 Reimu3: I'm only more cautious from that.
 Reimu1: It takes a lot of idiocy to make so much noise in a forest,
@@ -11,10 +13,9 @@ Reimu1: It takes a lot of idiocy to make so much noise in a forest,
 @set reimu displayName Bob
 @set reimu headerOutlineColor #ffff9300
 
-@enter reimu
 @enter sameika
 
-Reimu1: unless you have something to show or a reason to attract danger.
+Reimu1: Why is my name bob now
 
 Kiko: I don't need an expression if I'm not on screen yet
 
@@ -30,11 +31,11 @@ Kiko2: but i do need something to set my expression before i appear
 @unset reimu displayName
 
 Kiko1: Ah! It looks like I attracted some visitors.
-Reimu7: (So it was idiocy.. a kodama of all things.)
+Reimu7: at least i'm no longer bob now
 
 @unset reimu headerOutlineColor
 
-Reimu1: Was that music coming from you? I don't see any instruments around here.
+Reimu1: Oh I'm red again
 
 @exit reimu
 

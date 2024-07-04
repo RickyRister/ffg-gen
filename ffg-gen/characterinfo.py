@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Any
 import configs
+from movementinfo import MovementInfo
 
 
 @dataclass
@@ -70,38 +71,39 @@ class CharacterInfo:
             case 'dialogueColor': return configs.DIALOGUE_BOX.fontColor
 
             # portrait geometry configs
-            case 'geometry': return configs.get_char_move(self.isPlayer).geometry
-            case 'frontGeometry': return configs.get_char_move(self.isPlayer).frontGeometry
-            case 'backGeometry': return configs.get_char_move(self.isPlayer).backGeometry
-            case 'offstageGeometry': return configs.get_char_move(self.isPlayer).offstageGeometry
-            case 'offstageBackGeometry': return configs.get_char_move(self.isPlayer).offstageBackGeometry
+            case 'geometry': return MovementInfo.ofIsPlayer(self.isPlayer).geometry
+            case 'frontGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).frontGeometry
+            case 'backGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).backGeometry
+            case 'offstageGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).offstageGeometry
+            case 'offstageBackGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).offstageBackGeometry
 
             # movement timing configs
-            case 'brightnessFadeEnd': return configs.MOVEMENT.brightnessFadeEnd
-            case 'brightnessFadeLevel': return configs.MOVEMENT.brightnessFadeLevel
-            case 'moveEnd': return configs.MOVEMENT.moveEnd
-            case 'exitDuration': return configs.MOVEMENT.exitDuration
-            case 'fadeInEnd': return configs.MOVEMENT.fadeInEnd
-            case 'fadeOutEnd': return configs.MOVEMENT.fadeOutEnd
+            case 'brightnessFadeEnd': return MovementInfo.ofIsPlayer(self.isPlayer).brightnessFadeEnd
+            case 'brightnessFadeLevel': return MovementInfo.ofIsPlayer(self.isPlayer).brightnessFadeLevel
+            case 'moveEnd': return MovementInfo.ofIsPlayer(self.isPlayer).moveEnd
+            case 'exitDuration': return MovementInfo.ofIsPlayer(self.isPlayer).exitDuration
+            case 'fadeInEnd': return MovementInfo.ofIsPlayer(self.isPlayer).fadeInEnd
+            case 'fadeOutEnd': return MovementInfo.ofIsPlayer(self.isPlayer).fadeOutEnd
 
     def ofName(name: str):
-        """Looks up the name in the config json and parses the CharacterInfo from that
+        """Looks up the name in the config json and parses the CharacterInfo from that.
+        This method is meant to process any aliases (once we add that) before calling the cached get with the real name
         """
         name = str.lower(name)
-        character_json: dict = configs.CHARACTERS.get(name)
-
-        if not character_json:
-            raise ValueError(f'{name} not found in characters in config json')
-
         return CharacterInfo.get_cached(name)
 
     @cache
     def get_cached(name: str):
-        '''Caches the CharacterInfo by the name.
+        '''Looks up the name in the config json and parses the CharacterInfo from that.
+        Caches the CharacterInfo by the name.
         This way edits to the CharacterInfo can be remembered.
         Remeber to reset this cache after finishing each component.
         '''
         character_json: dict = configs.CHARACTERS.get(name)
+
+        if not character_json:
+            raise ValueError(f'Character info for {name} not found in config json')
+        
         return CharacterInfo(name=name, **character_json)
 
     def reset_attr(self, attr: str):

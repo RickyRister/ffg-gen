@@ -57,45 +57,6 @@ class DialogueBoxConfigs:
     fontColor: str = '#ffffff'
 
 
-@dataclass
-class CommonMovementConfigs:
-    brightnessFadeEnd: str
-    brightnessFadeLevel: float
-    moveEnd: str
-    exitDuration: float
-    fadeInEnd: str
-    fadeOutEnd: str
-    geometry: str | None = None
-    frontGeometry: str = None
-
-    def __post_init__(self):
-        # frontGeometry defaults to no transform
-        if self.frontGeometry is None:
-            self.frontGeometry = f'0 0 {VIDEO_MODE.width} {VIDEO_MODE.height} 1'
-
-
-@dataclass
-class CharacterMovementConfigs:
-    backGeometry: str
-    offstageGeometry: str
-    geometry: str | None = None
-    frontGeometry: str = None
-    offstageBackGeometry: str = None
-
-    def __post_init__(self):
-        '''All unfilled properties will fall through to the common movement configs
-        '''
-        # offstageBackGeometry will default to the same as offstageGeometry if not set
-        if self.offstageBackGeometry is None:
-            self.offstageBackGeometry = self.offstageGeometry
-
-        # fall through to defaults
-        if self.geometry is None:
-            self.geometry = MOVEMENT.geometry
-        if self.frontGeometry is None:
-            self.frontGeometry = MOVEMENT.frontGeometry
-
-
 # more specific configs
 PARSING: ParsingConfigs
 VIDEO_MODE: VideoModeConfigs
@@ -103,11 +64,9 @@ DURATIONS: DurationConfigs
 DURATION_FIXES: list[DurationFix]
 HEADER: HeaderConfigs
 DIALOGUE_BOX: DialogueBoxConfigs
-MOVEMENT: CommonMovementConfigs
-PLAYER_MOVEMENT: CharacterMovementConfigs
-ENEMY_MOVEMENT: CharacterMovementConfigs
 
-# character configs are still stored as a dict
+# configs that are loaded by their own classes are still stored as a dict
+MOVEMENT: dict[str, dict]
 CHARACTERS: dict[str, dict]
 
 
@@ -134,8 +93,6 @@ def loadIntoGlobals(configJson: dict):
     global HEADER
     global DIALOGUE_BOX
     global MOVEMENT
-    global PLAYER_MOVEMENT
-    global ENEMY_MOVEMENT
     global CHARACTERS
 
     # assign globals
@@ -145,12 +102,8 @@ def loadIntoGlobals(configJson: dict):
     DURATION_FIXES = [DurationFix(**fix) for fix in configJson.get('durationFixes')]
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
-    MOVEMENT = CommonMovementConfigs(**configJson.get('movement').get('common'))
-    PLAYER_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('player'))
-    ENEMY_MOVEMENT = CharacterMovementConfigs(**configJson.get('movement').get('enemy'))
 
+    # load dicts for the classes to load themselves
+    MOVEMENT = configJson.get('movement')
     CHARACTERS = configJson.get('characters')
 
-
-def get_char_move(is_player: bool) -> CharacterMovementConfigs:
-    return PLAYER_MOVEMENT if is_player else ENEMY_MOVEMENT

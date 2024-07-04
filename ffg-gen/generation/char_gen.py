@@ -8,7 +8,6 @@ from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
-from configs import CharacterMovementConfigs
 from vidpy_extension.blankclip import transparent_clip
 
 
@@ -134,9 +133,9 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # final exit
     match curr_state:
-        case State.OFFSCREEN: yield transparent_clip(configs.MOVEMENT.exitDuration)
-        case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
-        case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, configs.MOVEMENT.exitDuration)
+        case State.OFFSCREEN: yield transparent_clip(charInfo.exitDuration)
+        case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, charInfo.exitDuration)
+        case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, charInfo.exitDuration)
 
 
 def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
