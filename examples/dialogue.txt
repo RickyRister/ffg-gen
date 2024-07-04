@@ -11,16 +11,24 @@ Reimu3: I'm only more cautious from that.
 Reimu1: It takes a lot of idiocy to make so much noise in a forest,
 
 @set reimu displayName Bob
-@set reimu headerOutlineColor #ffff9300
+@set reimu headerOutlineColor #aaaa9300
 
 @enter sameika
 
 Reimu1: Why is my name bob now
 
+@reset reimu
+
+Reimu2: okay i'm back
+
+@set reimu displayName Bob
+@set reimu headerOutlineColor #aaaa9300
+
+Reimu1: oh no i'm bob again
+
 Kiko: I don't need an expression if I'm not on screen yet
 
 Sameika1: Still, it's a lead, so let's follow it.
-Sameika1: I'm sure nothing here is that threatening to you..
 
 Kiko2: but i do need something to set my expression before i appear
 
@@ -41,15 +49,11 @@ Reimu1: Oh I'm red again
 
 Kiko1: Yep. I just put it away.
 Sameika3: (For some reason, I don't believe it. Where would she even keep it..?)
-Kiko3: I don't recognise you, though. Are you lost?
-Reimu1: No, we're looking for whoever's causing this darkness.
 Kiko8: Really..? That's so bothersome.
 
 @enter reimu
 
 Kiko8: I was just getting to enjoy the cool air and the shade..
-Kiko8: The forest is much less noisy too, since all of the youkai are off somewhere else.
-Kiko8: I don't really want you to ruin that..
 Sameika5: It's too gloomy and pathetic here for silence to be relaxing.
 Reimu6: Well, we're not stopping.
 Reimu7: (..Doesn't her tree need sunlight anyway?)
