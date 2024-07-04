@@ -1,8 +1,7 @@
 from vidpy import Clip, Composition
-from xml.etree.ElementTree import Element, XML
+from xml.etree.ElementTree import Element
 from enum import Enum
 from collections.abc import Generator
-from mlt_fix import fix_mlt
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
@@ -43,24 +42,19 @@ class Transition(Enum):
 
 
 def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
-    """Processes the list of lines into a completed mlt for the given character
+    """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
     names: set[str] = {line.character.name for line in lines if isinstance(line, DialogueLine)}
     if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
 
-    composition = Composition(
+    return Composition(
         list(processLines(lines, name)),
         singletrack=True,
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,
         fps=configs.VIDEO_MODE.fps)
-
-    xml: str = composition.xml()
-    fixedXml: Element = fix_mlt(XML(xml))
-
-    return fixedXml
 
 
 def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[Clip]:
@@ -156,10 +150,11 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
         return transparent_clip(duration)
-    
+
     # error checking empty expression
     if expression is None:
-        raise ValueError(f"Character {charInfo.name} is trying to appear on-screen with missing expression.")
+        raise ValueError(
+            f"Character {charInfo.name} is trying to appear on-screen with missing expression.")
 
     # create clip with portrait
     portraitPath = charInfo.portraitPathFormat.format(expression=expression)

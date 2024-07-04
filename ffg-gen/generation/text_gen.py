@@ -1,6 +1,4 @@
 from vidpy import Clip, Composition
-from xml.etree.ElementTree import Element, XML
-from mlt_fix import fix_mlt
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
@@ -13,22 +11,17 @@ def filter_none(lines: list) -> list:
     return [line for line in lines if line is not None]
 
 
-def generate(lines: list[DialogueLine | SysLine]) -> Element:
-    """Processes the list of lines into a completed mlt for the dialogue
+def generate(lines: list[DialogueLine | SysLine]) -> Composition:
+    """Processes the list of lines into a Composition
     """
     clips: list[Clip] = filter_none([lineToClip(line) for line in lines])
 
-    composition = Composition(
+    return Composition(
         clips,
         singletrack=True,
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,
         fps=configs.VIDEO_MODE.fps)
-
-    xml: str = composition.xml()
-    fixedXml: Element = fix_mlt(XML(xml))
-
-    return fixedXml
 
 
 def lineToClip(line: DialogueLine | SysLine) -> Clip | None:

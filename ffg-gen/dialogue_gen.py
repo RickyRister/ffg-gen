@@ -1,12 +1,15 @@
 from argparse import ArgumentParser, _SubParsersAction
 from xml.etree import ElementTree
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, XML
 from pathlib import Path
+from typing import Callable
+from vidpy import Composition
 import configs
 from dialogueline import DialogueLine, parseDialogueFile
 from sysline import SysLine
 from generation import text_gen, char_gen
 from characterinfo import CharacterInfo
+import mlt_fix
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
@@ -39,6 +42,20 @@ def dialogue_gen():
             case _: print(f'{component} is not a valid option; skipping')
 
 
+def wrap_generate(gen_function: Callable[[list], Composition], file_suffix: str, error_msg: str):
+    '''Wraps the generate() call to do all the handling stuff'''
+    try:
+        xml_string: str = gen_function().xml()
+        fixed_xml: Element = mlt_fix.fix_mlt(XML(xml_string))
+        write_xml(fixed_xml, '_' + file_suffix)
+    except Exception as e:
+        print(error_msg, e)
+        if configs.ARGS.debug:
+            raise e
+    finally:
+        reset_configs()
+
+
 def write_xml(xml: Element, suffix: str = ''):
     """Writes the xml to a file.
     The suffix is appended to the output name given by the cli args
@@ -59,27 +76,16 @@ def gen_all(lines: list[DialogueLine | SysLine]):
 
 def gen_text(lines: list[DialogueLine | SysLine]):
     print(f"Generating text component")
-    try:
-        xml: Element = text_gen.generate(lines)
-        write_xml(xml, '_text')
-    except Exception as e:
-        print('Encountered exception while generating text:', e)
-        if (configs.ARGS.debug):
-            raise e
-    finally:
-        reset_configs()
+    wrap_generate(lambda: text_gen.generate(lines), 'text',
+                  'Encountered exception while generating text:')
 
 
 def gen_header(lines: list[DialogueLine | SysLine]):
     print(f"Generating header component")
-    try:
-        raise RuntimeError("gen_header not implemented yet")
-    except Exception as e:
-        print('Encountered exception while generating headers:', e)
-        if (configs.ARGS.debug):
-            raise e
-    finally:
-        reset_configs()
+
+    def raiser(): raise RuntimeError("gen_header not implemented yet")
+    wrap_generate(raiser, 'header',
+                  'Encountered exception while generating headers:')
 
 
 def gen_chars(lines: list[DialogueLine | SysLine]):
@@ -95,15 +101,8 @@ def gen_chars(lines: list[DialogueLine | SysLine]):
 
 def gen_char(lines: list[DialogueLine | SysLine], character: str):
     print(f"Generating character component for {character}")
-    try:
-        xml: Element = char_gen.generate(lines, character)
-        write_xml(xml, f'_{character}')
-    except Exception as e:
-        print(f'Encountered exception while generating character {character}:', e)
-        if (configs.ARGS.debug):
-            raise e
-    finally:
-        reset_configs()
+    wrap_generate(lambda: char_gen.generate(lines, character), f'{character}',
+                  f'Encountered exception while generating character {character}:')
 
 
 def reset_configs():
