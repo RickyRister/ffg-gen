@@ -210,8 +210,8 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
 
 def determine_brightness_levels(transition: Transition, charInfo: CharacterInfo) -> str:
     fade_end = charInfo.brightnessFadeEnd
-    full_level = '1'
-    dim_level = charInfo.brightnessFadeLevel
+    full_level = charInfo.frontBrightness
+    dim_level = charInfo.backBrightness
 
     match transition:
         case Transition.IN:

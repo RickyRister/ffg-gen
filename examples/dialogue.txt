@@ -47,7 +47,12 @@ Reimu1: Oh I'm red again
 
 @exit reimu
 
+@set kiko frontBrightness 0.4
+
 Kiko1: Yep. I just put it away.
+
+@unset kiko frontBrightness
+
 Sameika3: (For some reason, I don't believe it. Where would she even keep it..?)
 Kiko8: Really..? That's so bothersome.
 

@@ -32,9 +32,12 @@ class CharacterInfo:
     offstageGeometry: str = None
     offstageBackGeometry: str = None
 
-    # movement timing configs
+    # brightness configs
+    frontBrightness: float = None
+    backBrightness: float = None
     brightnessFadeEnd: str = None
-    brightnessFadeLevel: float = None
+
+    # movement timing configs
     moveEnd: str = None
     exitDuration: float = None
     fadeInEnd: str = None

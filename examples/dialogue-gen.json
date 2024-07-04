@@ -112,7 +112,7 @@
     },
     "movement": {
         "common": {
-            "brightnessFadeLevel": 0.7,
+            "backBrightness": 0.7,
             "brightnessFadeEnd": "00:00:00.200",
             "moveEnd": "00:00:00.200",
             "exitDuration": 0.25,
