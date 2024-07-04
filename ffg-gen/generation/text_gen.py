@@ -5,6 +5,7 @@ from characterinfo import CharacterInfo
 from sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 import configs
+from configs import expect
 
 
 def filter_none(lines: list) -> list:
@@ -34,15 +35,16 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
             case Wait(duration=duration): return transparent_clip(duration)
             case _: return None
 
+    name: str = line.name
     charInfo: CharacterInfo = line.character
 
     headerFilter: dict = textFilterArgs(
-        text=charInfo.displayName,
+        text=expect(charInfo.displayName, 'displayName', name),
         geometry=configs.HEADER.geometry,
-        font=charInfo.headerFont,
-        size=charInfo.headerFontSize,
-        color=charInfo.headerFillColor,
-        olcolor=charInfo.headerOutlineColor)
+        font=expect(charInfo.headerFont, 'headerFont', name),
+        size=expect(charInfo.headerFontSize, 'headerFontSize', name),
+        color=expect(charInfo.headerFillColor, 'headerFillColor', name),
+        olcolor=expect(charInfo.headerOutlineColor, 'headerOutlineColor', name))
 
     dropTextFilter: dict = dropTextFilterArgs(
         resource=configs.DIALOGUE_BOX.dropTextMaskPath,
@@ -51,9 +53,9 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     richTextFilter: dict = richTextFilterArgs(
         text=line.text,
         geometry=configs.DIALOGUE_BOX.geometry,
-        font=charInfo.dialogueFont,
-        fontSize=charInfo.dialogueFontSize,
-        color=charInfo.dialogueColor)
+        font=expect(charInfo.dialogueFont, 'dialogueFont', name),
+        fontSize=expect(charInfo.dialogueFontSize, 'dialogueFontSize', name),
+        color=expect(charInfo.dialogueColor, 'dialogueColor', name))
 
     return Clip('color:#00000000').set_duration(line.duration)\
         .fx('qtext', richTextFilter)\

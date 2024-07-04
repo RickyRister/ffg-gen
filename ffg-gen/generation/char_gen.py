@@ -7,6 +7,7 @@ from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
+from configs import expect
 from vidpy_extension.blankclip import transparent_clip
 
 
@@ -61,13 +62,13 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
     """Returns a generator that returns a stream of Clips
     """
 
-    charInfo = CharacterInfo.ofName(targetName)
-
     # Initialize state to offscreen
     curr_state: State = State.OFFSCREEN
     curr_expression: str = None
     curr_speaker: str = None
     pending_transition: Transition = None
+
+    # === start of loop ===
 
     for line in lines:
         # always run the pre_hook first if it's a sysline
@@ -118,6 +119,8 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         if pending_transition is None:
             pending_transition = determine_transition(curr_state, curr_speaker == targetName)
 
+        charInfo: CharacterInfo = CharacterInfo.ofName(targetName)
+
         # generate clip using the transition
         yield create_clip(pending_transition, charInfo, curr_expression, line.duration)
 
@@ -125,11 +128,17 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         curr_state = Transition.state_after(pending_transition)
         pending_transition = None
 
+    # === end of loop ===
+
+    # grab charInfo again
+    charInfo: CharacterInfo = CharacterInfo.ofName(targetName)
+    exitDuration = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
+
     # final exit
     match curr_state:
-        case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, charInfo.exitDuration)
-        case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, charInfo.exitDuration)
-        case _: yield transparent_clip(charInfo.exitDuration)
+        case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, exitDuration)
+        case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, exitDuration)
+        case _: yield transparent_clip(exitDuration)
 
 
 def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
@@ -157,7 +166,8 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
             f"Character {charInfo.name} is trying to appear on-screen with missing expression.")
 
     # create clip with portrait
-    portraitPath = charInfo.portraitPathFormat.format(expression=expression)
+    portraitPath = expect(charInfo.portraitPathFormat, 'portraitPathFormat', charInfo.name)\
+        .format(expression=expression)
     clip = Clip(portraitPath).set_duration(duration)
 
     # apply base geometry correction to image if required
@@ -172,22 +182,25 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
-        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=0;{charInfo.fadeInEnd}=1'))
+        fade_end = expect(charInfo.fadeInEnd, 'fadeInEnd', charInfo.name)
+        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
-        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=1;{charInfo.fadeOutEnd}=0'))
+        fade_end = expect(charInfo.fadeOutEnd, 'fadeOutEnd', charInfo.name)
+        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=1;{fade_end}=0'))
 
     return clip
 
 
 def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
-    moveEnd: str = charInfo.moveEnd
+    moveEnd = expect(charInfo.moveEnd, 'moveEnd', charInfo.name)
 
-    frontGeometry: str = charInfo.frontGeometry
-    backGeometry: str = charInfo.backGeometry
-    offstageGeometry: str = charInfo.offstageGeometry
-    offstageBackGeometry: str = charInfo.offstageBackGeometry
+    frontGeometry = expect(charInfo.frontGeometry, 'frontGeometry', charInfo.name)
+    backGeometry = expect(charInfo.backGeometry, 'backGeometry', charInfo.name)
+    offstageGeometry = expect(charInfo.offstageGeometry, 'offstageGeometry', charInfo.name)
+    offstageBackGeometry = expect(charInfo.offstageBackGeometry,
+                                  'offstageBackGeometry', charInfo.name)
 
     match transition:
         case Transition.IN:
@@ -209,9 +222,9 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
 
 
 def determine_brightness_levels(transition: Transition, charInfo: CharacterInfo) -> str:
-    fade_end = charInfo.brightnessFadeEnd
-    full_level = charInfo.frontBrightness
-    dim_level = charInfo.backBrightness
+    fade_end = expect(charInfo.brightnessFadeEnd, 'brightnessFadeEnd', charInfo.name)
+    full_level = expect(charInfo.frontBrightness, 'frontBrightness', charInfo.name)
+    dim_level = expect(charInfo.backBrightness, 'backBrightness', charInfo.name)
 
     match transition:
         case Transition.IN:

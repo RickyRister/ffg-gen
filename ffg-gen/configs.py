@@ -1,8 +1,10 @@
 from argparse import Namespace
 from dataclasses import dataclass
 import json
-import re
+from typing import TypeVar
 from duration import DurationFix, Threshold
+
+T = TypeVar("T")
 
 # parsed command line args
 ARGS: Namespace
@@ -40,10 +42,10 @@ class DurationConfigs:
 @dataclass
 class HeaderConfigs:
     geometry: str
-    font: str
-    fontSize: int
+    font: str = None
+    fontSize: int = None
     weight: int = 500
-    outlineColor: str = '#000000'
+    outlineColor: str = None
     fillColor: str = '#ffffff'
 
 
@@ -52,8 +54,8 @@ class DialogueBoxConfigs:
     geometry: str
     dropTextMaskPath: str
     dropTextEnd: str
-    font: str
-    fontSize: int
+    font: str = None
+    fontSize: int = None
     fontColor: str = '#ffffff'
 
 
@@ -107,3 +109,19 @@ def loadIntoGlobals(configJson: dict):
     MOVEMENT = configJson.get('movement')
     CHARACTERS = configJson.get('characters')
 
+
+def expect(value: T, prop_name: str, char_name: str = None) -> T:
+    '''Use this to validate that a property is not None before using it.
+    Raises an exception if it is None.
+
+    args:
+        value: The value to validate
+        prop_name: name of the property, for error message purposes
+        char_name: character name, if the property belongs to a character
+    '''
+    if value is not None:
+        return value
+    elif char_name is not None:
+        raise ValueError(f'Could not resolve property {prop_name} for character {char_name}')
+    else:
+        raise ValueError(f'Could not resolve property {prop_name}')
