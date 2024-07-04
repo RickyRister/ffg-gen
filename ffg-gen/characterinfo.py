@@ -52,12 +52,12 @@ class CharacterInfo:
         '''Returns the fall-through default value for the given attr.
         '''
         match attr:
-            # exclusive attributes
-            # we make them always return themselves, since they should always be set
+            # the name should never change
             case 'name': return self.name
-            case 'displayName': return self.displayName
-            case 'portraitPathFormat': return self.portraitPathFormat
-            case 'isPlayer': return self.isPlayer
+
+            # character-specific properties
+            case 'displayName' | 'portraitPathFormat' | 'isPlayer':
+                return configs.CHARACTERS.get(self.name).get(attr)
 
             # header configs
             case 'headerFont': return configs.HEADER.font
@@ -70,20 +70,11 @@ class CharacterInfo:
             case 'dialogueFontSize': return configs.DIALOGUE_BOX.fontSize
             case 'dialogueColor': return configs.DIALOGUE_BOX.fontColor
 
-            # portrait geometry configs
-            case 'geometry': return MovementInfo.ofIsPlayer(self.isPlayer).geometry
-            case 'frontGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).frontGeometry
-            case 'backGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).backGeometry
-            case 'offstageGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).offstageGeometry
-            case 'offstageBackGeometry': return MovementInfo.ofIsPlayer(self.isPlayer).offstageBackGeometry
-
+            # portrait geometry configs 
             # movement timing configs
-            case 'brightnessFadeEnd': return MovementInfo.ofIsPlayer(self.isPlayer).brightnessFadeEnd
-            case 'brightnessFadeLevel': return MovementInfo.ofIsPlayer(self.isPlayer).brightnessFadeLevel
-            case 'moveEnd': return MovementInfo.ofIsPlayer(self.isPlayer).moveEnd
-            case 'exitDuration': return MovementInfo.ofIsPlayer(self.isPlayer).exitDuration
-            case 'fadeInEnd': return MovementInfo.ofIsPlayer(self.isPlayer).fadeInEnd
-            case 'fadeOutEnd': return MovementInfo.ofIsPlayer(self.isPlayer).fadeOutEnd
+            case 'geometry' | 'frontGeometry' | 'backGeometry' | 'offstageGeometry' | 'offstageBackGeometry' \
+                    'brightnessFadeEnd' | 'brightnessFadeLevel' 'moveEnd' | 'exitDuration' | 'fadeInEnd' | 'fadeOutEnd': 
+                return getattr(MovementInfo.ofIsPlayer(self.isPlayer), attr)
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that.
@@ -103,7 +94,7 @@ class CharacterInfo:
 
         if not character_json:
             raise ValueError(f'Character info for {name} not found in config json')
-        
+
         return CharacterInfo(name=name, **character_json)
 
     def reset_attr(self, attr: str):
@@ -111,9 +102,7 @@ class CharacterInfo:
         Checks the characters in the config json, then falls back to the defaults
         '''
 
-        # This shouldn't raise exception because we know name already exists in the first dict
-        value = configs.CHARACTERS.get(self.name).get(attr)
-        if value is None:
-            setattr(self, attr, self._find_default_value(attr))
-        else:
+        if (value := configs.CHARACTERS.get(self.name).get(attr)) is not None:
             setattr(self, attr, value)
+        else:
+            setattr(self, attr, self._find_default_value(attr))
