@@ -69,6 +69,7 @@ class CharacterInfo:
             case 'headerFontSize': return configs.HEADER.fontSize
             case 'headerOutlineColor': return configs.HEADER.outlineColor
             case 'headerFillColor': return configs.HEADER.fillColor
+            case 'headerOverlayPath': return configs.HEADER.overlayPath
 
             # dialogue box configs
             case 'dialogueFont': return configs.DIALOGUE_BOX.font
