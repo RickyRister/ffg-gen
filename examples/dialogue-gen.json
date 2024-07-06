@@ -37,38 +37,28 @@
     },
     "durationFixes": [
         {
-            "comment": 0.2,
-            "expectedFrames": 5,
+            "comment": 0.25,
+            "expectedFrames": 6,
             "fix": "00:00:00.167"
         },
         {
-            "comment": 0.25,
-            "expectedFrames": 6,
-            "fix": "00:00:00.200"
-        },
-        {
-            "comment": "0:25",
+            "comment": 1,
             "expectedFrames": 25,
-            "fix": "00:00:00.800"
-        },
-        {
-            "comment": "1:20",
-            "expectedFrames": 50,
-            "fix": "00:00:01.633"
+            "fix": "00:00:00.960"
         },
         {
             "comment": 2,
-            "expectedFrames": 60,
+            "expectedFrames": 50,
             "fix": "00:00:01.960"
         },
         {
             "comment": 2.5,
-            "expectedFrames": 68,
+            "expectedFrames": 62,
             "fix": "00:00:02.467"
         },
         {
             "comment": 3,
-            "expectedFrames": 80,
+            "expectedFrames": 75,
             "fix": "00:00:02.960"
         },
         {
