@@ -140,6 +140,9 @@
             "isPlayer": true,
             "displayName": "Sameika",
             "geometry": "-342 118.71 1280 960",
+            "backGeometry": "-48 -24 1280 960",
+            "offstageGeometry": "-72 48 1280 960",
+            "offstageBackGeometry": "-84 24 1280 960",
             "portraitPathFormat": "assets/common/sameika/spplayer01{expression:0>2}.png",
             "headerOutlineColor": "#ffff9300"
         },
