@@ -9,6 +9,7 @@ from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
 from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
+from vidpy_extension.ext_composition import ExtComposition
 
 
 class State(Enum):
@@ -42,7 +43,7 @@ class Transition(Enum):
             case Transition.STAY_OFFSCREEN: return State.OFFSCREEN
 
 
-def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
+def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
     """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
@@ -50,7 +51,7 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     if name not in names:
         raise DialogueGenException(f'{name} does not appear in the dialogue')
 
-    return Composition(
+    return ExtComposition(
         list(processLines(lines, name)),
         singletrack=True,
         width=configs.VIDEO_MODE.width,
