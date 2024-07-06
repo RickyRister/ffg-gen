@@ -49,7 +49,7 @@ class CharEnter(SysLine):
     """Forces the character to enter the screen.
     By default, all characters will start offscreen and won't enter until explicitly declared
 
-    Usage: @exit [name]
+    Usage: @enter [name]
     """
 
     name: str
