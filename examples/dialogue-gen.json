@@ -98,13 +98,13 @@
         }
     ],
     "header": {
-        "geometry": "108 717 350 42 1",
+        "geometry": "108 717 350 42",
         "font": "MF KeKe (Noncommercial)",
         "fontSize": 28,
         "weight": 500
     },
     "dialogueBox": {
-        "geometry": "104 767 691 133 1",
+        "geometry": "104 767 691 133",
         "dropTextMaskPath": "assets/common/drop text mask.png",
         "dropTextEnd": "00:00:00.160",
         "font": "Linux Biolinum O",
@@ -120,11 +120,11 @@
             "fadeOutEnd": "00:00:00.200"
         },
         "player": {
-            "backGeometry": "-36 24 1280 960 1",
-            "offstageGeometry": "-72 48 1280 960 1"
+            "backGeometry": "-36 24 1280 960",
+            "offstageGeometry": "-72 48 1280 960"
         },
         "enemy": {
-            "backGeometry": "36 24 1280 960 1",
+            "backGeometry": "36 24 1280 960",
             "offstageGeometry": "72 48 1280 960"
         }
     },
@@ -132,21 +132,21 @@
         "reimu": {
             "isPlayer": true,
             "displayName": "Reimu",
-            "geometry": "-315 99.7849 1280 960 1",
+            "geometry": "-315 99.7849 1280 960",
             "portraitPathFormat": "assets/common/reimu/player01{expression:0>2}.png",
             "headerOutlineColor": "#fd6666"
         },
         "sameika": {
             "isPlayer": true,
             "displayName": "Sameika",
-            "geometry": "-342 118.71 1280 960 1",
+            "geometry": "-342 118.71 1280 960",
             "portraitPathFormat": "assets/common/sameika/spplayer01{expression:0>2}.png",
             "headerOutlineColor": "#ffff9300"
         },
         "kiko": {
             "isPlayer": false,
             "displayName": "Kiko",
-            "geometry": "134 160 1280 960 1",
+            "geometry": "134 160 1280 960",
             "portraitPathFormat": "assets/s1/portraits/boss01{expression:0>2}.png",
             "headerOutlineColor": "#73FA79"
         }
