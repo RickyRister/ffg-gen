@@ -96,7 +96,7 @@ def gen_chars(lines: list[DialogueLine | SysLine]):
     print(f"Generating all character components...")
 
     # figure out which characters are in the dialogue
-    names: set[str] = {line.character.name for line in lines if isinstance(line, DialogueLine)}
+    names: set[str] = {line.name for line in lines if hasattr(line, 'name')}
 
     # call gen_char with all those characters
     for name in names:

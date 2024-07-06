@@ -46,7 +46,7 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
-    names: set[str] = {line.character.name for line in lines if isinstance(line, DialogueLine)}
+    names: set[str] = {line.name for line in lines if hasattr(line, 'name')}
     if name not in names:
         raise ValueError(f'{name} does not appear in the dialogue')
 

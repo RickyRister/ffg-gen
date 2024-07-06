@@ -11,6 +11,9 @@ class SysLine:
     Sys line stands for System Line.
     Syslines act as commands in the dialogue file.
     Syslines begin with @
+
+    DialogueLine and some Sysline subclasses both share a name attribute.
+    You can check that attribute if you need to get the target of an action. 
     """
 
     def pre_hook(self):
