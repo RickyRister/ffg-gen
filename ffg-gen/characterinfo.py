@@ -20,6 +20,7 @@ class CharacterInfo:
     headerFontSize: int = None
     headerOutlineColor: str = None
     headerFillColor: str = None
+    headerOverlayPath: str = None
 
     # dialogue box configs
     dialogueFont: str = None

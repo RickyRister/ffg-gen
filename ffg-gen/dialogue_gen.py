@@ -7,7 +7,7 @@ from vidpy import Composition
 import configs
 from dialogueline import DialogueLine, parseDialogueFile
 from sysline import SysLine
-from generation import text_gen, char_gen
+from generation import text_gen, char_gen, header_gen
 from characterinfo import CharacterInfo
 from exceptions import DialogueGenException
 import mlt_fix
@@ -86,11 +86,9 @@ def gen_text(lines: list[DialogueLine | SysLine]):
 
 
 def gen_header(lines: list[DialogueLine | SysLine]):
-    print(f"Generating header component")
-
-    def raiser(): raise DialogueGenException("gen_header not implemented yet")
-    wrap_generate(raiser, 'header',
-                  'Encountered exception while generating headers:')
+    print(f"Generating header overlay component")
+    wrap_generate(lambda: header_gen.generate(lines), 'header',
+                  'Encountered exception while generating header overlay:')
 
 
 def gen_chars(lines: list[DialogueLine | SysLine]):
