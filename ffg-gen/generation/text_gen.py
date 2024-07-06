@@ -5,7 +5,7 @@ from characterinfo import CharacterInfo
 from sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 import configs
-from configs import expect
+from exceptions import expect
 
 
 def filter_none(lines: list) -> list:

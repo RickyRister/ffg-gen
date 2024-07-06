@@ -9,6 +9,7 @@ from dialogueline import DialogueLine, parseDialogueFile
 from sysline import SysLine
 from generation import text_gen, char_gen
 from characterinfo import CharacterInfo
+from exceptions import DialogueGenException
 import mlt_fix
 
 
@@ -52,7 +53,7 @@ def wrap_generate(gen_function: Callable[[list], Composition], file_suffix: str,
         xml_string: str = gen_function().xml()
         fixed_xml: Element = mlt_fix.fix_mlt(XML(xml_string))
         write_xml(fixed_xml, '_' + file_suffix)
-    except Exception as e:
+    except DialogueGenException as e:
         print(error_msg, e)
         if configs.ARGS.debug:
             raise e
@@ -87,7 +88,7 @@ def gen_text(lines: list[DialogueLine | SysLine]):
 def gen_header(lines: list[DialogueLine | SysLine]):
     print(f"Generating header component")
 
-    def raiser(): raise RuntimeError("gen_header not implemented yet")
+    def raiser(): raise DialogueGenException("gen_header not implemented yet")
     wrap_generate(raiser, 'header',
                   'Encountered exception while generating headers:')
 

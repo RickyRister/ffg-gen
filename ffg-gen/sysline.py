@@ -3,6 +3,7 @@ from functools import cache
 import re
 import configs
 from characterinfo import CharacterInfo
+from exceptions import NonExistentProperty
 
 
 @dataclass
@@ -117,7 +118,7 @@ class SetCharProperty(SysLine):
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
-            raise ValueError(
+            raise NonExistentProperty(
                 f'@set {self.name} {self.property}{configs.PARSING.assignmentDelimiter}{self.value} failed; CharacterInfo does not have property {self.property}')
 
         # possible type conversions

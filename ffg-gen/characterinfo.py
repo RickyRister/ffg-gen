@@ -3,6 +3,7 @@ from functools import cache
 from typing import Any
 import configs
 from movementinfo import MovementInfo
+from exceptions import MissingProperty
 
 
 @dataclass
@@ -77,7 +78,7 @@ class CharacterInfo:
             case other if hasattr(MovementInfo.ofIsPlayer(self.isPlayer), other):
                 return getattr(MovementInfo.ofIsPlayer(self.isPlayer), other)
             
-            case _: raise ValueError(f'Cannot find default value for CharacterInfo attribute {attr}')
+            case _: raise MissingProperty(f'Cannot find default value for CharacterInfo attribute {attr}')
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that.
@@ -96,7 +97,7 @@ class CharacterInfo:
         character_json: dict = configs.CHARACTERS.get(name)
 
         if not character_json:
-            raise ValueError(f'Character info for {name} not found in config json')
+            raise MissingProperty(f'Character info for {name} not found in config json')
 
         return CharacterInfo(name=name, **character_json)
 

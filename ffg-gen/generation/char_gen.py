@@ -7,7 +7,7 @@ from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
-from configs import expect
+from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
 
 
@@ -48,7 +48,7 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
     # double check that the character is actually in the scene
     names: set[str] = {line.name for line in lines if hasattr(line, 'name')}
     if name not in names:
-        raise ValueError(f'{name} does not appear in the dialogue')
+        raise DialogueGenException(f'{name} does not appear in the dialogue')
 
     return Composition(
         list(processLines(lines, name)),
@@ -162,7 +162,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # error checking empty expression
     if expression is None:
-        raise ValueError(
+        raise DialogueGenException(
             f"Character {charInfo.name} is trying to appear on-screen with missing expression.")
 
     # create clip with portrait
