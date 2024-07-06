@@ -23,9 +23,15 @@ def createArgumentParser() -> ArgumentParser:
     parentparser.add_argument(
         '--no-duration-fix', action='store_const', const=True, default=False, dest='no_duration_fix',
         help='Do not run the duration fix on the resulting mlt. This will mostly likely cause the keyframes to be broken, so no idea why you would enable this.')
+    parentparser.add_argument(
+        '--separate-track-export', action='store_const', const=True, default=False, dest='separate_track_export',
+        help='Export each track as a separate mlt file.')
+    parentparser.add_argument(
+        '--add-backing-track', action='store_const', const=True, default=False, dest='backing_track',
+        help='Adds a black backing track to the mlt.')
 
-    parser = ArgumentParser(
-        description='Generates mlt files for Touhou-style album videos.', parents=[parentparser])
+    parser = ArgumentParser(description='Generates mlt files for Touhou-style album videos.',
+                            parents=[parentparser])
     subparsers = parser.add_subparsers(help='the type of scene to generate', required=True)
 
     dialogue_gen.attach_subparser_to(subparsers, [parentparser])
