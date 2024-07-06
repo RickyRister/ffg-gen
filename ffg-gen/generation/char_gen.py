@@ -1,7 +1,7 @@
 from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element
 from enum import Enum
-from collections.abc import Generator
+from typing import Generator
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
@@ -58,7 +58,7 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> Element:
         fps=configs.VIDEO_MODE.fps)
 
 
-def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[Clip]:
+def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[Clip, None, None]:
     """Returns a generator that returns a stream of Clips
     """
 
