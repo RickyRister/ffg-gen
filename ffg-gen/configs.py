@@ -86,6 +86,7 @@ CHARACTERS: dict[str, dict]
 # not handled by own class but still stored as a raw data structure
 COMPONENT_MACROS: dict[str, list[str]]
 RESOURCE_NAMES: dict[str, str]
+ALIASES: dict[str, str]
 
 
 def loadConfigJson(path: str):
@@ -123,6 +124,7 @@ def loadIntoGlobals(configJson: dict):
     global CHARACTERS
     global COMPONENT_MACROS
     global RESOURCE_NAMES
+    global ALIASES
 
     # assign globals
     PARSING = ParsingConfigs(**safe_json_get('parsing'))
@@ -139,6 +141,7 @@ def loadIntoGlobals(configJson: dict):
     # load dicts for the classes to load themselves
     MOVEMENT = safe_json_get('movement')
     CHARACTERS = safe_json_get('characters')
+    ALIASES = safe_json_get('aliases')
 
 
 def follow_if_named(resource: str) -> str:

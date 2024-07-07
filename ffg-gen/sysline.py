@@ -189,6 +189,27 @@ class ResetAllChars(SysLine):
 
 
 @dataclass
+class SetAlias(SysLine):
+    '''Sets an alias for a character. That means the alias can be used in place of the name.
+
+    Usage: @alias [alias] [name]
+    '''
+
+    alias: str
+    name: str
+
+    def parseArgs(args: str):
+        match args.split():
+            case [alias, name]: return SetAlias(alias, name)
+            case _: raise ValueError(f'Invalid args for @alias: {args}')
+
+    def pre_hook(self):
+        '''Set alias somehow
+        '''
+        CharacterInfo.add_local_alias(self.name, self.alias)
+
+
+@dataclass
 class GroupedComponent(SysLine):
     '''Used by the group:[group] and groups component to recursively generate components.
     Not used during actual generation processing.
@@ -221,6 +242,7 @@ def parse_sysline(line: str):
         case ['unset', args]: return UnsetCharProperty.parseArgs(args.strip())
         case ['reset', args]: return ResetCharProperties.parseArgs(args.strip())
         case ['resetall']: return ResetAllChars()
+        case ['alias', args]: return SetAlias.parseArgs(args.strip())
         case ['grouped', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')

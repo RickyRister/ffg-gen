@@ -23,18 +23,21 @@ Reimu1: Why is my name bob now
 
 @reset reimu
 
-Reimu2: okay i'm back
+灵梦2: okay i'm back
 
 @set reimu displayName 'Bob'
 @set reimu headerOutlineColor '#aaaa9300'
 
-Reimu1: oh no i'm bob again
+灵梦1: oh no i'm bob again
 
-Kiko: I don't need an expression if I'm not on screen yet
+@alias ??? kiko
+@set kiko displayName '???'
+
+???: I don't need an expression if I'm not on screen yet
 
 Sameika1: Still, it's a lead, so let's follow it.
 
-Kiko2: but i do need something to set my expression before i appear
+???2: but i do need something to set my expression before i appear
 
 (Kiko comes on screen, guitar part stops)
 @enter kiko
@@ -42,7 +45,8 @@ Kiko2: but i do need something to set my expression before i appear
 
 @unset reimu displayName
 
-Kiko1: Ah! It looks like I attracted some visitors.
+???1: Ah! It looks like I attracted some visitors.
+
 Reimu7: at least i'm no longer bob now
 
 @unset reimu headerOutlineColor
@@ -52,8 +56,9 @@ Reimu1: Oh I'm red again
 @exit reimu
 
 @set kiko frontBrightness 0.4
+@unset kiko displayName
 
-Kiko1: Yep. I just put it away.
+Kiko1: I have a name you know
 
 @unset kiko frontBrightness
 

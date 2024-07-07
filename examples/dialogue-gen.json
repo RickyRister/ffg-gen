@@ -143,6 +143,9 @@
             "offstageGeometry": "72 48 1280 960"
         }
     },
+    "aliases":{
+        "灵梦": "reimu"
+    },
     "characters": {
         "reimu": {
             "isPlayer": true,

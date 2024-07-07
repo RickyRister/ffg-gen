@@ -6,6 +6,9 @@ from movementinfo import MovementInfo
 from exceptions import MissingProperty
 
 
+local_aliases: dict[str, str] = dict()
+
+
 @dataclass
 class CharacterInfo:
     """A representation of the info of a character, read from the config json
@@ -79,13 +82,19 @@ class CharacterInfo:
             # anything that is in MovementInfo
             case other if hasattr(MovementInfo.ofIsPlayer(self.isPlayer), other):
                 return getattr(MovementInfo.ofIsPlayer(self.isPlayer), other)
-            
+
             case _: raise MissingProperty(f'Cannot find default value for CharacterInfo attribute {attr}')
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that.
         This method is meant to process any aliases (once we add that) before calling the cached get with the real name
         """
+        if name in local_aliases:
+            return CharacterInfo.ofName(local_aliases.get(name))
+
+        if name in configs.ALIASES:
+            return CharacterInfo.ofName(configs.ALIASES.get(name))
+
         name = str.lower(name)
         return CharacterInfo.get_cached(name)
 
@@ -118,3 +127,13 @@ class CharacterInfo:
         '''
         for attr, _ in vars(self).items():
             self.reset_attr(attr)
+
+    def add_local_alias(name: str, alias: str):
+        '''Set local alias. The local alias dict is (ironically enough) a global variable.
+        '''
+        local_aliases[alias] = name
+
+    def reset_local_aliases():
+        '''Removes all local aliases
+        '''
+        local_aliases.clear()
