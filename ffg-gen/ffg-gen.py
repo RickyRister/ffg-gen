@@ -27,8 +27,8 @@ def createArgumentParser() -> ArgumentParser:
         '--separate-track-export', action='store_const', const=True, default=False, dest='separate_track_export',
         help='Export each track as a separate mlt file.')
     parentparser.add_argument(
-        '--add-backing-track', action='store_const', const=True, default=False, dest='backing_track',
-        help='Adds a black backing track to the mlt.')
+        '--bg-color', type=str, default='black', dest='bg_color',
+        help='Color of the backing track. Can be a color word or hex. (default black)')
 
     parser = ArgumentParser(description='Generates mlt files for Touhou-style album videos.',
                             parents=[parentparser])

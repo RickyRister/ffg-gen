@@ -2,6 +2,7 @@ import subprocess
 import itertools
 from xml.etree.ElementTree import Element, fromstring
 from vidpy import Composition, config
+import configs
 
 '''Code heavily referenced from vidpy
 '''
@@ -88,7 +89,7 @@ def combine_args(compositions: list[ExtComposition]) -> list[str]:
     args: list[str] = []
 
     # add the the background track
-    args += ['-track', 'color:black', 'out=0']
+    args += ['-track', f'color:{configs.ARGS.bg_color}', 'out=0']
 
     # add the combined args for all comps
     args += flatten([composition.single_track_args() for composition in compositions])
