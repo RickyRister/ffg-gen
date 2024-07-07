@@ -134,15 +134,20 @@ def follow_if_named(resource: str) -> str:
     '''Converts the resource to the proper link if it's a named resource.
 
     Named resources are indicated by starting with a !
+    You can terminate the name with another !
     '''
 
     # return early if it's not a named resource
     if not resource.startswith('!'):
         return resource
 
+    # parse string
+    split = resource[1:].split('!', 1)
+    name: str = split[0]
+    postfix: str = split[1] if len(split) > 1 else ''
+
     # get name
-    name: str = resource[1:]
     if name not in RESOURCE_NAMES:
-        raise MissingProperty(f'Named resource "{name}" not found.')
+        raise MissingProperty(f"Named resource '{name}' not defined.")
     else:
-        return RESOURCE_NAMES.get(name)
+        return RESOURCE_NAMES.get(name) + postfix
