@@ -11,12 +11,13 @@
             "header",
             "fill:!textbox",
             "chars",
-            "fill:!frame"
+            "group:background"
         ]
     },
     "resourceNames": {
         "textbox": "assets/common/textbox default.png",
-        "frame": "assets/common/frame.png"
+        "frame": "assets/common/frame.png",
+        "s1_bg_stage": "assets/s1/bg-stage.png"
     },
     "videoMode": {
         "width": 1280,

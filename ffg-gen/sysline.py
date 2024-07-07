@@ -188,6 +188,23 @@ class ResetAllChars(SysLine):
         CharacterInfo.get_cached.cache_clear()
 
 
+@dataclass
+class GroupedComponent(SysLine):
+    '''Used by the group:[group] and groups component to recursively generate components.
+    Not used during actual generation processing.
+
+    Usage: @grouped [group] [component]
+    '''
+
+    group: str
+    component: str
+
+    def parseArgs(args: str):
+        match args.split(None, 1):
+            case [group, component]: return GroupedComponent(group, component)
+            case _: raise ValueError(f'Invalid args for @grouped: {args}')
+
+
 def parse_sysline(line: str):
     """Parses a sysline.
 
@@ -204,5 +221,6 @@ def parse_sysline(line: str):
         case ['unset', args]: return UnsetCharProperty.parseArgs(args.strip())
         case ['reset', args]: return ResetCharProperties.parseArgs(args.strip())
         case ['resetall']: return ResetAllChars()
+        case ['grouped', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')

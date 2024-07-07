@@ -23,8 +23,8 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
     parser.add_argument(
         'components', nargs='+',
         help='''
-        Determines which components to generate. Order does matter, and goes from top layer to bottom layer.
-        Built-in options: text, header, chars, char:[name], fill:[resource]
+        Determines which components to generate. Order does matter; layers go from top to bottom.
+        Built-in options: text, header, char:[name], chars, fill:[resource], group:[group], groups
 
         You can configure macros in your config json under "componentMacros".
         Each macro maps to an array of components.
@@ -76,6 +76,8 @@ def process_components(components: list[str], lines: list[DialogueLine | SysLine
             case 'chars': yield from gen_chars(lines)
             case x if x.startswith('char:'): yield from gen_char(lines, x.removeprefix('char:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
+            case 'groups': yield from gen_groups(lines)
+            case x if x.startswith('group:'): yield from gen_group(lines, x.removeprefix('group:'))
             case _: raise ValueError(f'{component} is not a valid component.')
 
 
@@ -159,3 +161,21 @@ def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[tu
     print(f"Generating fill with {resource}")
     yield from wrap_generate(lambda: fill_gen.generate(lines, resource), resource,
                              f'Error while generating fill for {resource}:')
+
+
+def gen_groups(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
+    print(f"Generating components for all component groups...")
+
+    components: list[str] = [line.component for line in lines if hasattr(line, 'group')]
+    yield from process_components(components, lines)
+
+
+def gen_group(lines: list[DialogueLine | SysLine], group: str) -> Generator[tuple[ExtComposition, str], None, None]:
+    print(f"Generating components for component group '{group}'")
+
+    components: list[str] = [line.component for line in lines
+                             if getattr(line, 'group', None) == group]
+    if len(components) == 0:
+        print(f"No components found for component group '{group}'")
+
+    yield from process_components(components, lines)
