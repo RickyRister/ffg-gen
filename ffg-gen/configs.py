@@ -37,6 +37,17 @@ class DurationConfigs:
 
 
 @dataclass
+class DurationFixConfigs:
+    fixes: list[DurationFix]
+    fallbackMultiplier: float = None
+
+    def __post_init__(self):
+        # convert dict to actual objects, if nessecary
+        if isinstance(self.fixes[0], dict):
+            self.fixes = [DurationFix(**fix) for fix in self.fixes]
+
+
+@dataclass
 class HeaderConfigs:
     geometry: str
     font: str = None
@@ -61,7 +72,7 @@ class DialogueBoxConfigs:
 PARSING: ParsingConfigs
 VIDEO_MODE: VideoModeConfigs
 DURATIONS: DurationConfigs
-DURATION_FIXES: list[DurationFix]
+DURATION_FIX: DurationFixConfigs
 HEADER: HeaderConfigs
 DIALOGUE_BOX: DialogueBoxConfigs
 
@@ -89,7 +100,7 @@ def loadIntoGlobals(configJson: dict):
     global PARSING
     global VIDEO_MODE
     global DURATIONS
-    global DURATION_FIXES
+    global DURATION_FIX
     global HEADER
     global DIALOGUE_BOX
     global MOVEMENT
@@ -99,7 +110,7 @@ def loadIntoGlobals(configJson: dict):
     PARSING = ParsingConfigs(**configJson.get('parsing'))
     VIDEO_MODE = VideoModeConfigs(**configJson.get('videoMode'))
     DURATIONS = DurationConfigs(**configJson.get('durations'))
-    DURATION_FIXES = [DurationFix(**fix) for fix in configJson.get('durationFixes')]
+    DURATION_FIX = DurationFixConfigs(**configJson.get('durationFix'))
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
 

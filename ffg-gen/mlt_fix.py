@@ -1,7 +1,8 @@
 from xml.etree.ElementTree import Element
 import re
+import ast
+import math
 import configs
-from duration import DurationFix
 
 
 def createPropertyElement(property: str, value: str) -> Element:
@@ -85,22 +86,40 @@ def fix_out_timestamps(xml: Element) -> Element:
     """
 
     # load fixes from config
-    fixes: dict[str, str] = {str(durationFix.expectedFrames)
-                                 : durationFix.fix for durationFix in configs.DURATION_FIXES}
+    fixes: dict[int, str] = {durationFix.expectedFrames: durationFix.fix
+                             for durationFix in configs.DURATION_FIX.fixes}
 
-    unfoundFrames: set[str] = set()
+    errorMessages: set[str] = set()
 
+    # loop over all elements that have an 'out' attribute
     for producer in xml.findall('.//*[@out]'):
-        expectedFrames = producer.get('out')
-        fix = fixes.get(expectedFrames)
+        outFrame: str = producer.get('out')
+
+        # we only fix frame timestamps
+        if not outFrame.isdigit():
+            continue
+
+        outFrame: int = int(outFrame)
+
+        # try to get the durationFix
+        fix = fixes.get(outFrame)
 
         if fix is not None:
-            producer.set('out', fix)
+            # if we have a fix, then use that
+            producer.set('out', str(fix))
         else:
-            unfoundFrames.add(expectedFrames)
+            # otherwise, try to calculate a frame fix using the multiplier, if present
+            fallbackMultipler: float = configs.DURATION_FIX.fallbackMultiplier
+            if fallbackMultipler is None:
+                errorMessages.add(f"No duration fix found for frame count {outFrame}")
+            else:
+                calculated_fix = math.floor(outFrame * fallbackMultipler)
+                producer.set('out', str(calculated_fix))
+                errorMessages.add(f"No duration fix found for frame count {outFrame}; using fallback multiplier {fallbackMultipler}x")
 
-    for expectedFrame in unfoundFrames:
-        print(f"No duration fix found for frame count {expectedFrame}")
+    # error messages should be deduplicated due to being put in a set
+    for msg in errorMessages:
+        print(msg)
 
     return xml
 

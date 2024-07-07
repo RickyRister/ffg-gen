@@ -39,58 +39,61 @@
             }
         ]
     },
-    "durationFixes": [
-        {
-            "comment": 0.25,
-            "expectedFrames": 6,
-            "fix": "00:00:00.167"
-        },
-        {
-            "comment": 1,
-            "expectedFrames": 25,
-            "fix": "00:00:00.960"
-        },
-        {
-            "comment": 2,
-            "expectedFrames": 50,
-            "fix": "00:00:01.960"
-        },
-        {
-            "comment": 2.5,
-            "expectedFrames": 62,
-            "fix": "00:00:02.467"
-        },
-        {
-            "comment": 3,
-            "expectedFrames": 75,
-            "fix": "00:00:02.960"
-        },
-        {
-            "comment": 3.5,
-            "expectedFrames": 88,
-            "fix": "00:00:03.467"
-        },
-        {
-            "comment": 4,
-            "expectedFrames": 100,
-            "fix": "00:00:03.960"
-        },
-        {
-            "comment": 4.5,
-            "expectedFrames": 112,
-            "fix": "00:00:04.467"
-        },
-        {
-            "comment": 5,
-            "expectedFrames": 125,
-            "fix": "00:00:04.960"
-        },
-        {
-            "comment": 6,
-            "expectedFrames": 150,
-            "fix": "00:00:05.960"
-        }
-    ],
+    "durationFix": {
+        "fallbackMultiplier": 1.2,
+        "fixes": [
+            {
+                "comment": 0.25,
+                "expectedFrames": 6,
+                "fix": "00:00:00.167"
+            },
+            {
+                "comment": 1,
+                "expectedFrames": 25,
+                "fix": "00:00:00.960"
+            },
+            {
+                "comment": 2,
+                "expectedFrames": 50,
+                "fix": "00:00:01.960"
+            },
+            {
+                "comment": 2.5,
+                "expectedFrames": 62,
+                "fix": "00:00:02.467"
+            },
+            {
+                "comment": 3,
+                "expectedFrames": 75,
+                "fix": "00:00:02.960"
+            },
+            {
+                "comment": 3.5,
+                "expectedFrames": 88,
+                "fix": "00:00:03.467"
+            },
+            {
+                "comment": 4,
+                "expectedFrames": 100,
+                "fix": "00:00:03.960"
+            },
+            {
+                "comment": 4.5,
+                "expectedFrames": 112,
+                "fix": "00:00:04.467"
+            },
+            {
+                "comment": 5,
+                "expectedFrames": 125,
+                "fix": "00:00:04.960"
+            },
+            {
+                "comment": 6,
+                "expectedFrames": 150,
+                "fix": "00:00:05.960"
+            }
+        ]
+    },
     "header": {
         "geometry": "108 717 350 42",
         "font": "MF KeKe (Noncommercial)",
