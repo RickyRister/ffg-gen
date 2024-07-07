@@ -48,7 +48,7 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
         olcolor=expect(charInfo.headerOutlineColor, 'headerOutlineColor', name))
 
     dropTextFilter: dict = dropTextFilterArgs(
-        resource=configs.DIALOGUE_BOX.dropTextMaskPath,
+        resource=configs.follow_if_named(configs.DIALOGUE_BOX.dropTextMaskPath),
         end=configs.DIALOGUE_BOX.dropTextEnd)
 
     richTextFilter: dict = richTextFilterArgs(

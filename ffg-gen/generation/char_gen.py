@@ -169,6 +169,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # create clip with portrait
     portraitPath = expect(charInfo.portraitPathFormat, 'portraitPathFormat', charInfo.name)\
         .format(expression=expression)
+    portraitPath = configs.follow_if_named(portraitPath)
     clip = Clip(portraitPath).set_duration(duration)
 
     # apply base geometry correction to image if required

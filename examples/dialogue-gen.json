@@ -17,7 +17,8 @@
     "resourceNames": {
         "textbox": "assets/common/textbox default.png",
         "frame": "assets/common/frame.png",
-        "s1_bg_stage": "assets/s1/bg-stage.png"
+        "s1_bg_stage": "assets/s1/bg-stage.png",
+        "droptextMask": "assets/common/drop text mask.png"
     },
     "videoMode": {
         "width": 1280,
@@ -116,7 +117,7 @@
     },
     "dialogueBox": {
         "geometry": "104 767 691 133",
-        "dropTextMaskPath": "assets/common/drop text mask.png",
+        "dropTextMaskPath": "!droptextMask",
         "dropTextEnd": "00:00:00.160",
         "font": "Linux Biolinum O",
         "fontSize": 28

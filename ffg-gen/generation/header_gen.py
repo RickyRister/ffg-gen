@@ -36,6 +36,7 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
             case _: return None
 
     charInfo: CharacterInfo = line.character
-    overlayPath: str = expect(charInfo.headerOverlayPath, 'headerOverlayPath', charInfo.name)
+    overlayPath: str = configs.follow_if_named(
+        expect(charInfo.headerOverlayPath, 'headerOverlayPath', charInfo.name))
 
     return Clip(overlayPath).set_duration(line.duration)
