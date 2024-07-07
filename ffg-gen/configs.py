@@ -39,12 +39,14 @@ class DurationConfigs:
 
 @dataclass
 class DurationFixConfigs:
-    fixes: list[DurationFix]
+    fixes: list[DurationFix] = None
     fallbackMultiplier: float = None
 
     def __post_init__(self):
         # convert dict to actual objects, if nessecary
-        if isinstance(self.fixes[0], dict):
+        if self.fixes is None:
+            self.fixes = []
+        elif isinstance(self.fixes[0], dict):
             self.fixes = [DurationFix(**fix) for fix in self.fixes]
 
 
@@ -101,6 +103,15 @@ def loadConfigJson(path: str):
 def loadIntoGlobals(configJson: dict):
     """Load the json config values into the global variables
     """
+
+    # make sure the json get is null-checked
+    def safe_json_get(key: str) -> dict:
+        value = configJson.get(key)
+        if value is None:
+            return dict()
+        else:
+            return value
+
     # bring globals into scope
     global PARSING
     global VIDEO_MODE
@@ -114,20 +125,20 @@ def loadIntoGlobals(configJson: dict):
     global RESOURCE_NAMES
 
     # assign globals
-    PARSING = ParsingConfigs(**configJson.get('parsing'))
-    VIDEO_MODE = VideoModeConfigs(**configJson.get('videoMode'))
-    DURATIONS = DurationConfigs(**configJson.get('durations'))
-    DURATION_FIX = DurationFixConfigs(**configJson.get('durationFix'))
-    HEADER = HeaderConfigs(**configJson.get('header'))
-    DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
+    PARSING = ParsingConfigs(**safe_json_get('parsing'))
+    VIDEO_MODE = VideoModeConfigs(**safe_json_get('videoMode'))
+    DURATIONS = DurationConfigs(**safe_json_get('durations'))
+    DURATION_FIX = DurationFixConfigs(**safe_json_get('durationFix'))
+    HEADER = HeaderConfigs(**safe_json_get('header'))
+    DIALOGUE_BOX = DialogueBoxConfigs(**safe_json_get('dialogueBox'))
 
     # load dicts
-    COMPONENT_MACROS = configJson.get('componentMacros')
-    RESOURCE_NAMES = configJson.get('resourceNames')
+    COMPONENT_MACROS = safe_json_get('componentMacros')
+    RESOURCE_NAMES = safe_json_get('resourceNames')
 
     # load dicts for the classes to load themselves
-    MOVEMENT = configJson.get('movement')
-    CHARACTERS = configJson.get('characters')
+    MOVEMENT = safe_json_get('movement')
+    CHARACTERS = safe_json_get('characters')
 
 
 def follow_if_named(resource: str) -> str:
