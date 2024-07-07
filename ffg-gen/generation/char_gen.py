@@ -81,7 +81,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
             case DialogueLine(character=character, expression=expression):
                 # store the new values from the dialogueLine
                 curr_speaker = character.name
-                if curr_speaker == targetName:
+                if curr_speaker == targetName and expression is not None:
                     curr_expression = expression
 
             case Wait(duration=duration):
@@ -164,7 +164,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # error checking empty expression
     if expression is None:
         raise DialogueGenException(
-            f"Character {charInfo.name} is trying to appear on-screen with missing expression.")
+            f"Character {charInfo.name} is trying to appear on-screen with undefined expression.")
 
     # create clip with portrait
     portraitPath = expect(charInfo.portraitPathFormat, 'portraitPathFormat', charInfo.name)\

@@ -14,6 +14,7 @@ Sameika3: Eh? Someone's playing some kind of koto.
 @enter reimu
 
 Sameika1: checking that reimu's expression is 3
+Sameika: empty expression will just continue current expression
 
 @set reimu displayName "Bob"
 @set reimu headerOutlineColor "#aaaa9300"
