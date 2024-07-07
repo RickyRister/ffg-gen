@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 import ast
 import re
 import configs
@@ -98,11 +99,17 @@ class SetCharProperty(SysLine):
 
     name: str       # character to modify for
     property: str   # the CharacterInfo property to modify
-    value: str      # the value to set the property to
+    value: Any      # the value to set the property to
 
     def parseArgs(args: str):
         match args.split(None, 2):
-            case [name, property, value]: return SetCharProperty(name, property, value)
+            case [name, property, value]:
+                try:
+                    parsed_value: Any = ast.literal_eval(value)
+                    return SetCharProperty(name, property, parsed_value)
+                except (ValueError, SyntaxError):
+                    raise ValueError(
+                        f'Invalid args for @set {args}; {value} is not a valid python literal.')
             case _: raise ValueError(f'Invalid args for @set: {args}')
 
     def pre_hook(self):
@@ -115,13 +122,7 @@ class SetCharProperty(SysLine):
             raise NonExistentProperty(
                 f'Failed to @set {self.name} {self.property} {self.value}; CharacterInfo does not have property {self.property}')
 
-        # possible type conversions
-        try: 
-            value = ast.literal_eval(self.value)
-            setattr(charInfo, self.property, value)
-        except ValueError as e:
-            raise NonExistentProperty(
-                f'Failed to @set {self.name} {self.property} {self.value}; {self.value} is not a valid python literal.')
+        setattr(charInfo, self.property, self.value)
 
 
 @dataclass
