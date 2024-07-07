@@ -3,11 +3,11 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, XML
 from pathlib import Path
 from typing import Callable, Generator
-from vidpy import Composition
+from vidpy import Composition, Clip
 import configs
 from dialogueline import DialogueLine, parseDialogueFile
 from sysline import SysLine
-from generation import text_gen, char_gen, header_gen
+from generation import text_gen, char_gen, header_gen, fill_gen
 from characterinfo import CharacterInfo
 from exceptions import DialogueGenException
 import mlt_fix
@@ -22,7 +22,10 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 
     parser.add_argument(
         'components', nargs='+',
-        help='"all" will generate all components. Otherwise, provide one or more options. Options: text, header, chars, char:[name]')
+        help='''
+        "all" will generate all components. Otherwise, provide one or more options. 
+        Options: text, header, chars, char:[name], fill:[resource]
+        ''')
 
     parser.add_argument(
         '--use-blanks', action='store_const', const=True, default=False, dest='use_blanks',
@@ -61,12 +64,13 @@ def process_components(components: list[str], lines: list[DialogueLine | SysLine
     The generator yields a tuple containing the Composition as well as the file_suffix for that component
     '''
     for component in components:
-        match (str.lower(component)):
+        match component:
             case 'all': yield from gen_all(lines)
             case 'text': yield from gen_text(lines)
             case 'header': yield from gen_header(lines)
             case 'chars': yield from gen_chars(lines)
             case x if x.startswith('char:'): yield from gen_char(lines, x.removeprefix('char:'))
+            case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
             case _: print(f'{component} is not a valid option; skipping')
 
 
@@ -151,3 +155,9 @@ def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[t
     print(f"Generating character component for {character}")
     yield from wrap_generate(lambda: char_gen.generate(lines, character), character,
                              f'Error while generating character component for {character}:')
+
+
+def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[tuple[ExtComposition, str], None, None]:
+    print(f"Generating fill with {resource}")
+    yield from wrap_generate(lambda: fill_gen.generate(lines, resource), resource,
+                             f'Error while generating fill for {resource}:')
