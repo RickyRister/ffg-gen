@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import ast
 import re
 import configs
 from characterinfo import CharacterInfo
@@ -112,20 +113,15 @@ class SetCharProperty(SysLine):
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
             raise NonExistentProperty(
-                f'@set {self.name} {self.property}{configs.PARSING.assignmentDelimiter}{self.value} failed; CharacterInfo does not have property {self.property}')
+                f'Failed to @set {self.name} {self.property} {self.value}; CharacterInfo does not have property {self.property}')
 
         # possible type conversions
-        # self.value starts as a string
-        curr_value = getattr(charInfo, self.property)
-
-        value = self.value
-        if isinstance(curr_value, float) or isinstance(curr_value, int):
-            try:
-                value = int(value)
-            except ValueError:
-                value = float(value)
-
-        setattr(charInfo, self.property, value)
+        try: 
+            value = ast.literal_eval(self.value)
+            setattr(charInfo, self.property, value)
+        except ValueError as e:
+            raise NonExistentProperty(
+                f'Failed to @set {self.name} {self.property} {self.value}; {self.value} is not a valid python literal.')
 
 
 @dataclass
