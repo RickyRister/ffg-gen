@@ -9,10 +9,14 @@
         "all": [
             "text",
             "header",
-            "fill:assets/common/textbox default.png",
+            "fill:!textbox",
             "chars",
-            "fill:assets/common/frame.png"
+            "fill:!frame"
         ]
+    },
+    "resourceNames": {
+        "textbox": "assets/common/textbox default.png",
+        "frame": "assets/common/frame.png"
     },
     "videoMode": {
         "width": 1280,

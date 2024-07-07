@@ -13,6 +13,9 @@ def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtCompositi
     # caculate duration
     total_duration: float = sum([line.duration for line in lines if hasattr(line, 'duration')])
 
+    # follow resource
+    resource = configs.follow_if_named(resource)
+
     return ExtComposition(
         [Clip(resource).set_duration(total_duration)],
         singletrack=True,

@@ -2,6 +2,7 @@ from argparse import Namespace
 from dataclasses import dataclass
 import json
 from duration import DurationFix, Threshold
+from exceptions import MissingProperty
 
 # parsed command line args
 ARGS: Namespace
@@ -82,6 +83,7 @@ CHARACTERS: dict[str, dict]
 
 # not handled by own class but still stored as a raw data structure
 COMPONENT_MACROS: dict[str, list[str]]
+RESOURCE_NAMES: dict[str, str]
 
 
 def loadConfigJson(path: str):
@@ -109,6 +111,7 @@ def loadIntoGlobals(configJson: dict):
     global MOVEMENT
     global CHARACTERS
     global COMPONENT_MACROS
+    global RESOURCE_NAMES
 
     # assign globals
     PARSING = ParsingConfigs(**configJson.get('parsing'))
@@ -120,7 +123,26 @@ def loadIntoGlobals(configJson: dict):
 
     # load dicts
     COMPONENT_MACROS = configJson.get('componentMacros')
+    RESOURCE_NAMES = configJson.get('resourceNames')
 
     # load dicts for the classes to load themselves
     MOVEMENT = configJson.get('movement')
     CHARACTERS = configJson.get('characters')
+
+
+def follow_if_named(resource: str) -> str:
+    '''Converts the resource to the proper link if it's a named resource.
+
+    Named resources are indicated by starting with a !
+    '''
+
+    # return early if it's not a named resource
+    if not resource.startswith('!'):
+        return resource
+
+    # get name
+    name: str = resource[1:]
+    if name not in RESOURCE_NAMES:
+        raise MissingProperty(f'Named resource "{name}" not found.')
+    else:
+        return RESOURCE_NAMES.get(name)
