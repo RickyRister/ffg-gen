@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from functools import cache
 import re
 import configs
 from characterinfo import CharacterInfo
@@ -33,14 +32,8 @@ class SetExpr(SysLine):
     name: str
     expression: str
 
-    @cache
-    def getExpressionRegex() -> re.Pattern:
-        """We have this in a separate function so we can cache the result and don't have to recompile every time
-        """
-        return re.compile(configs.PARSING.expressionRegex)
-
     def parseArgs(args: str):
-        if (matches := SetExpr.getExpressionRegex().match(args)):
+        if (matches := re.match(configs.PARSING.expressionRegex, args)):
             return SetExpr(
                 name=matches.group('name').lower().strip(),
                 expression=matches.group('expression').strip())

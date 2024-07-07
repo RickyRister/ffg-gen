@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Iterable
-from functools import cache
 from bisect import bisect
 import re
 import configs
@@ -73,12 +72,12 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
     expression: str = None
 
     # try to match normal dialogue line
-    match = getDialoguePattern().match(line)
+    match = re.match(configs.PARSING.dialogueRegex, line)
     if match:
         expression = match.group('expression').strip()  # normal dialogue line exclusive group
     else:
         # try to match shortened dialogue line and throw if that match also fails
-        if not (match := getShortDialoguePattern().match(line)):
+        if not (match := re.match(configs.PARSING.shortDialogueRegex, line)):
             raise ValueError(f'line did not match regex exactly: {line}')
 
     # groups that appear in both dialogue line types
@@ -91,17 +90,3 @@ def parseLine(line: str) -> DialogueLine | SysLine | None:
 
 def isComment(line: str) -> bool:
     return len(line) == 0 or line.startswith('#') or line.startswith('//') or line.startswith('(')
-
-
-@cache
-def getDialoguePattern() -> re.Pattern:
-    """We have this in a separate function so we can cache the result and don't have to recompile every time
-    """
-    return re.compile(configs.PARSING.dialogueRegex)
-
-
-@cache
-def getShortDialoguePattern() -> re.Pattern:
-    """We have this in a separate function so we can cache the result and don't have to recompile every time
-    """
-    return re.compile(configs.PARSING.shortDialogueRegex)
