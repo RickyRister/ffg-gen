@@ -23,8 +23,12 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
     parser.add_argument(
         'components', nargs='+',
         help='''
-        "all" will generate all components. Otherwise, provide one or more options. 
-        Options: text, header, chars, char:[name], fill:[resource]
+        Determines which components to generate. Order does matter, and goes from top layer to bottom layer.
+        Built-in options: text, header, chars, char:[name], fill:[resource]
+
+        You can configure macros in your config json under "componentMacros".
+        Each macro maps to an array of components.
+        Macros can be recursive :)
         ''')
 
     parser.add_argument(
@@ -65,13 +69,14 @@ def process_components(components: list[str], lines: list[DialogueLine | SysLine
     '''
     for component in components:
         match component:
-            case 'all': yield from gen_all(lines)
+            case macro if macro in configs.COMPONENT_MACROS:
+                yield from process_components(configs.COMPONENT_MACROS.get(macro), lines)
             case 'text': yield from gen_text(lines)
             case 'header': yield from gen_header(lines)
             case 'chars': yield from gen_chars(lines)
             case x if x.startswith('char:'): yield from gen_char(lines, x.removeprefix('char:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
-            case _: print(f'{component} is not a valid option; skipping')
+            case _: raise ValueError(f'{component} is not a valid component.')
 
 
 def reset_configs():
@@ -119,13 +124,6 @@ def wrap_generate(gen_function: Callable[[list], Composition],
             raise e
     finally:
         reset_configs()
-
-
-def gen_all(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
-    print("Generating all components...")
-    yield from gen_text(lines)
-    yield from gen_header(lines)
-    yield from gen_chars(lines)
 
 
 def gen_text(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:

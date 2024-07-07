@@ -5,6 +5,15 @@
         "expressionRegex": "(?P<name>.+)(?P<expression>\\d+)",
         "assignmentDelimiter": "="
     },
+    "componentMacros": {
+        "all": [
+            "text",
+            "header",
+            "fill:assets/common/textbox default.png",
+            "chars",
+            "fill:assets/common/frame.png"
+        ]
+    },
     "videoMode": {
         "width": 1280,
         "height": 960,

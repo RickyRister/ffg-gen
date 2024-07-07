@@ -80,6 +80,9 @@ DIALOGUE_BOX: DialogueBoxConfigs
 MOVEMENT: dict[str, dict]
 CHARACTERS: dict[str, dict]
 
+# not handled by own class but still stored as a raw data structure
+COMPONENT_MACROS: dict[str, list[str]]
+
 
 def loadConfigJson(path: str):
     """Reads the json file into appropriate configs, then loads the json values into the globals
@@ -105,6 +108,7 @@ def loadIntoGlobals(configJson: dict):
     global DIALOGUE_BOX
     global MOVEMENT
     global CHARACTERS
+    global COMPONENT_MACROS
 
     # assign globals
     PARSING = ParsingConfigs(**configJson.get('parsing'))
@@ -113,6 +117,9 @@ def loadIntoGlobals(configJson: dict):
     DURATION_FIX = DurationFixConfigs(**configJson.get('durationFix'))
     HEADER = HeaderConfigs(**configJson.get('header'))
     DIALOGUE_BOX = DialogueBoxConfigs(**configJson.get('dialogueBox'))
+
+    # load dicts
+    COMPONENT_MACROS = configJson.get('componentMacros')
 
     # load dicts for the classes to load themselves
     MOVEMENT = configJson.get('movement')
