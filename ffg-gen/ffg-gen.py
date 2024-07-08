@@ -15,7 +15,7 @@ def createArgumentParser() -> ArgumentParser:
         '--input', '-i', type=str, default='dialogue.txt',
         help='path to the input dialogue file')
     parentparser.add_argument(
-        '--output', '-o',  type=str, default='output.mlt',
+        '--output', '-o',  type=str, default=None,
         help='base name of the output file')
     parentparser.add_argument(
         '--debug', '-d', action='store_const', const=True, default=False,

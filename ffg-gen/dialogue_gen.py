@@ -101,12 +101,19 @@ def write_mlt(xml: Element, suffix: str = ''):
     """Writes the xml to a file.
     The suffix is appended to the output name given by the cli args
     """
-    path: Path = Path(configs.ARGS.output)
+    path: Path
+    if configs.ARGS.output is not None:
+        path = Path(configs.ARGS.output)
+    else:
+        path = Path(configs.ARGS.input)
+        path = path.with_suffix('.mlt')
+    
     path = path.with_stem(path.stem + suffix)
 
     with open(path, 'wb') as outfile:
         xml_string = ElementTree.tostring(xml)
         outfile.write(xml_string)
+        print(f'Finished writing output to {path}')
 
 #
 # ===  gen_functions ===
