@@ -134,6 +134,11 @@ class CharacterInfo:
         '''
         local_aliases[alias] = name
 
+    def remove_local_alias(alias: str):
+        '''Removes a local alias
+        '''
+        del local_aliases[alias]
+
     def reset_local_aliases():
         '''Removes all local aliases
         '''

@@ -190,7 +190,7 @@ class ResetAllChars(SysLine):
 
 @dataclass
 class SetAlias(SysLine):
-    '''Sets an alias for a character. That means the alias can be used in place of the name.
+    '''Sets a local alias for a character. That means the alias can be used in place of the name.
 
     Usage: @alias [name] [alias]
     '''
@@ -204,9 +204,29 @@ class SetAlias(SysLine):
             case _: raise ValueError(f'Invalid args for @alias: {args}')
 
     def pre_hook(self):
-        '''Set alias somehow
+        '''Set alias
         '''
         CharacterInfo.add_local_alias(self.name, self.alias)
+
+
+@dataclass
+class UnsetAlias(SysLine):
+    '''Unset a local alias for a character.
+
+    Usage: @unalias [alias]
+    '''
+
+    alias: str
+
+    def parseArgs(args: str):
+        match args.split():
+            case [alias]: return UnsetAlias(alias)
+            case _: raise ValueError(f'Invalid args for @unalias: {args}')
+
+    def pre_hook(self):
+        '''unset alias
+        '''
+        CharacterInfo.remove_local_alias(self.alias)
 
 
 @dataclass
@@ -243,6 +263,7 @@ def parse_sysline(line: str):
         case ['reset', args]: return ResetCharProperties.parseArgs(args.strip())
         case ['resetall']: return ResetAllChars()
         case ['alias', args]: return SetAlias.parseArgs(args.strip())
+        case ['unalias', args]: return UnsetAlias.parseArgs(args.strip())
         case ['grouped', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
