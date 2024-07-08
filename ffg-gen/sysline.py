@@ -230,6 +230,51 @@ class UnsetAlias(SysLine):
 
 
 @dataclass
+class Nick(SysLine):
+    '''Basically a shorthand for @alias [name] [alias] + @set [name] displayName [alias]
+
+    Usage: @nick [name] [nickname]
+    '''
+
+    name: str
+    nickname: str
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name, nickname]: return Nick(name, nickname)
+            case _: raise ValueError(f'Invalid args for @nick: {args}')
+
+    def pre_hook(self):
+        '''Set alias and set displayName
+        '''
+        CharacterInfo.add_local_alias(self.name, self.nickname)
+        charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
+        charInfo.displayName = self.nickname
+
+
+@dataclass
+class UnNick(SysLine):
+    '''Undoes the effects of a @nick. Unique in that it takes the original name instead of the nick
+
+    Usage: @unnick [name]
+    '''
+
+    name: str
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name]: return UnNick(name)
+            case _: raise ValueError(f'Invalid args for @unnick: {args}')
+
+    def pre_hook(self):
+        '''Unset displayName and unset alias
+        '''
+        charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
+        charInfo.reset_attr('displayName')
+        CharacterInfo.remove_local_aliases_for_name(self.name)
+
+
+@dataclass
 class GroupedComponent(SysLine):
     '''Used by the group:[group] and groups component to recursively generate components.
     Not used during actual generation processing.
@@ -264,6 +309,8 @@ def parse_sysline(line: str):
         case ['resetall']: return ResetAllChars()
         case ['alias', args]: return SetAlias.parseArgs(args.strip())
         case ['unalias', args]: return UnsetAlias.parseArgs(args.strip())
+        case ['nick', args]: return Nick.parseArgs(args.strip())
+        case ['unnick', args]: return UnNick.parseArgs(args.strip())
         case ['grouped', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
