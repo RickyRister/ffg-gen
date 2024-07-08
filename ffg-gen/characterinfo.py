@@ -87,15 +87,16 @@ class CharacterInfo:
 
     def ofName(name: str):
         """Looks up the name in the config json and parses the CharacterInfo from that.
-        This method is meant to process any aliases (once we add that) before calling the cached get with the real name
+        This method is meant to process any aliases before calling the cached get with the real name
         """
+        name = str.lower(name)
+        
         if name in local_aliases:
             return CharacterInfo.ofName(local_aliases.get(name))
 
         if name in configs.ALIASES:
             return CharacterInfo.ofName(configs.ALIASES.get(name))
 
-        name = str.lower(name)
         return CharacterInfo.get_cached(name)
 
     @cache

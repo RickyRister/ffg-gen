@@ -192,15 +192,15 @@ class ResetAllChars(SysLine):
 class SetAlias(SysLine):
     '''Sets an alias for a character. That means the alias can be used in place of the name.
 
-    Usage: @alias [alias] [name]
+    Usage: @alias [name] [alias]
     '''
 
-    alias: str
     name: str
+    alias: str
 
     def parseArgs(args: str):
         match args.split():
-            case [alias, name]: return SetAlias(alias, name)
+            case [name, alias]: return SetAlias(name, alias)
             case _: raise ValueError(f'Invalid args for @alias: {args}')
 
     def pre_hook(self):

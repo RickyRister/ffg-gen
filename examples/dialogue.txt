@@ -30,7 +30,7 @@ Reimu1: Why is my name bob now
 
 灵梦1: oh no i'm bob again
 
-@alias ??? kiko
+@alias kiko ???
 @set kiko displayName '???'
 
 ???: I don't need an expression if I'm not on screen yet
@@ -48,6 +48,8 @@ Sameika1: Still, it's a lead, so let's follow it.
 ???1: Ah! It looks like I attracted some visitors.
 
 Reimu7: at least i'm no longer bob now
+
+@alias reimu sameika
 
 @unset reimu headerOutlineColor
 
