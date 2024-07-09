@@ -4,12 +4,12 @@ import configs
 local_aliases: dict[str, str] = dict()
 
 
-def follow_alias(name: str):
+def follow_alias(name: str, follow_local: bool = True):
     '''Follows any aliases.
     Checks the local aliases first.
     Aliases are recursive.
     '''
-    if name in local_aliases:
+    if follow_local and name in local_aliases:
         return follow_alias(local_aliases.get(name))
 
     if name in configs.GLOBAL_ALIASES:
