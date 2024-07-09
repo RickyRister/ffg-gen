@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Callable, Generator
 from vidpy import Composition, Clip
 import configs
+import alias
 from dialogueline import DialogueLine, parseDialogueFile
 from sysline import SysLine
 from generation import text_gen, char_gen, header_gen, fill_gen
@@ -85,7 +86,7 @@ def reset_configs():
     '''Resets any global configs that might have gotten altered during a run
     '''
     CharacterInfo.get_cached.cache_clear()
-    CharacterInfo.reset_local_aliases()
+    alias.reset_local_aliases()
 
 
 def fix_and_write_mlt(mlt: Element, file_suffix: str = None):
@@ -154,15 +155,8 @@ def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposi
     # figure out which names appear in the dialogue
     names: set[str] = {line.name for line in lines if hasattr(line, 'name')}
 
-    # filter out names that don't appear in characters or global aliases, and follow global aliases
-    def follow_alias(name: str) -> str:
-        if name in configs.ALIASES:
-            return configs.ALIASES.get(name)
-        else:
-            return name
-
-    names = {follow_alias(name) for name in names
-             if name in configs.CHARACTERS or name in configs.ALIASES}
+    names = {alias.follow_alias(name) for name in names
+             if name in configs.CHARACTERS or name in configs.GLOBAL_ALIASES}
 
     # call gen_char with all those characters
     for name in names:

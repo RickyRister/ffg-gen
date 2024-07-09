@@ -3,6 +3,7 @@ from typing import Any
 import ast
 import re
 import configs
+import alias
 from characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
 
@@ -231,7 +232,7 @@ class SetAlias(SysLine):
     def pre_hook(self):
         '''Set alias
         '''
-        CharacterInfo.add_local_alias(self.name, self.alias)
+        alias.add_local_alias(self.name, self.alias)
 
 
 @dataclass
@@ -251,7 +252,7 @@ class UnsetAlias(SysLine):
     def pre_hook(self):
         '''unset alias
         '''
-        CharacterInfo.remove_local_alias(self.alias)
+        alias.remove_local_alias(self.alias)
 
 
 @dataclass
@@ -272,7 +273,7 @@ class Nick(SysLine):
     def pre_hook(self):
         '''Set alias and set displayName
         '''
-        CharacterInfo.add_local_alias(self.name, self.nickname)
+        alias.add_local_alias(self.name, self.nickname)
         charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
         charInfo.displayName = self.nickname
 
@@ -296,7 +297,7 @@ class UnNick(SysLine):
         '''
         charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
         charInfo.reset_attr('displayName')
-        CharacterInfo.remove_local_aliases_for_name(self.name)
+        alias.remove_local_aliases_for_name(self.name)
 
 
 @dataclass

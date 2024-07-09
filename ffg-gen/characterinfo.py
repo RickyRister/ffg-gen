@@ -2,11 +2,9 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Any
 import configs
+import alias
 from movementinfo import MovementInfo
 from exceptions import MissingProperty
-
-
-local_aliases: dict[str, str] = dict()
 
 
 @dataclass
@@ -90,12 +88,7 @@ class CharacterInfo:
         This method is meant to process any aliases before calling the cached get with the real name
         """
         name = str.lower(name)
-        
-        if name in local_aliases:
-            return CharacterInfo.ofName(local_aliases.get(name))
-
-        if name in configs.ALIASES:
-            return CharacterInfo.ofName(configs.ALIASES.get(name))
+        name = alias.follow_alias(name)
 
         return CharacterInfo.get_cached(name)
 
@@ -128,25 +121,3 @@ class CharacterInfo:
         '''
         for attr, _ in vars(self).items():
             self.reset_attr(attr)
-
-    def add_local_alias(name: str, alias: str):
-        '''Set local alias. The local alias dict is (ironically enough) a global variable.
-        '''
-        local_aliases[alias] = name
-
-    def remove_local_alias(alias: str):
-        '''Removes a local alias
-        '''
-        del local_aliases[alias]
-
-    def remove_local_aliases_for_name(name: str):
-        '''Removes all local aliases for the given name
-        '''
-        for key, value in list(local_aliases.items()):
-            if value == name:
-                del local_aliases[key]
-
-    def reset_local_aliases():
-        '''Removes all local aliases
-        '''
-        local_aliases.clear()
