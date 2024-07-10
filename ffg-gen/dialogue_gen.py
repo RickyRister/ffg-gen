@@ -86,7 +86,7 @@ def reset_configs():
     '''Resets any global configs that might have gotten altered during a run
     '''
     CharacterInfo.get_cached.cache_clear()
-    alias.reset_local_aliases()
+    alias.reset_all_local()
 
 
 def fix_and_write_mlt(mlt: Element, file_suffix: str = None):

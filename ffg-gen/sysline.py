@@ -258,6 +258,7 @@ class UnsetAlias(SysLine):
 @dataclass
 class Nick(SysLine):
     '''Basically a shorthand for @alias [name] [alias] + @set [name] displayName [alias]
+    Nicks are tracked separately, so that an unnick doesn't remove existing aliases
 
     Usage: @nick [name] [nickname]
     '''
@@ -274,13 +275,15 @@ class Nick(SysLine):
         '''Set alias and set displayName
         '''
         alias.add_local_alias(self.name, self.nickname)
+        alias.track_nick(self.name, self.nickname)
         charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
         charInfo.displayName = self.nickname
 
 
 @dataclass
 class UnNick(SysLine):
-    '''Undoes the effects of a @nick. Unique in that it takes the original name instead of the nick
+    '''Undoes the effects of a @nick. 
+    Unique in that it takes the original name instead of the nick, and won't remove existing aliases.
 
     Usage: @unnick [name]
     '''
@@ -297,7 +300,8 @@ class UnNick(SysLine):
         '''
         charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
         charInfo.reset_attr('displayName')
-        alias.remove_local_aliases_for_name(self.name)
+        if (nickname := alias.pop_nick(self.name)) is not None:
+            alias.remove_local_alias(nickname)
 
 
 @dataclass
