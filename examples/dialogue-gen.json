@@ -121,18 +121,18 @@
     "dialogueBox": {
         "geometry": "104 767 691 133",
         "dropTextMaskPath": "!droptextMask",
-        "dropTextEnd": "00:00:00.160",
+        "dropTextEnd": 5,
         "font": "Linux Biolinum O",
         "fontSize": 28
     },
     "movement": {
         "common": {
             "backBrightness": 0.7,
-            "brightnessFadeEnd": "00:00:00.200",
-            "moveEnd": "00:00:00.200",
             "exitDuration": 0.25,
-            "fadeInEnd": "00:00:00.200",
-            "fadeOutEnd": "00:00:00.200"
+            "brightnessFadeEnd": 6,
+            "moveEnd": 6,
+            "fadeInEnd": 6,
+            "fadeOutEnd": 6
         },
         "player": {
             "backGeometry": "-36 24 1280 960",
