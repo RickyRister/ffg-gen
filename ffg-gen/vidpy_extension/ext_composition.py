@@ -29,22 +29,22 @@ class ExtComposition(Composition):
         args += ['-track']
 
         # add args and transitions for all clips
-        for i, c in enumerate(self.clips):
-            c.track_number = i + 1
-            args += c.args(self.singletrack)
-            args += c.transition_args(i+1)
+        for i, clip in enumerate(self.clips):
+            clip.track_number = i + 1
+            args += clip.args(self.singletrack)
+            args += clip.transition_args(i+1)
 
         # add mask clips
-        for i, c in enumerate(self.clips):
-            if c.mask:
-                args += c.mask.args()
+        for i, clip in enumerate(self.clips):
+            if clip.mask:
+                args += clip.mask.args()
 
         # add matte transitions for mask clips
         mask_track_number = len(self.clips)
-        for i, c in enumerate(self.clips):
-            if c.mask:
+        for i, clip in enumerate(self.clips):
+            if clip.mask:
                 args += ['-transition', 'matte',
-                         'a_track={}'.format(c.track_number), 'b_track={}'.format(mask_track_number)]
+                         'a_track={}'.format(clip.track_number), 'b_track={}'.format(mask_track_number)]
                 mask_track_number += 1
 
         return args
