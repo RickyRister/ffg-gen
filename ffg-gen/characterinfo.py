@@ -42,6 +42,7 @@ class CharacterInfo:
 
     # movement timing configs
     moveEnd: str = None
+    moveCurve: str = None               # single char curve determiner
     exitDuration: int | float = None    # ints will be interpreted as frames and floats as seconds
     fadeInEnd: str = None
     fadeOutEnd: str = None

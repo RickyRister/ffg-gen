@@ -138,6 +138,7 @@
             "exitDuration": 0.25,
             "brightnessFadeEnd": 6,
             "moveEnd": 6,
+            "moveCurve": "k",
             "fadeInEnd": 6,
             "fadeOutEnd": 6
         },

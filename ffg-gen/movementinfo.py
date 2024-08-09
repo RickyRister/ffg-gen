@@ -16,7 +16,7 @@ class MovementInfo:
     # geometry
     geometry: str = None
     frontGeometry: str = None
-    backGeometry:str = None
+    backGeometry: str = None
     offstageGeometry: str = None
     offstageBackGeometry: str = None
 
@@ -24,9 +24,10 @@ class MovementInfo:
     frontBrightness: float = 1
     backBrightness: float = 0.7
     brightnessFadeEnd: str = None
-    
+
     # movement timing configs
     moveEnd: str = None
+    moveCurve: str = None               # single char curve determiner
     exitDuration: int | float = None    # ints will be interpreted as frames and floats as seconds
     fadeInEnd: str = None
     fadeOutEnd: str = None
@@ -41,10 +42,14 @@ class MovementInfo:
         # frontGeometry defaults to no transform
         if self.frontGeometry is None:
             self.frontGeometry = f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height} 1'
-        
+
         # offstageBackGeometry defaults to the same as offstageGeometry
         if self.offstageBackGeometry is None:
             self.offstageBackGeometry = self.offstageGeometry
+
+        # moveCurve defaults to empty
+        if self.moveCurve is None:
+            self.moveCurve = ''
 
     @cache
     def ofCommon():
