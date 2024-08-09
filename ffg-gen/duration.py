@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+from vidpy.utils import Second, Frame
+import configs
+from exceptions import MissingProperty
+
 
 @dataclass
 class DurationFix:
@@ -17,5 +21,24 @@ class Threshold:
     """Contains info about mapping count to duration
     """
 
-    count: int
-    seconds: float
+    count: int              # bottom word/char count to hit this threshold
+    seconds: float = None   # duration of clip in seconds
+    frames: int = None      # duration of clip in frames
+
+    def get_duration(self) -> Second | Frame:
+        '''Gets the duration, in the unit that's given in the configs
+        '''
+        match configs.DURATIONS.unit:
+            case 'seconds':
+                if self.seconds is None:
+                    raise MissingProperty(
+                        f'No seconds value configured for threshold at count {self.count}')
+                else:
+                    return Second(self.seconds)
+            case 'frames':
+                if self.frames is None:
+                    raise MissingProperty(
+                        f'No frames value configured for threshold at count {self.count}')
+                else:
+                    return Frame(self.frames)
+            case _: raise ValueError(f"'{configs.DURATIONS.unit}' is not a valid duration unit.")

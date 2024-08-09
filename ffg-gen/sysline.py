@@ -3,6 +3,7 @@ from typing import Any
 import ast
 import re
 import configs
+from vidpy.utils import Second, Frame
 import alias
 from characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
@@ -103,16 +104,23 @@ class CharExit(SysLine):
 
 @dataclass
 class Wait(SysLine):
-    """Makes nothing happen for the next x seconds.
-    Usage @wait [seconds]
+    """Makes nothing happen for the given duration.
+    Interprets integer durations as frames and float durations as seconds.
+
+    Usage: @wait [duration]
     """
 
-    duration: float
+    duration: Second | Frame
 
     def parseArgs(args: str):
         match args.split():
-            case [duration]: return Wait(duration=float(duration))
+            case [duration]: return Wait(Wait.parse_duration(duration))
             case _: raise ValueError(f'Invalid args for @wait: {args}')
+
+    def parse_duration(duration: str):
+        '''Does some duration conversions, depending on the current duration unit
+        '''
+        return configs.DURATIONS.convert_duration(ast.literal_eval(duration))
 
 
 @dataclass

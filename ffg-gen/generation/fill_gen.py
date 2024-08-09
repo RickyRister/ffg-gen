@@ -1,9 +1,9 @@
 from vidpy import Clip
 from dialogueline import DialogueLine
 from sysline import SysLine
+from vidpy.utils import Second, Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-from exceptions import expect
 
 
 def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtComposition:
@@ -11,13 +11,18 @@ def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtCompositi
     The lines are used to calculate the duration of the single Clip.
     """
     # caculate duration
-    total_duration: float = sum([line.duration for line in lines if hasattr(line, 'duration')])
+    durations: list[Second | Frame] = [line.duration for line in lines if hasattr(line, 'duration')]
+    total_duration: Second | Frame = sum(durations)
+
+    # the gap between each clip is 1 frame, so we also need to make up those durations
+    if configs.DURATIONS.unit == 'frames':
+        total_duration += Frame(len(durations) - 1)
 
     # follow resource
     resource = configs.follow_if_named(resource)
 
     return ExtComposition(
-        [Clip(resource).set_duration(total_duration)],
+        [Clip(resource, start=Frame(0)).set_duration(total_duration)],
         singletrack=True,
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,

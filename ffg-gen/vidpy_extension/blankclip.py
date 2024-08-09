@@ -1,5 +1,6 @@
 
 from vidpy import Clip
+from vidpy.utils import Second, Frame
 import configs
 
 
@@ -14,10 +15,10 @@ class BlankClip(Clip):
     Don't use unless you're certain that all gap lengths are covered by duration fixes.
     '''
 
-    def ofDuration(duration: float):
+    def ofDuration(duration: Second | Frame):
         '''Creates a blank clip of the given duration
         '''
-        return BlankClip().set_offset(duration)
+        return BlankClip(start=Frame(0)).set_offset(duration)
 
     def args(self, singletrack=False):
         '''Returns melt command line arguments as a list'''
@@ -33,7 +34,7 @@ class BlankClip(Clip):
         return args
 
 
-def transparent_clip(duration: float) -> Clip:
+def transparent_clip(duration: Second | Frame) -> Clip:
     '''Creates a transparent clip with the given duration.
     This is the best way of having a blank clip without causing durationFix issues.
     If the option --use-blanks is on, this will return an actual blank clip 
@@ -41,4 +42,4 @@ def transparent_clip(duration: float) -> Clip:
     if configs.ARGS.use_blanks:
         return BlankClip.ofDuration(duration)
     else:
-        return Clip('color:#00000000').set_duration(duration)
+        return Clip('color:#00000000', start=Frame(0)).set_duration(duration)

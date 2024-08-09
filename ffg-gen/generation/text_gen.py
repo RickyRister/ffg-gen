@@ -1,4 +1,5 @@
-from vidpy import Clip, Composition
+from vidpy import Clip
+from vidpy.utils import Frame
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
@@ -58,7 +59,7 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
         fontSize=expect(charInfo.dialogueFontSize, 'dialogueFontSize', name),
         color=expect(charInfo.dialogueColor, 'dialogueColor', name))
 
-    return Clip('color:#00000000').set_duration(line.duration)\
+    return Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)\
         .fx('qtext', richTextFilter)\
         .fx('mask_start', dropTextFilter)\
         .fx('dynamictext', headerFilter)

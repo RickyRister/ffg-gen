@@ -4,6 +4,7 @@ from bisect import bisect
 import re
 import configs
 import sysline
+from vidpy.utils import Second, Frame
 from sysline import SysLine
 from characterinfo import CharacterInfo
 
@@ -25,9 +26,9 @@ class DialogueLine:
         return CharacterInfo.ofName(self.name)
 
     @property
-    def duration(self) -> float:
+    def duration(self) -> Second | Frame:
         """Determines how long the text should last for depending on its length.
-        Returns duration in seconds
+        Duration unit depends on configs 
         """
 
         count: int = None
@@ -41,7 +42,7 @@ class DialogueLine:
 
         index = bisect(configs.DURATIONS.thresholds, count,
                        key=lambda threshold: threshold.count)
-        return configs.DURATIONS.thresholds[index-1].seconds
+        return configs.DURATIONS.thresholds[index-1].get_duration()
 
 
 def parseDialogueFile(lines: Iterable[str]) -> list[DialogueLine | SysLine]:

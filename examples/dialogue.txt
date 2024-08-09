@@ -2,7 +2,7 @@
 @expression sameika 2
 @exit kiko
 
-@wait 1
+@wait 1.0
 
 @grouped background fill:!frame
 @grouped background fill:!s1_bg_stage 
@@ -40,7 +40,7 @@ Sameika1: Still, it's a lead, so let's follow it.
 
 (Kiko comes on screen, guitar part stops)
 @enter kiko
-@wait 2
+@wait 2.0
 
 @unset reimu displayName
 

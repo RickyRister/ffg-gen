@@ -2,6 +2,7 @@ from vidpy import Clip, Composition
 from xml.etree.ElementTree import Element
 from enum import Enum
 from typing import Generator
+from vidpy.utils import Second, Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
@@ -135,7 +136,10 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # grab charInfo again
     charInfo: CharacterInfo = CharacterInfo.ofName(targetName, False)
+
+    # exitDuration is stored as as either a int or float, so we need to convert it to the current unit
     exitDuration = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
+    exitDuration: Frame | Second = configs.DURATIONS.convert_duration(exitDuration)
 
     # final exit
     match curr_state:
@@ -158,7 +162,7 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
         case(State.FRONT, False): return Transition.OUT
 
 
-def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: float) -> Clip:
+def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Second | Frame) -> Clip:
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
         return transparent_clip(duration)
@@ -172,7 +176,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     portraitPath = expect(charInfo.portraitPathFormat, 'portraitPathFormat', charInfo.name)\
         .format(expression=expression)
     portraitPath = configs.follow_if_named(portraitPath)
-    clip = Clip(portraitPath).set_duration(duration)
+    clip = Clip(portraitPath, start=Frame(0)).set_duration(duration)
 
     # apply base geometry correction to image if required
     if charInfo.geometry:

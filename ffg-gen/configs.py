@@ -1,6 +1,8 @@
+import math
 from argparse import Namespace
 from dataclasses import dataclass
 import json
+from vidpy.utils import Second, Frame
 from duration import DurationFix, Threshold
 from exceptions import MissingProperty
 
@@ -29,12 +31,31 @@ class VideoModeConfigs:
 @dataclass
 class DurationConfigs:
     mode: str
+    unit: str
     thresholds: list[Threshold]
 
     def __post_init__(self):
         # convert dict to actual objects, if nessecary
         if isinstance(self.thresholds[0], dict):
             self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
+
+    def convert_duration(self, duration: int | float) -> Frame | Second:
+        '''Converts the duration into either seconds or frames, accounting for the settings
+
+        If duration is an int: interpret as frames. 
+        Directly convert to a Frame regardless of the unit.
+
+        If duration is a float: interpret as seconds. 
+        If the unit is frames, will multiply the duration by the fps before converting to Second
+        '''
+        if isinstance(duration, int):
+            return Frame(duration)
+        else:
+            if self.unit == 'frames':
+                # we subtract 1 from the resulting frame if it lands on an integer
+                return Frame(math.floor(duration * VIDEO_MODE.fps - 0.000001))
+            else:
+                return Second(duration)
 
 
 @dataclass

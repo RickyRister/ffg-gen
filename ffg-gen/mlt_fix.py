@@ -19,8 +19,11 @@ def fix_mlt(xml: Element) -> Element:
 
     xml = make_mlt_editable(xml)
     xml = fix_filters(xml)
-    if not configs.ARGS.no_duration_fix:
+
+    # we do not need to do durationFix if we're in frame mode
+    if configs.DURATIONS.unit == 'seconds' and not configs.ARGS.no_duration_fix:
         xml = fix_out_timestamps(xml)
+    
     xml = fix_affine_out(xml)
 
     return xml

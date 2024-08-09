@@ -1,4 +1,5 @@
 from vidpy import Clip
+from vidpy.utils import Frame
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, Wait
@@ -39,4 +40,4 @@ def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
     overlayPath: str = configs.follow_if_named(
         expect(charInfo.headerOverlayPath, 'headerOverlayPath', charInfo.name))
 
-    return Clip(overlayPath).set_duration(line.duration)
+    return Clip(overlayPath, start=Frame(0)).set_duration(line.duration)

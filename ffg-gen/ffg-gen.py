@@ -22,7 +22,7 @@ def createArgumentParser() -> ArgumentParser:
         help='causes the program to throw on error instead of just printing and skipping')
     parentparser.add_argument(
         '--no-duration-fix', action='store_const', const=True, default=False, dest='no_duration_fix',
-        help='Do not run the duration fix on the resulting mlt. This will mostly likely cause the keyframes to be broken, so no idea why you would enable this.')
+        help='Do not run the duration fix on the resulting mlt. This will mostly likely cause the keyframes to be broken, so no idea why you would enable this. Only relevant if duration unit is seconds')
     parentparser.add_argument(
         '--separate-track-export', action='store_const', const=True, default=False, dest='separate_track_export',
         help='Export each track as a separate mlt file.')
