@@ -7,6 +7,8 @@
 @grouped background fill:!frame
 @grouped background fill:!s1_bg_stage 
 
+// prebattle
+
 @enter sameika
 
 Sameika3: Eh? Someone's playing some kind of koto.
@@ -80,3 +82,20 @@ Reimu7: (..Doesn't her tree need sunlight anyway?)
 (Boss theme starts)
 
 Kiko1: I guess I'll have to fight you, so here I go.
+
+// postbattle
+
+@expression reimu 4
+@expression sameika 8
+
+Kiko9lo: Ahhh, I lost..
+Kiko1lo: The sun is enjoyable, so maybe it isn't so bad for the incident to end.
+Sameika8: That was really pointless, wasn't it?
+Reimu4: There's always someone who has to get in my way for no reason.
+Reimu4: I wish these youkai would finally remember who I am,
+Reimu4: so I don't have to keep reminding them with a beatdown.
+Sameika1: At least we know there's nothing here.
+Sameika2: The youkai are probably causing the humans lots of grievance,
+Sameika2: so onward we go.
+
+

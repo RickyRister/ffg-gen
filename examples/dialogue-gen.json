@@ -1,6 +1,6 @@
 {
     "parsing": {
-        "dialogueRegex": "(?P<name>.+)(?P<expression>\\d+): (?P<text>.+)",
+        "dialogueRegex": "(?P<name>.+)(?P<expression>\\d+.*): (?P<text>.+)",
         "shortDialogueRegex": "(?P<name>.+): (?P<text>.+)",
         "expressionRegex": "(?P<name>.+)(?P<expression>\\d+)",
         "assignmentDelimiter": "="
@@ -159,7 +159,7 @@
             "isPlayer": true,
             "displayName": "Reimu",
             "geometry": "-315 99.7849 1280 960",
-            "portraitPathFormat": "!reimu_folder!player01{expression:0>2}.png",
+            "portraitPathFormat": "!reimu_folder!reimu {expression}.png",
             "headerOutlineColor": "#fd6666",
             "headerOverlayPath": "!reimu_folder!overlay.png"
         },
@@ -170,7 +170,7 @@
             "backGeometry": "-68 -24 1280 960",
             "offstageGeometry": "-92 48 1280 960",
             "offstageBackGeometry": "-104 24 1280 960",
-            "portraitPathFormat": "!sameika_folder!spplayer01{expression:0>2}.png",
+            "portraitPathFormat": "!sameika_folder!sameika {expression}.png",
             "headerOutlineColor": "#ffff9300",
             "headerOverlayPath": "!sameika_folder!overlay.png"
         },
@@ -178,7 +178,7 @@
             "isPlayer": false,
             "displayName": "Kiko",
             "geometry": "134 160 1280 960",
-            "portraitPathFormat": "!s1_folder!boss01{expression:0>2}.png",
+            "portraitPathFormat": "!s1_folder!b1 {expression}.png",
             "headerOutlineColor": "#73FA79",
             "headerOverlayPath": "!s1_folder!overlay.png"
         }
