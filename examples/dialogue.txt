@@ -7,7 +7,7 @@
 @grouped background fill:!frame
 @grouped background fill:!s1_bg_stage 
 
-// prebattle
+=== prebattle
 
 @enter sameika
 
@@ -83,7 +83,11 @@ Reimu7: (..Doesn't her tree need sunlight anyway?)
 
 Kiko1: I guess I'll have to fight you, so here I go.
 
-// postbattle
+=== postbattle
+
+@enter reimu
+@enter sameika
+@enter kiko
 
 @expression reimu 4
 @expression sameika 8

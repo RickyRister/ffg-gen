@@ -43,16 +43,34 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 def dialogue_gen():
     configs.loadConfigJson(configs.ARGS.config)
 
-    lines = None
+    common_lines: list[DialogueLine | SysLine] = None
+    chapters: dict[str, list[DialogueLine | SysLine]] = None
     with open(configs.ARGS.input) as inputFile:
-        lines = line_parse.parseDialogueFile(inputFile)
+        common_lines, chapters = line_parse.parseDialogueFile(inputFile)
 
+    if len(chapters) == 0:
+        # no chapters; just process all lines
+        process_chapter(None, common_lines)
+    else:
+        # otherwise, process each chapter separately, 
+        for chapter_name, lines in chapters.items():
+            print(f'=== Generating for chapter: {chapter_name} ===')
+            # make sure to include the common lines the start
+            process_chapter(chapter_name, common_lines + lines)
+
+
+def process_chapter(chapter_name: str | None, lines: list[DialogueLine | SysLine]):
+    '''Processes a single chapter
+    Assumes that lines already includes the common lines
+    '''
     composition_generator: Generator[tuple[ExtComposition, str]]
     composition_generator = process_components(configs.ARGS.components, lines)
 
     if configs.ARGS.separate_track_export:
-        for (composition, file_suffix) in composition_generator:
-            fix_and_write_mlt(composition.xml_as_element(), file_suffix)
+        for composition, file_suffix in composition_generator:
+            # append chapter_name to front of file_suffix if present
+            suffix = chapter_name + '_' + file_suffix if chapter_name is not None else file_suffix
+            fix_and_write_mlt(composition.xml_as_element(), suffix)
     else:
         compositions: list[ExtComposition] = [genned[0] for genned in composition_generator]
 
@@ -62,7 +80,7 @@ def dialogue_gen():
         print("Done generating. Now exporting combined mlt...")
 
         xml: Element = compositions_to_mlt(compositions)
-        fix_and_write_mlt(xml)
+        fix_and_write_mlt(xml, chapter_name)
 
 
 def process_components(components: list[str], lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
@@ -109,7 +127,7 @@ def write_mlt(xml: Element, suffix: str = ''):
     else:
         path = Path(configs.ARGS.input)
         path = path.with_suffix('.mlt')
-    
+
     path = path.with_stem(path.stem + suffix)
 
     with open(path, 'wb') as outfile:
