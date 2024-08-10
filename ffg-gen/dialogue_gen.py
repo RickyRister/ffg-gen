@@ -6,7 +6,8 @@ from typing import Callable, Generator
 from vidpy import Composition, Clip
 import configs
 import alias
-from dialogueline import DialogueLine, parseDialogueFile
+from dialogueline import DialogueLine
+import line_parse
 from sysline import SysLine
 from generation import text_gen, char_gen, header_gen, fill_gen
 from characterinfo import CharacterInfo
@@ -44,7 +45,7 @@ def dialogue_gen():
 
     lines = None
     with open(configs.ARGS.input) as inputFile:
-        lines = parseDialogueFile(inputFile)
+        lines = line_parse.parseDialogueFile(inputFile)
 
     composition_generator: Generator[tuple[ExtComposition, str]]
     composition_generator = process_components(configs.ARGS.components, lines)
