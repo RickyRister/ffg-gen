@@ -1,7 +1,7 @@
-from vidpy import Clip, Composition
-from xml.etree.ElementTree import Element
+from vidpy import Clip
 from enum import Enum
 from typing import Generator
+from dataclasses import dataclass
 from vidpy.utils import Second, Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine
@@ -13,6 +13,8 @@ from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 
+
+# === Objects ====
 
 class State(Enum):
     OFFSCREEN = 0
@@ -45,6 +47,25 @@ class Transition(Enum):
             case Transition.STAY_OFFSCREEN: return State.OFFSCREEN
 
 
+@dataclass
+class ClipInfo:
+    '''An intermediate representation that stores each processed line before it gets turned into clips
+    '''
+    charInfo: CharacterInfo     # character info at that point
+    transition: Transition      # The transition that happens at the start of the clip
+    expression: str | None      # label for the portait expression
+    duration: Second | Frame    # duration used for the clip
+
+    @property
+    def name(self) -> str:
+        return self.charInfo.name
+
+    def to_clip(self) -> Clip:
+        return create_clip(self.transition, self.charInfo, self.expression, self.duration)
+
+
+# === Entrance ====
+
 def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
     """Processes the list of lines into a Composition for the given character
     """
@@ -53,16 +74,20 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
     if name not in names:
         raise DialogueGenException(f'{name} does not appear in the dialogue')
 
+    clips = [clip_info.to_clip() for clip_info in processLines(lines, name)]
+
     return ExtComposition(
-        list(processLines(lines, name)),
+        clips,
         singletrack=True,
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,
         fps=configs.VIDEO_MODE.fps)
 
 
-def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[Clip, None, None]:
-    """Returns a generator that returns a stream of Clips
+# === Processing Lines ===
+
+def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[ClipInfo, None, None]:
+    """Returns a generator that returns a stream of ClipInfo
     """
     # Initialize context
     context = ConfigContext()
@@ -91,7 +116,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
             case Wait(duration=duration):
                 if curr_speaker is None:
                     # if no one is on screen yet, then we leave a gap
-                    yield transparent_clip(duration)
+                    yield ClipInfo(None, Transition.STAY_OFFSCREEN, curr_expression, duration)
                     continue
                 else:
                     # otherwise, we fall through and generate a clip using the previous line's state,
@@ -127,7 +152,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         charInfo: CharacterInfo = context.get_char(targetName, False)
 
         # generate clip using the transition
-        yield create_clip(pending_transition, charInfo, curr_expression, line.duration)
+        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration)
 
         # update state and reset pending transition
         curr_state = Transition.state_after(pending_transition)
@@ -144,9 +169,9 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # final exit
     match curr_state:
-        case State.FRONT: yield create_clip(Transition.FULL_EXIT, charInfo, curr_expression, exitDuration)
-        case State.BACK: yield create_clip(Transition.HALF_EXIT, charInfo, curr_expression, exitDuration)
-        case _: yield transparent_clip(exitDuration)
+        case State.FRONT: yield ClipInfo(charInfo, Transition.FULL_EXIT, curr_expression, exitDuration)
+        case State.BACK: yield ClipInfo(charInfo, Transition.HALF_EXIT, curr_expression, exitDuration)
+        case _: yield ClipInfo(charInfo, Transition.STAY_OFFSCREEN, curr_expression, exitDuration)
 
 
 def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
@@ -162,6 +187,8 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
         case(State.FRONT, True): return Transition.STAY_IN
         case(State.FRONT, False): return Transition.OUT
 
+
+# === Mapping ClipInfo into Clips ===
 
 def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Second | Frame) -> Clip:
     # return early if we're still staying offscreen
