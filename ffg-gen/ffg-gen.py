@@ -24,9 +24,6 @@ def createArgumentParser() -> ArgumentParser:
         '--no-duration-fix', action='store_const', const=True, default=False, dest='no_duration_fix',
         help='Do not run the duration fix on the resulting mlt. This will mostly likely cause the keyframes to be broken, so no idea why you would enable this. Only relevant if duration unit is seconds')
     parentparser.add_argument(
-        '--separate-track-export', action='store_const', const=True, default=False, dest='separate_track_export',
-        help='Export each track as a separate mlt file.')
-    parentparser.add_argument(
         '--bg-color', type=str, default='black', dest='bg_color',
         help='Color of the backing track. Can be a color word or hex. (default black)')
 

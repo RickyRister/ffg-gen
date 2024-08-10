@@ -1,9 +1,8 @@
 from argparse import ArgumentParser, _SubParsersAction
 from xml.etree import ElementTree
-from xml.etree.ElementTree import Element, XML
+from xml.etree.ElementTree import Element
 from pathlib import Path
 from typing import Callable, Generator
-from vidpy import Composition, Clip
 import configs
 import alias
 from dialogueline import DialogueLine
@@ -11,7 +10,6 @@ import line_parse
 from sysline import SysLine
 from generation import text_gen, char_gen, header_gen, fill_gen
 from characterinfo import CharacterInfo
-from exceptions import DialogueGenException
 import mlt_fix
 from vidpy_extension.ext_composition import ExtComposition, compositions_to_mlt
 
@@ -52,7 +50,7 @@ def dialogue_gen():
         # no chapters; just process all lines
         process_chapter(None, common_lines)
     else:
-        # otherwise, process each chapter separately, 
+        # otherwise, process each chapter separately,
         for chapter_name, lines in chapters.items():
             print(f'=== Generating for chapter: {chapter_name} ===')
             # make sure to include the common lines the start
@@ -63,29 +61,21 @@ def process_chapter(chapter_name: str | None, lines: list[DialogueLine | SysLine
     '''Processes a single chapter
     Assumes that lines already includes the common lines
     '''
-    composition_generator: Generator[tuple[ExtComposition, str]]
-    composition_generator = process_components(configs.ARGS.components, lines)
+    # generate all compositions
+    compositions: list[ExtComposition] = list(process_components(configs.ARGS.components, lines))
 
-    if configs.ARGS.separate_track_export:
-        for composition, file_suffix in composition_generator:
-            # append chapter_name to front of file_suffix if present
-            suffix = chapter_name + '_' + file_suffix if chapter_name is not None else file_suffix
-            fix_and_write_mlt(composition.xml_as_element(), suffix)
-    else:
-        compositions: list[ExtComposition] = [genned[0] for genned in composition_generator]
+    # reverse the list so components render in left-to-right order of cli args
+    compositions.reverse()
 
-        # reverse the list so components render in left-to-right order of cli args
-        compositions.reverse()
+    print("Done generating. Now exporting combined mlt...")
 
-        print("Done generating. Now exporting combined mlt...")
-
-        xml: Element = compositions_to_mlt(compositions)
-        fix_and_write_mlt(xml, chapter_name)
+    xml: Element = compositions_to_mlt(compositions)
+    fix_and_write_mlt(xml, chapter_name)
 
 
-def process_components(components: list[str], lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
+def process_components(components: list[str], lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     '''Creates a generator that will process each component.
-    The generator yields a tuple containing the Composition as well as the file_suffix for that component
+    The generator yields the Composition for that component
     '''
     for component in components:
         match component:
@@ -143,32 +133,25 @@ def write_mlt(xml: Element, suffix: str = ''):
 #
 
 
-def wrap_generate(gen_function: Callable[[list], Composition],
-                  file_suffix: str, error_msg: str) -> Generator[tuple[ExtComposition, str], None, None]:
-    '''Wraps the generate() call to do all the error handling stuff'''
+def wrap_generate(gen_function: Callable[[], ExtComposition]) -> Generator[ExtComposition, None, None]:
+    '''Wraps the generate() call to do all the cleanup stuff'''
     try:
-        yield (gen_function(), file_suffix)
-    except DialogueGenException as e:
-        print(error_msg, e)
-        if configs.ARGS.debug or not configs.ARGS.separate_track_export:
-            raise e
+        yield gen_function()
     finally:
         reset_configs()
 
 
-def gen_text(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_text(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print("Generating text component")
-    yield from wrap_generate(lambda: text_gen.generate(lines), 'text',
-                             'Error while generating text:')
+    yield from wrap_generate(lambda: text_gen.generate(lines))
 
 
-def gen_header(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_header(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print("Generating header overlay component")
-    yield from wrap_generate(lambda: header_gen.generate(lines), 'header',
-                             'Error while generating header overlay:')
+    yield from wrap_generate(lambda: header_gen.generate(lines))
 
 
-def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print("Generating all character components...")
 
     # figure out which names appear in the dialogue
@@ -182,26 +165,24 @@ def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposi
         yield from gen_char(lines, name)
 
 
-def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating character component for {character}")
-    yield from wrap_generate(lambda: char_gen.generate(lines, character), character,
-                             f'Error while generating character component for {character}:')
+    yield from wrap_generate(lambda: char_gen.generate(lines, character))
 
 
-def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
-    yield from wrap_generate(lambda: fill_gen.generate(lines, resource), resource,
-                             f'Error while generating fill for {resource}:')
+    yield from wrap_generate(lambda: fill_gen.generate(lines, resource))
 
 
-def gen_groups(lines: list[DialogueLine | SysLine]) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_groups(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print(f"Generating components for all component groups...")
 
     components: list[str] = [line.component for line in lines if hasattr(line, 'group')]
     yield from process_components(components, lines)
 
 
-def gen_group(lines: list[DialogueLine | SysLine], group: str) -> Generator[tuple[ExtComposition, str], None, None]:
+def gen_group(lines: list[DialogueLine | SysLine], group: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating components for component group '{group}'")
 
     components: list[str] = [line.component for line in lines
