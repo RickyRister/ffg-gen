@@ -32,8 +32,8 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
         ''')
 
     parser.add_argument(
-        '--use-blanks', action='store_const', const=True, default=False, dest='use_blanks',
-        help='Use blanks for waits instead of transparent clips. May cause issues with durationFix if there are multiple consecutive blanks')
+        '--fill-blanks', action='store_const', const=True, default=False, dest='fill_blanks',
+        help='Use transparent clips for waits instead of blanks. Could be useful if multiple consecutive blanks are causing issues with durationFix')
 
     parser.set_defaults(func=dialogue_gen)
 
