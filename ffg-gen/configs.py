@@ -47,7 +47,7 @@ class HeaderConfigs:
     weight: int = 500
     outlineColor: str = None
     fillColor: str = '#ffffff'
-    overlayPath: str = None
+    overlayPath: str = 'color:#00000000'
 
 
 @dataclass
