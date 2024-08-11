@@ -121,26 +121,17 @@ def write_mlt(xml: Element, suffix: str = ''):
 # ===  gen_functions ===
 # These functions all return generators, even the ones that can only possibly return one Composition
 # Means that I don't have to check for None when iterating the result
-# The generators return tuples of (Composition, file_suffix)
 #
-
-
-def wrap_generate(gen_function: Callable[[], ExtComposition]) -> Generator[ExtComposition, None, None]:
-    '''Wraps the generate() call to do all the cleanup stuff'''
-    try:
-        yield gen_function()
-    finally:
-        ...
 
 
 def gen_text(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print("Generating text component")
-    yield from wrap_generate(lambda: text_gen.generate(lines))
+    yield text_gen.generate(lines)
 
 
 def gen_header(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print("Generating header overlay component")
-    yield from wrap_generate(lambda: header_gen.generate(lines))
+    yield header_gen.generate(lines)
 
 
 def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
@@ -159,12 +150,12 @@ def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, 
 
 def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating character component for {character}")
-    yield from wrap_generate(lambda: char_gen.generate(lines, character))
+    yield char_gen.generate(lines, character)
 
 
 def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
-    yield from wrap_generate(lambda: fill_gen.generate(lines, resource))
+    yield fill_gen.generate(lines, resource)
 
 
 def gen_groups(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
