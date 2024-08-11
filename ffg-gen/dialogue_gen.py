@@ -33,6 +33,9 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
     parser.add_argument(
         '--fill-blanks', action='store_const', const=True, default=False, dest='fill_blanks',
         help='Use transparent clips for waits instead of blanks.')
+    parser.add_argument(
+        '--chapter', '-c', type=str, default=None,
+        help='Only generate this chapter')
 
     parser.set_defaults(func=dialogue_gen)
 
@@ -45,7 +48,14 @@ def dialogue_gen():
     with open(configs.ARGS.input) as inputFile:
         common_lines, chapters = line_parse.parseDialogueFile(inputFile)
 
-    if len(chapters) == 0:
+    if (chapter_name := configs.ARGS.chapter) is not None:
+        # cli args; only process this chapter
+        if chapter_name not in chapters:
+            raise ValueError(f'{chapter_name} is not a valid chapter.')
+
+        print(f'=== Generating for chapter: {chapter_name} ===')
+        process_chapter(chapter_name, common_lines + chapters[chapter_name])
+    elif len(chapters) == 0:
         # no chapters; just process all lines
         process_chapter(None, common_lines)
     else:
