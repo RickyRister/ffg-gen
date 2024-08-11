@@ -134,17 +134,21 @@ def gen_header(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition,
     yield header_gen.generate(lines)
 
 
+def find_all_names(lines: list[DialogueLine | SysLine]) -> list[str]:
+    '''Figures out which names appear in the lines.
+    Handles wierdness with aliases
+    Preserves the order of appearance in the script.
+    '''
+    # does weird stuff with dict to ensure uniqueness while preserving order
+    names: dict[str] = {line.name: None for line in lines if hasattr(line, 'name')}
+    names: dict[str] = {configs.follow_alias(name): None for name in names
+                        if name in configs.CHARACTERS or name in configs.GLOBAL_ALIASES}
+    return list(names)
+
+
 def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
     print("Generating all character components...")
-
-    # figure out which names appear in the dialogue
-    names: set[str] = {line.name for line in lines if hasattr(line, 'name')}
-
-    names = {configs.follow_alias(name) for name in names
-             if name in configs.CHARACTERS or name in configs.GLOBAL_ALIASES}
-
-    # call gen_char with all those characters
-    for name in names:
+    for name in find_all_names(lines):
         yield from gen_char(lines, name)
 
 
