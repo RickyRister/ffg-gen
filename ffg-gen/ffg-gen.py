@@ -21,9 +21,6 @@ def createArgumentParser() -> ArgumentParser:
         '--debug', '-d', action='store_const', const=True, default=False,
         help='causes the program to throw on error instead of just printing and skipping')
     parentparser.add_argument(
-        '--no-duration-fix', action='store_const', const=True, default=False, dest='no_duration_fix',
-        help='Do not run the duration fix on the resulting mlt. This will mostly likely cause the keyframes to be broken, so no idea why you would enable this. Only relevant if duration unit is seconds')
-    parentparser.add_argument(
         '--bg-color', type=str, default='black', dest='bg_color',
         help='Color of the backing track. Can be a color word or hex. (default black)')
 

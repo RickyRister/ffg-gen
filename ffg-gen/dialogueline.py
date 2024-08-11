@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from bisect import bisect
 import re
 import configs
-from vidpy.utils import Second, Frame
+from vidpy.utils import Frame
 from characterinfo import CharacterInfo
 
 
@@ -23,7 +23,7 @@ class DialogueLine:
         return CharacterInfo.ofName(self.name)
 
     @property
-    def duration(self) -> Second | Frame:
+    def duration(self) -> Frame:
         """Determines how long the text should last for depending on its length.
         Duration unit depends on configs 
         """

@@ -1,8 +1,5 @@
 from xml.etree.ElementTree import Element
 import re
-import ast
-import math
-import configs
 
 
 def createPropertyElement(property: str, value: str) -> Element:
@@ -20,10 +17,6 @@ def fix_mlt(xml: Element) -> Element:
     xml = make_mlt_editable(xml)
     xml = fix_filters(xml)
 
-    # we do not need to do durationFix if we're in frame mode
-    if configs.DURATIONS.unit == 'seconds' and not configs.ARGS.no_duration_fix:
-        xml = fix_out_timestamps(xml)
-    
     xml = fix_affine_out(xml)
 
     return xml
@@ -82,49 +75,6 @@ def handle_possible_fades(brightness_filter: Element):
                 brightness_filter.append(createPropertyElement(
                     'shotcut:filter', 'brightnessOpacity'))
                 brightness_filter.append(createPropertyElement('opacity', alpha.text))
-
-
-def fix_out_timestamps(xml: Element) -> Element:
-    """Replace the out timestamps on each producer with the equivalent timestamp, if known.
-    """
-
-    # load fixes from config
-    fixes: dict[int, str] = {durationFix.expectedFrames: durationFix.fix
-                             for durationFix in configs.DURATION_FIX.fixes}
-
-    errorMessages: set[str] = set()
-
-    # loop over all elements that have an 'out' attribute
-    for producer in xml.findall('.//*[@out]'):
-        outFrame: str = producer.get('out')
-
-        # we only fix frame timestamps
-        if not outFrame.isdigit():
-            continue
-
-        outFrame: int = int(outFrame)
-
-        # try to get the durationFix
-        fix = fixes.get(outFrame)
-
-        if fix is not None:
-            # if we have a fix, then use that
-            producer.set('out', str(fix))
-        else:
-            # otherwise, try to calculate a frame fix using the multiplier, if present
-            fallbackMultipler: float = configs.DURATION_FIX.fallbackMultiplier
-            if fallbackMultipler is None:
-                errorMessages.add(f"No duration fix found for frame count {outFrame}")
-            else:
-                calculated_fix = math.floor(outFrame * fallbackMultipler)
-                producer.set('out', str(calculated_fix))
-                errorMessages.add(f"No duration fix found for frame count {outFrame}; using fallback multiplier {fallbackMultipler}x")
-
-    # error messages should be deduplicated due to being put in a set
-    for msg in errorMessages:
-        print(msg)
-
-    return xml
 
 
 def fix_affine_out(xml: Element) -> Element:

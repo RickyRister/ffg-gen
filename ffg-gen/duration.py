@@ -1,19 +1,8 @@
+import math
 from dataclasses import dataclass
-from vidpy.utils import Second, Frame
+from vidpy.utils import Frame
 import configs
 from exceptions import MissingProperty
-
-
-@dataclass
-class DurationFix:
-    """Contains info about converting frame durations to timestamp durations.
-    The expected out frame won't be known at first.
-    We recommend you run the tool first to fill in the expected frame and the correct fix.
-    """
-
-    expectedFrames: int     # expected out frame
-    fix: str                # timestamp fix
-    comment: str = ""       # optional field to leave comment
 
 
 @dataclass
@@ -21,24 +10,30 @@ class Threshold:
     """Contains info about mapping count to duration
     """
 
-    count: int              # bottom word/char count to hit this threshold
-    seconds: float = None   # duration of clip in seconds
-    frames: int = None      # duration of clip in frames
+    count: int                      # bottom word/char count to hit this threshold
+    duration: int | float = None    # duration of clip. int will be intepreted as frames and float as seconds
 
-    def get_duration(self) -> Second | Frame:
+    def get_duration(self) -> Frame:
         '''Gets the duration, in the unit that's given in the configs
         '''
-        match configs.DURATIONS.unit:
-            case 'seconds':
-                if self.seconds is None:
-                    raise MissingProperty(
-                        f'No seconds value configured for threshold at count {self.count}')
-                else:
-                    return Second(self.seconds)
-            case 'frames':
-                if self.frames is None:
-                    raise MissingProperty(
-                        f'No frames value configured for threshold at count {self.count}')
-                else:
-                    return Frame(self.frames)
-            case _: raise ValueError(f"'{configs.DURATIONS.unit}' is not a valid duration unit.")
+        if self.duration is None:
+            raise MissingProperty(
+                f'No duration value configured for threshold at count {self.count}')
+        else:
+            return convert_duration(self.duration)
+
+
+def convert_duration(duration: int | float) -> Frame:
+    '''Converts the duration into a Frame, accounting for the settings
+
+    If duration is an int: interpret as frames. 
+    Directly convert to a Frame.
+
+    If duration is a float: interpret as seconds. 
+    Multiply the duration by the fps before converting it to a Frame
+    '''
+    if isinstance(duration, int):
+        return Frame(duration)
+    else:
+        # we subtract 1 from the resulting frame if it lands on an integer
+        return Frame(math.floor(duration * configs.VIDEO_MODE.fps - 0.000001))

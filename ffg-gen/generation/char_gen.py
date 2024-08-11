@@ -2,12 +2,13 @@ from vidpy import Clip
 from enum import Enum
 from typing import Generator, Iterable
 from dataclasses import dataclass
-from vidpy.utils import Second, Frame
+from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
+from duration import convert_duration
 from configcontext import ConfigContext
 from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
@@ -54,7 +55,7 @@ class ClipInfo:
     charInfo: CharacterInfo     # character info at that point
     transition: Transition      # The transition that happens at the start of the clip
     expression: str | None      # label for the portait expression
-    duration: Second | Frame    # duration used for the clip
+    duration: Frame    # duration used for the clip
     bring_to_front: bool = False  # whether this clip should bring the character to the front
 
     @property
@@ -101,7 +102,7 @@ def generate_sided(lines: list[DialogueLine | SysLine], names: list[str]) -> Gen
     # process lines and then the track stacks
     processed_lines: list[Generator[ClipInfo]] = [processLines(lines, name) for name in names]
     track_list: list[list[ClipInfo]] = order_clips(processed_lines, names)
-    
+
     # now convert each track list to a Composition
     for track in track_list:
         clips = [clip_info.to_clip() for clip_info in track]
@@ -116,11 +117,11 @@ def generate_sided(lines: list[DialogueLine | SysLine], names: list[str]) -> Gen
 def order_clips(processed_lines: list[Iterable[ClipInfo]], names: list[str]) -> list[list[ClipInfo]]:
     '''Stacks the clips from the tracks into the right order.
     Make sure the speaker is always in front and the characters don't randomly change order.
-    
+
     Expects each entry in processed_lines to have the same length.
     Will not check first, so make sure it's correct!
     '''
-    # check preconditions 
+    # check preconditions
     assert len(processed_lines) == len(names)
 
     # Each entry in this list represents a track
@@ -228,7 +229,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # exitDuration is stored as as either a int or float, so we need to convert it to the current unit
     exitDuration = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
-    exitDuration: Frame | Second = configs.DURATIONS.convert_duration(exitDuration)
+    exitDuration: Frame = convert_duration(exitDuration)
 
     # final exit
     match curr_state:
@@ -253,7 +254,7 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
 
 # === Mapping ClipInfo into Clips ===
 
-def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Second | Frame) -> Clip:
+def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Frame) -> Clip:
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
         return transparent_clip(duration)

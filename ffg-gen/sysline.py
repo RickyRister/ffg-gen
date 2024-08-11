@@ -1,10 +1,10 @@
-import dataclasses
 from dataclasses import dataclass
 from typing import Any
 import ast
 import re
 import configs
-from vidpy.utils import Second, Frame
+from duration import convert_duration
+from vidpy.utils import Frame
 from characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
 from configcontext import ConfigContext
@@ -111,7 +111,7 @@ class Wait(SysLine):
     Usage: @wait [duration]
     """
 
-    duration: Second | Frame
+    duration: Frame
 
     def parseArgs(args: str):
         match args.split():
@@ -121,7 +121,7 @@ class Wait(SysLine):
     def parse_duration(duration: str):
         '''Does some duration conversions, depending on the current duration unit
         '''
-        return configs.DURATIONS.convert_duration(ast.literal_eval(duration))
+        return convert_duration(ast.literal_eval(duration))
 
 
 @dataclass
