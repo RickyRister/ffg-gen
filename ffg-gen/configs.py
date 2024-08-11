@@ -13,6 +13,8 @@ ARGS: Namespace
 CONFIG_JSON: dict
 
 
+# === Classes ===
+
 @dataclass
 class ParsingConfigs:
     dialogueRegex: str
@@ -92,6 +94,8 @@ class DialogueBoxConfigs:
     fontColor: str = '#ffffff'
 
 
+# === Global Constants ===
+
 # more specific configs
 PARSING: ParsingConfigs
 VIDEO_MODE: VideoModeConfigs
@@ -164,6 +168,8 @@ def loadIntoGlobals(configJson: dict):
     CHARACTERS = safe_json_get('characters')
     GLOBAL_ALIASES = safe_json_get('aliases')
 
+
+# === Getters ===
 
 def follow_if_named(resource: str) -> str:
     '''Converts the resource to the proper link if it's a named resource.

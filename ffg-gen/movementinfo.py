@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import cache
+from typing import Self
 import configs
 
 
@@ -52,7 +53,7 @@ class MovementInfo:
             self.moveCurve = ''
 
     @cache
-    def ofCommon():
+    def ofCommon() -> Self:
         '''Returns the singleton instance of the MovementInfo object.
         Will load info from the global config json.
         Make sure the json is loaded in before calling this!
@@ -60,7 +61,7 @@ class MovementInfo:
         return MovementInfo(side='common', **configs.MOVEMENT.get('common'))
 
     @cache
-    def ofIsPlayer(is_player: bool):
+    def ofIsPlayer(is_player: bool) -> Self:
         '''Gets the global movement info for the given side.
         '''
         side: str = 'player' if is_player else 'enemy'
