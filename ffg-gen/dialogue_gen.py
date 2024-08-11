@@ -2,7 +2,7 @@ from argparse import ArgumentParser, _SubParsersAction
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 from pathlib import Path
-from typing import Callable, Generator
+from typing import Generator
 import configs
 from dialogueline import DialogueLine
 import line_parse
@@ -32,7 +32,7 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 
     parser.add_argument(
         '--fill-blanks', action='store_const', const=True, default=False, dest='fill_blanks',
-        help='Use transparent clips for waits instead of blanks. Could be useful if multiple consecutive blanks are causing issues with durationFix')
+        help='Use transparent clips for waits instead of blanks.')
 
     parser.set_defaults(func=dialogue_gen)
 

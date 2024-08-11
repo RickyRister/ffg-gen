@@ -36,7 +36,6 @@ class BlankClip(Clip):
 
 def transparent_clip(duration: Second | Frame) -> Clip:
     '''Creates a blank clip with the given duration.
-    This is the best way of having a blank clip without causing durationFix issues.
     If the option --fill-blanks is on, this will instead return a transparent clip with the given duration 
     '''
     if configs.ARGS.fill_blanks:

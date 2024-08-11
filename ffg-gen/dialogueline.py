@@ -3,7 +3,6 @@ from bisect import bisect
 import re
 import configs
 from vidpy.utils import Frame
-from characterinfo import CharacterInfo
 
 
 @dataclass
@@ -15,12 +14,6 @@ class DialogueLine:
     name: str
     expression: str | None
     text: str
-
-    @property
-    def character(self) -> CharacterInfo:
-        """Looks up the CharacterInfo corresponding to this line's character's name
-        """
-        return CharacterInfo.ofName(self.name)
 
     @property
     def duration(self) -> Frame:

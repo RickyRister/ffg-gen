@@ -18,9 +18,6 @@ def createArgumentParser() -> ArgumentParser:
         '--output', '-o',  type=str, default=None,
         help='base name of the output file')
     parentparser.add_argument(
-        '--debug', '-d', action='store_const', const=True, default=False,
-        help='causes the program to throw on error instead of just printing and skipping')
-    parentparser.add_argument(
         '--bg-color', type=str, default='black', dest='bg_color',
         help='Color of the backing track. Can be a color word or hex. (default black)')
 

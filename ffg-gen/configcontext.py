@@ -1,5 +1,4 @@
 from typing import Self
-from functools import cache
 from characterinfo import CharacterInfo
 import configs
 

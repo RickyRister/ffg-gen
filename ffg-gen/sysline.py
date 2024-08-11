@@ -287,7 +287,7 @@ class Nick(SysLine):
         '''
         context.add_local_alias(self.name, self.nickname)
         context.track_nick(self.name, self.nickname)
-        
+
         charInfo: CharacterInfo = context.get_char(self.name)
         new_charInfo = charInfo.with_attr('displayName', self.nickname)
         context.update_char(new_charInfo)
@@ -314,7 +314,7 @@ class UnNick(SysLine):
         charInfo: CharacterInfo = context.get_char(self.name)
         new_charInfo = charInfo.with_reset_attr('displayName')
         context.update_char(new_charInfo)
-        
+
         if (nickname := context.pop_nick(self.name)) is not None:
             context.remove_local_alias(nickname)
 
