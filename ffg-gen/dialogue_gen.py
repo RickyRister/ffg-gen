@@ -83,6 +83,8 @@ def process_components(components: list[str], lines: list[DialogueLine | SysLine
             case 'text': yield from gen_text(lines)
             case 'header': yield from gen_header(lines)
             case 'chars': yield from gen_chars(lines)
+            case 'chars:p': yield from gen_sided_chars(lines, True)
+            case 'chars:e': yield from gen_sided_chars(lines, False)
             case x if x.startswith('char:'): yield from gen_char(lines, x.removeprefix('char:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
             case 'groups': yield from gen_groups(lines)
@@ -150,6 +152,17 @@ def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, 
     print("Generating all character components...")
     for name in find_all_names(lines):
         yield from gen_char(lines, name)
+
+
+def gen_sided_chars(lines: list[DialogueLine | SysLine], is_player: bool) -> Generator[ExtComposition, None, None]:
+    '''Generates all characters on the given side, making sure that the speaker is always on the top layer
+    '''
+    print(f"Generating all {'player' if is_player else 'enemy'} character components...")
+    # filter out all names on the wrong side
+    names: list[str] = find_all_names(lines)
+    names = [name for name in names if CharacterInfo.of_name(name).isPlayer == is_player]
+
+    yield from char_gen.generate_sided(lines, names)
 
 
 def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[ExtComposition, None, None]:

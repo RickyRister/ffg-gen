@@ -74,6 +74,8 @@ Kiko8: Really..? That's so bothersome.
 
 @enter reimu
 
+@unalias sameika
+
 木子8: I was just getting to enjoy the cool air and the shade..
 Sameika5: It's too gloomy and pathetic here for silence to be relaxing.
 Reimu6: Well, we're not stopping.
@@ -100,6 +102,7 @@ Reimu4: I wish these youkai would finally remember who I am,
 Reimu4: so I don't have to keep reminding them with a beatdown.
 Sameika1: At least we know there's nothing here.
 Sameika2: The youkai are probably causing the humans lots of grievance,
+Kiko1lo: say something
 Sameika2: so onward we go.
 
 

@@ -1,6 +1,6 @@
 from vidpy import Clip
 from enum import Enum
-from typing import Generator
+from typing import Generator, Iterable
 from dataclasses import dataclass
 from vidpy.utils import Second, Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
@@ -55,6 +55,7 @@ class ClipInfo:
     transition: Transition      # The transition that happens at the start of the clip
     expression: str | None      # label for the portait expression
     duration: Second | Frame    # duration used for the clip
+    bring_to_front: bool = False  # whether this clip should bring the character to the front
 
     @property
     def name(self) -> str:
@@ -82,6 +83,67 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,
         fps=configs.VIDEO_MODE.fps)
+
+
+def generate_sided(lines: list[DialogueLine | SysLine], names: list[str]) -> Generator[ExtComposition, None, None]:
+    """Processes the list of lines into a Composition for the given characters.
+    Will make sure that the FRONT character is always on the top layer.
+    BACK characters will be sorted by names order.
+    """
+    # Bounds checking
+    if len(names) == 0:
+        return
+    elif len(names) == 1:
+        # if we only have a single character, then it's the same as just generating normally
+        yield generate(lines, names[0])
+        return
+
+    # process lines and then the track stacks
+    processed_lines: list[Generator[ClipInfo]] = [processLines(lines, name) for name in names]
+    track_list: list[list[ClipInfo]] = order_clips(processed_lines, names)
+    
+    # now convert each track list to a Composition
+    for track in track_list:
+        clips = [clip_info.to_clip() for clip_info in track]
+        yield ExtComposition(
+            clips,
+            singletrack=True,
+            width=configs.VIDEO_MODE.width,
+            height=configs.VIDEO_MODE.height,
+            fps=configs.VIDEO_MODE.fps)
+
+
+def order_clips(processed_lines: list[Iterable[ClipInfo]], names: list[str]) -> list[list[ClipInfo]]:
+    '''Stacks the clips from the tracks into the right order.
+    Make sure the speaker is always in front and the characters don't randomly change order.
+    
+    Expects each entry in processed_lines to have the same length.
+    Will not check first, so make sure it's correct!
+    '''
+    # check preconditions 
+    assert len(processed_lines) == len(names)
+
+    # Each entry in this list represents a track
+    # We will be appending clips to the lists in the list
+    track_list: list[list[ClipInfo]] = [list() for _ in range(len(names))]
+
+    # We keep a list that tracks the order of the characters
+    # Modify this list whenever the character order changes
+    curr_name_order: list[str] = names.copy()
+
+    # processing loop
+    for clip_stack in zip(*processed_lines):
+        # determine if we need to bring anyone to the front
+        to_front_name = next((clip.name for clip in clip_stack if clip.bring_to_front), None)
+        if to_front_name is not None:
+            curr_name_order.pop(curr_name_order.index(to_front_name))
+            curr_name_order.insert(0, to_front_name)
+
+        # append the clips to the tracks in the correct order
+        for name, track in zip(curr_name_order, track_list):
+            track.append(clip_stack[names.index(name)])
+
+    return track_list
 
 
 # === Processing Lines ===
@@ -146,13 +208,14 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         # make sure whatever line makes it down here has a duration field
 
         # if no pending transition, then determine transition depending on current conditions
+        is_speaker: bool = curr_speaker == targetName
         if pending_transition is None:
-            pending_transition = determine_transition(curr_state, curr_speaker == targetName)
+            pending_transition = determine_transition(curr_state, is_speaker)
 
         charInfo: CharacterInfo = context.get_char(targetName, False)
 
         # generate clip using the transition
-        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration)
+        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration, is_speaker)
 
         # update state and reset pending transition
         curr_state = Transition.state_after(pending_transition)

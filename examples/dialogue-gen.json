@@ -10,7 +10,8 @@
             "text",
             "header",
             "fill:!textbox",
-            "chars",
+            "chars:p",
+            "chars:e",
             "group:background"
         ]
     },
