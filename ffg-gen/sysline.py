@@ -3,7 +3,7 @@ from typing import Any
 import ast
 import re
 import configs
-from duration import convert_duration
+import durations
 from vidpy.utils import Frame
 from characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
@@ -121,7 +121,7 @@ class Wait(SysLine):
     def parse_duration(duration: str):
         '''Does some duration conversions, depending on the current duration unit
         '''
-        return convert_duration(ast.literal_eval(duration))
+        return durations.to_frame(ast.literal_eval(duration))
 
 
 @dataclass

@@ -20,10 +20,10 @@ class Threshold:
             raise MissingProperty(
                 f'No duration value configured for threshold at count {self.count}')
         else:
-            return convert_duration(self.duration)
+            return to_frame(self.duration)
 
 
-def convert_duration(duration: int | float) -> Frame:
+def to_frame(duration: int | float) -> Frame:
     '''Converts the duration into a Frame, accounting for the settings
 
     If duration is an int: interpret as frames. 

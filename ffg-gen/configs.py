@@ -1,7 +1,7 @@
 from argparse import Namespace
 from dataclasses import dataclass
 import json
-from duration import Threshold
+from durations import Threshold
 from exceptions import MissingProperty
 
 # parsed command line args

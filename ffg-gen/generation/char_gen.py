@@ -8,7 +8,7 @@ from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
-from duration import convert_duration
+import durations
 from configcontext import ConfigContext
 from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
@@ -229,7 +229,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
 
     # exitDuration is stored as as either a int or float, so we need to convert it to the current unit
     exitDuration = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
-    exitDuration: Frame = convert_duration(exitDuration)
+    exitDuration: Frame = durations.to_frame(exitDuration)
 
     # final exit
     match curr_state:
