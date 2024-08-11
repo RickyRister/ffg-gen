@@ -4,9 +4,9 @@ import ast
 import re
 import configs
 from vidpy.utils import Second, Frame
-import alias
 from characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
+from configcontext import ConfigContext
 
 
 @dataclass
@@ -20,7 +20,7 @@ class SysLine:
     You can check that attribute if you need to get the target of an action. 
     """
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Put code here that should always be run regardless of line processing logic.
         Processors should always call this on every sysline, before line processing.
         '''
@@ -146,10 +146,10 @@ class SetCharProperty(SysLine):
                         f'Invalid args for @set {args}; {value} is not a valid python literal.')
             case _: raise ValueError(f'Invalid args for @set: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Does the modification
         '''
-        charInfo = CharacterInfo.ofName(self.name)
+        charInfo = context.get_char(self.name)
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
@@ -175,10 +175,10 @@ class UnsetCharProperty(SysLine):
             case [name, property]: return UnsetCharProperty(name, property)
             case _: raise ValueError(f'Invalid args for @unset: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Unsets the property
         '''
-        charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
+        charInfo: CharacterInfo = context.get_char(self.name)
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
@@ -203,10 +203,10 @@ class ResetCharProperties(SysLine):
             case [name]: return ResetCharProperties(name)
             case _: raise ValueError(f'Invalid args for @unset: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Resets the CharacterInfo
         '''
-        CharacterInfo.ofName(self.name).reset_all_attr()
+        context.get_char(self.name).reset_all_attr()
 
 
 @dataclass
@@ -216,10 +216,10 @@ class ResetAllChars(SysLine):
     Usage: @resetall
     '''
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Does the cache reset
         '''
-        CharacterInfo.get_cached.cache_clear()
+        context.reset_all_char()
 
 
 @dataclass
@@ -237,10 +237,10 @@ class SetAlias(SysLine):
             case [name, alias]: return SetAlias(name, alias)
             case _: raise ValueError(f'Invalid args for @alias: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Set alias
         '''
-        alias.add_local_alias(self.name, self.alias)
+        context.add_local_alias(self.name, self.alias)
 
 
 @dataclass
@@ -257,10 +257,10 @@ class UnsetAlias(SysLine):
             case [alias]: return UnsetAlias(alias)
             case _: raise ValueError(f'Invalid args for @unalias: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''unset alias
         '''
-        alias.remove_local_alias(self.alias)
+        context.remove_local_alias(self.alias)
 
 
 @dataclass
@@ -279,12 +279,12 @@ class Nick(SysLine):
             case [name, nickname]: return Nick(name, nickname)
             case _: raise ValueError(f'Invalid args for @nick: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Set alias and set displayName
         '''
-        alias.add_local_alias(self.name, self.nickname)
-        alias.track_nick(self.name, self.nickname)
-        charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
+        context.add_local_alias(self.name, self.nickname)
+        context.track_nick(self.name, self.nickname)
+        charInfo: CharacterInfo = context.get_char(self.name)
         charInfo.displayName = self.nickname
 
 
@@ -303,13 +303,13 @@ class UnNick(SysLine):
             case [name]: return UnNick(name)
             case _: raise ValueError(f'Invalid args for @unnick: {args}')
 
-    def pre_hook(self):
+    def pre_hook(self, context: ConfigContext):
         '''Unset displayName and unset alias
         '''
-        charInfo: CharacterInfo = CharacterInfo.ofName(self.name)
+        charInfo: CharacterInfo = context.get_char(self.name)
         charInfo.reset_attr('displayName')
-        if (nickname := alias.pop_nick(self.name)) is not None:
-            alias.remove_local_alias(nickname)
+        if (nickname := context.pop_nick(self.name)) is not None:
+            context.remove_local_alias(nickname)
 
 
 @dataclass

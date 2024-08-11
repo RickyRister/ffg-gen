@@ -8,7 +8,7 @@ from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
 from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
 import configs
-import alias
+from configcontext import ConfigContext
 from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
@@ -49,8 +49,7 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
     """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
-    names: set[str] = {alias.follow_alias(line.name, False)
-                       for line in lines if hasattr(line, 'name')}
+    names: set[str] = {configs.follow_alias(line.name) for line in lines if hasattr(line, 'name')}
     if name not in names:
         raise DialogueGenException(f'{name} does not appear in the dialogue')
 
@@ -65,6 +64,8 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
 def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[Clip, None, None]:
     """Returns a generator that returns a stream of Clips
     """
+    # Initialize context
+    context = ConfigContext()
 
     # Initialize state to offscreen
     curr_state: State = State.OFFSCREEN
@@ -77,13 +78,13 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
     for line in lines:
         # always run the pre_hook first if it's a sysline
         if isinstance(line, SysLine):
-            line.pre_hook()
+            line.pre_hook(context)
 
         # messy processing depending on line type
         match line:
             case DialogueLine(name=name, expression=expression):
                 # store the new values from the dialogueLine
-                curr_speaker = alias.follow_alias(name)
+                curr_speaker = context.follow_alias(name)
                 if curr_speaker == targetName and expression is not None:
                     curr_expression = expression
 
@@ -97,17 +98,17 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                     # except there is no speaker
                     curr_speaker = None
 
-            case SetExpr(name=name, expression=expression) if alias.follow_alias(name) == targetName:
+            case SetExpr(name=name, expression=expression) if context.follow_alias(name) == targetName:
                 # set the expression, then continue to next dialogue line
                 curr_expression = expression
                 continue
 
-            case CharEnter(name=name) if alias.follow_alias(name) == targetName:
+            case CharEnter(name=name) if context.follow_alias(name) == targetName:
                 # force an enter transition on the next dialogue line
                 curr_state = State.PENDING_ENTER
                 continue
 
-            case CharExit(name=name) if alias.follow_alias(name) == targetName:
+            case CharExit(name=name) if context.follow_alias(name) == targetName:
                 # force an exit transition on the next dialogue line
                 match curr_state:
                     case State.FRONT: pending_transition = Transition.FULL_EXIT
@@ -123,7 +124,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
         if pending_transition is None:
             pending_transition = determine_transition(curr_state, curr_speaker == targetName)
 
-        charInfo: CharacterInfo = CharacterInfo.ofName(targetName, False)
+        charInfo: CharacterInfo = context.get_char(targetName, False)
 
         # generate clip using the transition
         yield create_clip(pending_transition, charInfo, curr_expression, line.duration)
@@ -135,7 +136,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
     # === end of loop ===
 
     # grab charInfo again
-    charInfo: CharacterInfo = CharacterInfo.ofName(targetName, False)
+    charInfo: CharacterInfo = context.get_char(targetName, False)
 
     # exitDuration is stored as as either a int or float, so we need to convert it to the current unit
     exitDuration = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)

@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Any, Self
 import configs
-import alias
 from movementinfo import MovementInfo
 from exceptions import MissingProperty
 
@@ -84,23 +83,13 @@ class CharacterInfo:
 
             case _: raise MissingProperty(f'Cannot find default value for CharacterInfo attribute {attr}')
 
-    def ofName(name: str, follow_alias: bool = True) -> Self:
-        """Looks up the name in the config json and parses the CharacterInfo from that.
-        This method is meant to process any aliases before calling the cached get with the real name
-        """
-        name = str.lower(name)
-        
-        if follow_alias:
-            name = alias.follow_alias(name)
 
-        return CharacterInfo.get_cached(name)
-
-    @cache
-    def get_cached(name: str) -> Self:
+    @staticmethod
+    def of_name(name: str) -> Self:
         '''Looks up the name in the config json and parses the CharacterInfo from that.
-        Caches the CharacterInfo by the name.
-        This way edits to the CharacterInfo can be remembered.
-        Remeber to reset this cache after finishing each component.
+        Note: DOES NOT follow aliases
+
+        returns: A new CharacterInfo
         '''
         character_json: dict = configs.CHARACTERS.get(name)
 

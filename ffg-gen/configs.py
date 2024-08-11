@@ -192,3 +192,14 @@ def follow_if_named(resource: str) -> str:
         raise MissingProperty(f"Named resource '{name}' not defined.")
     else:
         return RESOURCE_NAMES.get(name) + postfix
+
+
+def follow_alias(name: str):
+    '''Follows any global aliases.
+    Aliases are recursive.
+    '''
+
+    if name in GLOBAL_ALIASES:
+        return follow_alias(GLOBAL_ALIASES.get(name))
+
+    return name

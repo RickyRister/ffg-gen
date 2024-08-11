@@ -8,6 +8,7 @@ from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 from exceptions import expect
+from configcontext import ConfigContext
 
 
 def filter_none(lines: list) -> list:
@@ -17,7 +18,8 @@ def filter_none(lines: list) -> list:
 def generate(lines: list[DialogueLine | SysLine]) -> ExtComposition:
     """Processes the list of lines into a Composition
     """
-    clips: list[Clip] = filter_none([lineToClip(line) for line in lines])
+    context = ConfigContext()
+    clips: list[Clip] = filter_none([lineToClip(line, context) for line in lines])
 
     return ExtComposition(
         clips,
@@ -27,18 +29,18 @@ def generate(lines: list[DialogueLine | SysLine]) -> ExtComposition:
         fps=configs.VIDEO_MODE.fps)
 
 
-def lineToClip(line: DialogueLine | SysLine) -> Clip | None:
+def lineToClip(line: DialogueLine | SysLine, context: ConfigContext) -> Clip | None:
     if isinstance(line, SysLine):
         # always run the pre_hook first if it's a sysline
-        line.pre_hook()
+        line.pre_hook(context)
 
         # match sysline
         match line:
             case Wait(duration=duration): return transparent_clip(duration)
             case _: return None
 
-    name: str = line.name
-    charInfo: CharacterInfo = line.character
+    charInfo: CharacterInfo = context.get_char(line.name)
+    name = charInfo.name    # name after following alias
 
     headerFilter: dict = textFilterArgs(
         text=expect(charInfo.displayName, 'displayName', name),
