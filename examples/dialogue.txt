@@ -4,8 +4,8 @@
 
 @wait 1.0
 
-@grouped background fill:!frame
-@grouped background fill:!s1_bg_stage 
+@component background fill:!frame
+@component background fill:!s1_bg_stage 
 
 === prebattle
 

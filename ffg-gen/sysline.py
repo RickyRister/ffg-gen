@@ -48,7 +48,7 @@ def parse_sysline(line: str):
         case ['unalias', args]: return UnsetAlias.parseArgs(args.strip())
         case ['nick', args]: return Nick.parseArgs(args.strip())
         case ['unnick', args]: return UnNick.parseArgs(args.strip())
-        case ['grouped', args]: return GroupedComponent.parseArgs(args.strip())
+        case ['component', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
 
@@ -324,7 +324,7 @@ class GroupedComponent(SysLine):
     '''Used by the group:[group] and groups component to recursively generate components.
     Not used during actual generation processing.
 
-    Usage: @grouped [group] [component]
+    Usage: @component [group] [component]
     '''
 
     group: str
@@ -333,4 +333,4 @@ class GroupedComponent(SysLine):
     def parseArgs(args: str):
         match args.split(None, 1):
             case [group, component]: return GroupedComponent(group, component)
-            case _: raise ValueError(f'Invalid args for @grouped: {args}')
+            case _: raise ValueError(f'Invalid args for @component: {args}')
