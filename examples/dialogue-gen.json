@@ -2,8 +2,7 @@
     "parsing": {
         "dialogueRegex": "(?P<name>.+)(?P<expression>\\d+.*): (?P<text>.+)",
         "shortDialogueRegex": "(?P<name>.+): (?P<text>.+)",
-        "expressionRegex": "(?P<name>.+)(?P<expression>\\d+)",
-        "assignmentDelimiter": "="
+        "expressionRegex": "(?P<name>.+)(?P<expression>\\d+)"
     },
     "componentMacros": {
         "all": [
@@ -54,7 +53,7 @@
             },
             {
                 "count": 120,
-                "duration": 5
+                "duration": 5.0
             }
         ]
     },
