@@ -43,6 +43,7 @@ class CharacterInfo:
     # movement timing configs
     moveEnd: str = None
     moveCurve: str = None               # https://github.com/mltframework/mlt/blob/master/src/framework/mlt_animation.c#L68
+    enterEnd: str = None
     exitDuration: int | float = None    # ints will be interpreted as frames and floats as seconds
     fadeInEnd: str = None
     fadeOutEnd: str = None

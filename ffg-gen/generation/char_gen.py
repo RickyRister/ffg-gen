@@ -296,6 +296,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
     moveEnd = expect(charInfo.moveEnd, 'moveEnd', charInfo.name)
     moveCurve = expect(charInfo.moveCurve, 'moveCurve', charInfo.name)
+    enterEnd = expect(charInfo.enterEnd, 'enterEnd', charInfo.name)
 
     frontGeometry = expect(charInfo.frontGeometry, 'frontGeometry', charInfo.name)
     backGeometry = expect(charInfo.backGeometry, 'backGeometry', charInfo.name)
@@ -309,9 +310,9 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
         case Transition.OUT:
             return f'00:00:00.000{moveCurve}={frontGeometry};{moveEnd}={backGeometry}'
         case Transition.FULL_ENTER:
-            return f'00:00:00.000{moveCurve}={offstageGeometry};{moveEnd}={frontGeometry}'
+            return f'00:00:00.000{moveCurve}={offstageGeometry};{enterEnd}={frontGeometry}'
         case Transition.HALF_ENTER:
-            return f'00:00:00.000{moveCurve}={offstageBackGeometry};{moveEnd}={backGeometry}'
+            return f'00:00:00.000{moveCurve}={offstageBackGeometry};{enterEnd}={backGeometry}'
         case Transition.FULL_EXIT:
             return f'00:00:00.000{moveCurve}={frontGeometry};{moveEnd}={offstageGeometry}'
         case Transition.HALF_EXIT:

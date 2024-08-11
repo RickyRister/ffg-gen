@@ -75,8 +75,9 @@
             "backBrightness": 0.7,
             "exitDuration": 0.25,
             "brightnessFadeEnd": 6,
-            "moveEnd": 6,
+            "moveEnd": 10,
             "moveCurve": "k",
+            "enterEnd": 6,
             "fadeInEnd": 6,
             "fadeOutEnd": 6
         },
