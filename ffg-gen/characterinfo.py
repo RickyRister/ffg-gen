@@ -1,14 +1,15 @@
+import dataclasses
 from dataclasses import dataclass
-from functools import cache
 from typing import Any, Self
 import configs
 from movementinfo import MovementInfo
 from exceptions import MissingProperty
 
 
-@dataclass
+@dataclass(frozen=True)
 class CharacterInfo:
-    """A representation of the info of a character, read from the config json
+    """A representation of the info of a character, read from the config json.
+    This class is immutable. Use dataclasses.replace() to modify it
     """
     name: str                       # the dict name, for tracking purposes
     displayName: str
@@ -52,7 +53,7 @@ class CharacterInfo:
         # fill all unset fields with the fall-through default
         for attr, value in vars(self).items():
             if value is None:
-                setattr(self, attr, self._find_default_value(attr))
+                object.__setattr__(self, attr, self._find_default_value(attr))
 
     def _find_default_value(self, attr: str) -> Any:
         '''Returns the fall-through default value for the given attr.
@@ -83,7 +84,6 @@ class CharacterInfo:
 
             case _: raise MissingProperty(f'Cannot find default value for CharacterInfo attribute {attr}')
 
-
     @staticmethod
     def of_name(name: str) -> Self:
         '''Looks up the name in the config json and parses the CharacterInfo from that.
@@ -98,18 +98,18 @@ class CharacterInfo:
 
         return CharacterInfo(name=name, **character_json)
 
-    def reset_attr(self, attr: str):
+    def with_attr(self, attr: str, value: Any) -> Self:
+        '''Returns a new instance with the given field changed
+        '''
+        return dataclasses.replace(self, **{attr: value})
+
+    def with_reset_attr(self, attr: str) -> Self:
         '''Resets the given field to what would've been loaded on startup.
-        Checks the characters in the config json, then falls back to the defaults
-        '''
+        Checks the characters in the config json, then falls back to the defaults.
 
+        returns: a new instance with the field changed
+        '''
         if (value := configs.CHARACTERS.get(self.name).get(attr)) is not None:
-            setattr(self, attr, value)
+            return dataclasses.replace(self, **{attr: value})
         else:
-            setattr(self, attr, self._find_default_value(attr))
-
-    def reset_all_attr(self):
-        '''Resets all fields in this instance to what would've been loaded on startup.
-        '''
-        for attr, _ in vars(self).items():
-            self.reset_attr(attr)
+            return dataclasses.replace(self, **{attr: self._find_default_value(attr)})

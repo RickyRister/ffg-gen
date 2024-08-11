@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import dataclass
 from typing import Any
 import ast
@@ -156,7 +157,8 @@ class SetCharProperty(SysLine):
             raise NonExistentProperty(
                 f'Failed to @set {self.name} {self.property} {self.value}; CharacterInfo does not have property {self.property}')
 
-        setattr(charInfo, self.property, self.value)
+        new_charInfo = charInfo.with_attr(self.property, self.value)
+        context.update_char(new_charInfo)
 
 
 @dataclass
@@ -185,7 +187,8 @@ class UnsetCharProperty(SysLine):
             raise ValueError(
                 f'@unset {self.name} {self.property} failed; CharacterInfo does not have property {self.property}')
 
-        charInfo.reset_attr(self.property)
+        new_charInfo = charInfo.with_reset_attr(self.property)
+        context.update_char(new_charInfo)
 
 
 @dataclass
@@ -206,7 +209,7 @@ class ResetCharProperties(SysLine):
     def pre_hook(self, context: ConfigContext):
         '''Resets the CharacterInfo
         '''
-        context.get_char(self.name).reset_all_attr()
+        context.reset_char(self.name)
 
 
 @dataclass
@@ -284,8 +287,10 @@ class Nick(SysLine):
         '''
         context.add_local_alias(self.name, self.nickname)
         context.track_nick(self.name, self.nickname)
+        
         charInfo: CharacterInfo = context.get_char(self.name)
-        charInfo.displayName = self.nickname
+        new_charInfo = charInfo.with_attr('displayName', self.nickname)
+        context.update_char(new_charInfo)
 
 
 @dataclass
@@ -307,7 +312,9 @@ class UnNick(SysLine):
         '''Unset displayName and unset alias
         '''
         charInfo: CharacterInfo = context.get_char(self.name)
-        charInfo.reset_attr('displayName')
+        new_charInfo = charInfo.with_reset_attr('displayName')
+        context.update_char(new_charInfo)
+        
         if (nickname := context.pop_nick(self.name)) is not None:
             context.remove_local_alias(nickname)
 

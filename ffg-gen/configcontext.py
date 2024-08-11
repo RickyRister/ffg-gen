@@ -33,6 +33,25 @@ class ConfigContext:
 
         return self.cached_chars.get(name)
 
+    def update_char(self, new_char_info: CharacterInfo):
+        '''Updates the CharacterInfo cache by replacing the characterInfo with the new one.
+        Gets the name to replace from the new CharacterInfo
+
+        Since CharacterInfo is immutable, this is how we modify the charaInfo
+        '''
+        self.cached_chars[new_char_info.name] = new_char_info
+
+    def reset_char(self, name: str, follow_alias: bool = True):
+        '''Resets the CharacterInfo for the given char by deleting it from the cache.
+        Will follow aliases.
+        '''
+        name = str.lower(name)
+
+        if follow_alias:
+            name = self.follow_alias(name)
+
+        self.cached_chars.pop(name)
+
     def reset_all_char(self):
         '''Resets all CharacterInfo by clearing the cache
         '''
