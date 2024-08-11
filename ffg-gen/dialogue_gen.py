@@ -108,6 +108,7 @@ def write_mlt(xml: Element, suffix: str = ''):
     path: Path
     if configs.ARGS.output is not None:
         path = Path(configs.ARGS.output)
+        path = path.with_suffix('.mlt')
     else:
         path = Path(configs.ARGS.input)
         path = path.with_suffix('.mlt')
