@@ -7,7 +7,7 @@ import configs
 from dialogueline import DialogueLine
 import line_parse
 from sysline import SysLine
-from generation import text_gen, char_gen, header_gen, fill_gen
+from generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
 from characterinfo import CharacterInfo
 import mlt_fix
 from vidpy_extension.ext_composition import ExtComposition, compositions_to_mlt
@@ -97,6 +97,7 @@ def process_components(components: list[str], lines: list[DialogueLine | SysLine
             case 'chars:e': yield from gen_sided_chars(lines, False)
             case x if x.startswith('char:'): yield from gen_char(lines, x.removeprefix('char:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
+            case x if x.startswith('tfill:'): yield from gen_tfill(lines, x.removeprefix('tfill:'))
             case 'groups': yield from gen_groups(lines)
             case x if x.startswith('group:'): yield from gen_group(lines, x.removeprefix('group:'))
             case _: raise ValueError(f'{component} is not a valid component.')
@@ -184,6 +185,11 @@ def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[E
 def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
     yield fill_gen.generate(lines, resource)
+
+
+def gen_tfill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[ExtComposition, None, None]:
+    print(f"Generating tfill with {resource}")
+    yield tfill_gen.generate(lines, resource)
 
 
 def gen_groups(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:

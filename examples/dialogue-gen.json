@@ -8,7 +8,7 @@
         "all": [
             "text",
             "header",
-            "fill:!textbox",
+            "tfill:!textbox",
             "chars:p",
             "chars:e",
             "group:background"
