@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from bisect import bisect
-import re
-from dialogue_gen import dconfigs
+from . import dconfigs
 from vidpy.utils import Frame
 
 
@@ -27,19 +25,7 @@ class DialogueLine(Line):
 
     @property
     def duration(self) -> Frame:
-        """Determines how long the text should last for depending on its length.
-        Duration unit depends on configs 
-        """
-
-        count: int = None
-        match dconfigs.DURATIONS.mode:
-            case 'char':
-                count = len(self.text)
-            case 'word':
-                count = len(re.findall(r'\w+', self.text))
-            case _:
-                raise ValueError(f'{dconfigs.DURATIONS.mode} is not a valid durations mode')
-
-        index = bisect(dconfigs.DURATIONS.thresholds, count,
-                       key=lambda threshold: threshold.count)
-        return dconfigs.DURATIONS.thresholds[index-1].duration
+        '''How long the text should last for depending on its length.
+        Duration unit depends on configs.
+        '''
+        return dconfigs.DURATIONS.calc_duration(self.text)

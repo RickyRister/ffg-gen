@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from durations import Threshold
+from durations import Durations
 
 '''Configs that are specific to dialogue_gen
 '''
@@ -14,22 +14,11 @@ class ParsingConfigs:
     expressionRegex: str
 
 
-@dataclass
-class DurationConfigs:
-    mode: str
-    thresholds: list[Threshold]
-
-    def __post_init__(self):
-        # convert dict to actual objects, if nessecary
-        if isinstance(self.thresholds[0], dict):
-            self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
-
-
 # === Global Constants ===
 
 # more specific configs
 PARSING: ParsingConfigs
-DURATIONS: DurationConfigs
+DURATIONS: Durations
 
 # configs that are loaded by their own classes are still stored as a dict
 CHAR_INFO: dict[str, dict]
@@ -56,7 +45,7 @@ def load_into_globals(configJson: dict):
 
     # assign globals
     PARSING = ParsingConfigs(**safe_json_get('parsing'))
-    DURATIONS = DurationConfigs(**safe_json_get('durations'))
+    DURATIONS = Durations(**safe_json_get('durations'))
 
     # load dicts for the classes to load themselves
     CHAR_INFO = safe_json_get('charInfo')
