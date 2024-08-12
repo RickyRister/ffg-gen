@@ -30,7 +30,7 @@ def richTextFilterArgs(text: str, geometry: str, font: str, fontSize: int, color
     Generates the args for the rich text filter. Use with 'qtext' filter 
 
     Args:
-        text: The text in the textbox. No linebreaks
+        text: The text in the textbox
         geometry: The geometry of the textbox
         font: The font
         fontSize: The font size
@@ -61,6 +61,8 @@ li.checked::marker { content: "\2612"; }
 def generateHtml(text: str, font: str, fontSize: int, color: str = '#ffffff') -> str:
     """Generates the html for the rich text filter
     """
+    # replace newlines with <br/> so that they show up as newlines in html
+    text = text.replace('\n', '<br/>')
 
     return HTML.replace("{FONT}", font).replace("{SIZE}", str(fontSize)).replace("{COLOR}", color).replace("{TEXT}", text)
 
