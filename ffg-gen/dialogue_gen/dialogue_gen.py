@@ -33,6 +33,12 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
         ''')
 
     parser.add_argument(
+        '--config', '-j', type=str, default='dialogue-gen.json',
+        help='path to the config json')
+    parser.add_argument(
+        '--input', '-i', type=str, default='dialogue.txt',
+        help='path to the input dialogue file')
+    parser.add_argument(
         '--fill-blanks', action='store_const', const=True, default=False, dest='fill_blanks',
         help='Use transparent clips for waits instead of blanks.')
     parser.add_argument(

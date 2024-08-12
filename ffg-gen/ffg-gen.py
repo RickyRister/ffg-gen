@@ -9,12 +9,6 @@ def createArgumentParser() -> ArgumentParser:
     parentparser = ArgumentParser(add_help=False)
 
     parentparser.add_argument(
-        '--config', '-j', type=str, default='dialogue-gen.json',
-        help='path to the config json')
-    parentparser.add_argument(
-        '--input', '-i', type=str, default='dialogue.txt',
-        help='path to the input dialogue file')
-    parentparser.add_argument(
         '--output', '-o',  type=str, default=None,
         help='base name of the output file')
     parentparser.add_argument(
