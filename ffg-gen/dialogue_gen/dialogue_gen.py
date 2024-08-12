@@ -39,9 +39,6 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
         '--input', '-i', type=str, default='dialogue.txt',
         help='path to the input dialogue file')
     parser.add_argument(
-        '--fill-blanks', action='store_const', const=True, default=False, dest='fill_blanks',
-        help='Use transparent clips for waits instead of blanks.')
-    parser.add_argument(
         '--chapter', '-c', type=str, default=None,
         help='Only generate this chapter')
 

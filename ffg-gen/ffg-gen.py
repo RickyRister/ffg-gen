@@ -14,6 +14,9 @@ def createArgumentParser() -> ArgumentParser:
     parentparser.add_argument(
         '--bg-color', type=str, default='black', dest='bg_color',
         help='Color of the backing track. Can be a color word or hex. (default black)')
+    parentparser.add_argument(
+        '--fill-blanks', action='store_const', const=True, default=False, dest='fill_blanks',
+        help='Use transparent clips for waits instead of blanks.')
 
     parser = ArgumentParser(description='Generates mlt files for Touhou-style album videos.',
                             parents=[parentparser])
