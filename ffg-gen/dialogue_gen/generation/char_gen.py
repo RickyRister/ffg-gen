@@ -4,7 +4,7 @@ from typing import Generator, Iterable
 from dataclasses import dataclass
 from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
-from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.dialogueline import DialogueLine, Line
 from dialogue_gen.characterinfo import CharacterInfo
 from dialogue_gen.sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 import configs
@@ -68,7 +68,7 @@ class ClipInfo:
 
 # === Entrance ====
 
-def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
+def generate(lines: list[Line], name: str) -> ExtComposition:
     """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
@@ -86,7 +86,7 @@ def generate(lines: list[DialogueLine | SysLine], name: str) -> ExtComposition:
         fps=configs.VIDEO_MODE.fps)
 
 
-def generate_sided(lines: list[DialogueLine | SysLine], names: list[str]) -> Generator[ExtComposition, None, None]:
+def generate_sided(lines: list[Line], names: list[str]) -> Generator[ExtComposition, None, None]:
     """Processes the list of lines into a Composition for the given characters.
     Will make sure that the FRONT character is always on the top layer.
     BACK characters will be sorted by names order.
@@ -149,7 +149,7 @@ def order_clips(processed_lines: list[Iterable[ClipInfo]], names: list[str]) -> 
 
 # === Processing Lines ===
 
-def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Generator[ClipInfo, None, None]:
+def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None, None]:
     """Returns a generator that returns a stream of ClipInfo
     """
     # Initialize context

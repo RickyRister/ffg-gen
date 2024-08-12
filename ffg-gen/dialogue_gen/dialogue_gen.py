@@ -7,9 +7,8 @@ import json
 import cli_args
 import configs
 from dialogue_gen import dconfigs
-from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.dialogueline import Line
 from dialogue_gen import line_parse
-from dialogue_gen.sysline import SysLine
 from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
 from dialogue_gen.characterinfo import CharacterInfo
 import mlt_fix
@@ -51,8 +50,8 @@ def dialogue_gen():
         dconfigs.load_into_globals(json_dict)
 
     # load lines from dialogue text file
-    common_lines: list[DialogueLine | SysLine] = None
-    chapters: dict[str, list[DialogueLine | SysLine]] = None
+    common_lines: list[Line] = None
+    chapters: dict[str, list[Line]] = None
     with open(cli_args.ARGS.input) as inputFile:
         common_lines, chapters = line_parse.parseDialogueFile(inputFile)
 
@@ -75,7 +74,7 @@ def dialogue_gen():
             process_chapter(chapter_name, common_lines + lines)
 
 
-def process_chapter(chapter_name: str | None, lines: list[DialogueLine | SysLine]):
+def process_chapter(chapter_name: str | None, lines: list[Line]):
     '''Processes a single chapter
     Assumes that lines already includes the common lines
     '''
@@ -91,7 +90,7 @@ def process_chapter(chapter_name: str | None, lines: list[DialogueLine | SysLine
     fix_and_write_mlt(xml, chapter_name)
 
 
-def process_components(components: list[str], lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
+def process_components(components: list[str], lines: list[Line]) -> Generator[ExtComposition, None, None]:
     '''Creates a generator that will process each component.
     The generator yields the Composition for that component
     '''
@@ -147,17 +146,17 @@ def write_mlt(xml: Element, suffix: str = ''):
 #
 
 
-def gen_text(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
+def gen_text(lines: list[Line]) -> Generator[ExtComposition, None, None]:
     print("Generating text component")
     yield text_gen.generate(lines)
 
 
-def gen_header(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
+def gen_header(lines: list[Line]) -> Generator[ExtComposition, None, None]:
     print("Generating header overlay component")
     yield header_gen.generate(lines)
 
 
-def find_all_names(lines: list[DialogueLine | SysLine]) -> list[str]:
+def find_all_names(lines: list[Line]) -> list[str]:
     '''Figures out which names appear in the lines.
     Handles wierdness with aliases
     Preserves the order of appearance in the script.
@@ -169,13 +168,13 @@ def find_all_names(lines: list[DialogueLine | SysLine]) -> list[str]:
     return list(names)
 
 
-def gen_chars(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
+def gen_chars(lines: list[Line]) -> Generator[ExtComposition, None, None]:
     print("Generating all character components...")
     for name in find_all_names(lines):
         yield from gen_char(lines, name)
 
 
-def gen_sided_chars(lines: list[DialogueLine | SysLine], is_player: bool) -> Generator[ExtComposition, None, None]:
+def gen_sided_chars(lines: list[Line], is_player: bool) -> Generator[ExtComposition, None, None]:
     '''Generates all characters on the given side, making sure that the speaker is always on the top layer
     '''
     print(f"Generating all {'player' if is_player else 'enemy'} character components...")
@@ -186,29 +185,29 @@ def gen_sided_chars(lines: list[DialogueLine | SysLine], is_player: bool) -> Gen
     yield from char_gen.generate_sided(lines, names)
 
 
-def gen_char(lines: list[DialogueLine | SysLine], character: str) -> Generator[ExtComposition, None, None]:
+def gen_char(lines: list[Line], character: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating character component for {character}")
     yield char_gen.generate(lines, character)
 
 
-def gen_fill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[ExtComposition, None, None]:
+def gen_fill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
     yield fill_gen.generate(lines, resource)
 
 
-def gen_tfill(lines: list[DialogueLine | SysLine], resource: str) -> Generator[ExtComposition, None, None]:
+def gen_tfill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating tfill with {resource}")
     yield tfill_gen.generate(lines, resource)
 
 
-def gen_groups(lines: list[DialogueLine | SysLine]) -> Generator[ExtComposition, None, None]:
+def gen_groups(lines: list[Line]) -> Generator[ExtComposition, None, None]:
     print(f"Generating components for all component groups...")
 
     components: list[str] = [line.component for line in lines if hasattr(line, 'group')]
     yield from process_components(components, lines)
 
 
-def gen_group(lines: list[DialogueLine | SysLine], group: str) -> Generator[ExtComposition, None, None]:
+def gen_group(lines: list[Line], group: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating components for component group '{group}'")
 
     components: list[str] = [line.component for line in lines

@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import Iterable, Generator
 import re
 from dialogue_gen import dconfigs
-from dialogue_gen.sysline import SysLine, parse_sysline
-from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.sysline import parse_sysline
+from dialogue_gen.dialogueline import DialogueLine, Line
 
 
 @dataclass
@@ -13,7 +13,7 @@ class ChapterLine:
     name: str
 
 
-def parseDialogueFile(lines: Iterable[str]) -> tuple[list[DialogueLine | SysLine], dict[str, list[DialogueLine | SysLine]]]:
+def parseDialogueFile(lines: Iterable[str]) -> tuple[list[Line], dict[str, list[Line]]]:
     """Parse the script into the internal representation
     The output is given as a tuple of (common, dict[chapters])
     """
@@ -49,7 +49,7 @@ def iterate_by_pairs(iterable: Iterable) -> Generator[tuple[int, int], None, Non
         yield first, second
 
 
-def parseLine(line: str) -> DialogueLine | SysLine | ChapterLine | None:
+def parseLine(line: str) -> Line | ChapterLine | None:
     """Parse a single line of the file
     """
     # strip before processing

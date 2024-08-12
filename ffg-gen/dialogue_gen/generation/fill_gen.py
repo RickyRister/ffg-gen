@@ -1,6 +1,5 @@
 from vidpy import Clip
-from dialogue_gen.dialogueline import DialogueLine
-from dialogue_gen.sysline import SysLine
+from dialogue_gen.dialogueline import Line
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
@@ -8,7 +7,7 @@ import durations
 from dialogue_gen.characterinfo import CharacterInfo
 
 
-def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtComposition:
+def generate(lines: list[Line], resource: str) -> ExtComposition:
     """Returns a Composition containing a single Clip.
     The lines are used to calculate the duration of the single Clip.
     """

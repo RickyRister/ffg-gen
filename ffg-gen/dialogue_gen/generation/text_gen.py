@@ -1,7 +1,7 @@
 from vidpy import Clip
 from vidpy.utils import Frame
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.dialogueline import Line
 from dialogue_gen.characterinfo import CharacterInfo
 from dialogue_gen.sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
@@ -15,7 +15,7 @@ def filter_none(lines: list) -> list:
     return [line for line in lines if line is not None]
 
 
-def generate(lines: list[DialogueLine | SysLine]) -> ExtComposition:
+def generate(lines: list[Line]) -> ExtComposition:
     """Processes the list of lines into a Composition
     """
     context = ConfigContext()
@@ -29,7 +29,7 @@ def generate(lines: list[DialogueLine | SysLine]) -> ExtComposition:
         fps=configs.VIDEO_MODE.fps)
 
 
-def lineToClip(line: DialogueLine | SysLine, context: ConfigContext) -> Clip | None:
+def lineToClip(line: Line, context: ConfigContext) -> Clip | None:
     if isinstance(line, SysLine):
         # always run the pre_hook first if it's a sysline
         line.pre_hook(context)

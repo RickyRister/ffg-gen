@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Generator
 from vidpy import Clip
-from dialogue_gen.dialogueline import DialogueLine
-from dialogue_gen.sysline import SysLine, Wait
+from dialogue_gen.dialogueline import Line
+from dialogue_gen.sysline import Wait
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 from vidpy_extension.blankclip import transparent_clip
@@ -17,7 +17,7 @@ class ClipSection:
     do_show: bool
 
 
-def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtComposition:
+def generate(lines: list[Line], resource: str) -> ExtComposition:
     '''Returns a composition possibly containing multiple clips
     '''
     # filter lines with duration
@@ -43,7 +43,7 @@ def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtCompositi
         fps=configs.VIDEO_MODE.fps)
 
 
-def to_clip_section(line: DialogueLine | SysLine) -> ClipSection:
+def to_clip_section(line: Line) -> ClipSection:
     '''Maps the Line to a ClipSection.
     expects the Line to have a duration.
     '''

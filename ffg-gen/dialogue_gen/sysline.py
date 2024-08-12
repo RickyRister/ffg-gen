@@ -8,10 +8,11 @@ from vidpy.utils import Frame
 from dialogue_gen.characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
 from dialogue_gen.configcontext import ConfigContext
+from dialogue_gen.dialogueline import Line
 
 
 @dataclass
-class SysLine:
+class SysLine(Line):
     """Parent class for sys lines.
     Sys line stands for System Line.
     Syslines act as commands in the dialogue file.
