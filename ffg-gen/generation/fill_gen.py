@@ -5,7 +5,7 @@ from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 import durations
-from movementinfo import MovementInfo
+from characterinfo import CharacterInfo
 
 
 def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtComposition:
@@ -15,7 +15,7 @@ def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtCompositi
     # caculate duration
     all_durations: list[Frame] = [line.duration for line in lines if hasattr(line, 'duration')]
     # also add the time taken for the exit
-    all_durations.append(durations.to_frame(MovementInfo.ofCommon().exitDuration))
+    all_durations.append(durations.to_frame(CharacterInfo.of_common().exitDuration))
     total_duration: Frame = sum(all_durations)
 
     # the gap between each clip is 1 frame, so we also need to make up those durations

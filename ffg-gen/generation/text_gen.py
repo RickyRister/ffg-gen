@@ -44,22 +44,23 @@ def lineToClip(line: DialogueLine | SysLine, context: ConfigContext) -> Clip | N
 
     headerFilter: dict = textFilterArgs(
         text=expect(charInfo.displayName, 'displayName', name),
-        geometry=configs.HEADER.geometry,
+        geometry=expect(charInfo.headerGeometry, 'headerGeometry', name),
         font=expect(charInfo.headerFont, 'headerFont', name),
         size=expect(charInfo.headerFontSize, 'headerFontSize', name),
         color=expect(charInfo.headerFillColor, 'headerFillColor', name),
         olcolor=expect(charInfo.headerOutlineColor, 'headerOutlineColor', name))
 
     dropTextFilter: dict = dropTextFilterArgs(
-        resource=configs.follow_if_named(configs.DIALOGUE_BOX.dropTextMaskPath),
-        end=configs.DIALOGUE_BOX.dropTextEnd)
+        resource=configs.follow_if_named(
+            expect(charInfo.dropTextMaskPath, 'dropTextMaskPath', name)),
+        end=expect(charInfo.dropTextEnd, 'dropTextEnd', name))
 
     richTextFilter: dict = richTextFilterArgs(
         text=line.text,
-        geometry=configs.DIALOGUE_BOX.geometry,
+        geometry=expect(charInfo.dialogueGeometry, 'dialogueGeometry', name),
         font=expect(charInfo.dialogueFont, 'dialogueFont', name),
         fontSize=expect(charInfo.dialogueFontSize, 'dialogueFontSize', name),
-        color=expect(charInfo.dialogueColor, 'dialogueColor', name))
+        color=expect(charInfo.dialogueFontColor, 'dialogueFontColor', name))
 
     return Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)\
         .fx('qtext', richTextFilter)\

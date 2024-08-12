@@ -18,7 +18,6 @@ class ParsingConfigs:
     dialogueRegex: str
     shortDialogueRegex: str
     expressionRegex: str
-    assignmentDelimiter: str = '='
 
 
 @dataclass
@@ -39,38 +38,15 @@ class DurationConfigs:
             self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
 
 
-@dataclass
-class HeaderConfigs:
-    geometry: str
-    font: str = None
-    fontSize: int = None
-    weight: int = 500
-    outlineColor: str = None
-    fillColor: str = '#ffffff'
-    overlayPath: str = 'color:#00000000'
-
-
-@dataclass
-class DialogueBoxConfigs:
-    geometry: str
-    dropTextMaskPath: str
-    dropTextEnd: str
-    font: str = None
-    fontSize: int = None
-    fontColor: str = '#ffffff'
-
-
 # === Global Constants ===
 
 # more specific configs
 PARSING: ParsingConfigs
 VIDEO_MODE: VideoModeConfigs
 DURATIONS: DurationConfigs
-HEADER: HeaderConfigs
-DIALOGUE_BOX: DialogueBoxConfigs
 
 # configs that are loaded by their own classes are still stored as a dict
-MOVEMENT: dict[str, dict]
+CHAR_INFO: dict[str, dict]
 CHARACTERS: dict[str, dict]
 
 # not handled by own class but still stored as a raw data structure
@@ -107,9 +83,7 @@ def loadIntoGlobals(configJson: dict):
     global PARSING
     global VIDEO_MODE
     global DURATIONS
-    global HEADER
-    global DIALOGUE_BOX
-    global MOVEMENT
+    global CHAR_INFO
     global CHARACTERS
     global COMPONENT_MACROS
     global RESOURCE_NAMES
@@ -119,15 +93,13 @@ def loadIntoGlobals(configJson: dict):
     PARSING = ParsingConfigs(**safe_json_get('parsing'))
     VIDEO_MODE = VideoModeConfigs(**safe_json_get('videoMode'))
     DURATIONS = DurationConfigs(**safe_json_get('durations'))
-    HEADER = HeaderConfigs(**safe_json_get('header'))
-    DIALOGUE_BOX = DialogueBoxConfigs(**safe_json_get('dialogueBox'))
 
     # load dicts
     COMPONENT_MACROS = safe_json_get('componentMacros')
     RESOURCE_NAMES = safe_json_get('resourceNames')
 
     # load dicts for the classes to load themselves
-    MOVEMENT = safe_json_get('movement')
+    CHAR_INFO = safe_json_get('charInfo')
     CHARACTERS = safe_json_get('characters')
     GLOBAL_ALIASES = safe_json_get('aliases')
 

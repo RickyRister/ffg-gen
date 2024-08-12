@@ -57,27 +57,26 @@
             }
         ]
     },
-    "header": {
-        "geometry": "108 717 350 42",
-        "font": "MF KeKe (Noncommercial)",
-        "fontSize": 28,
-        "weight": 500
-    },
-    "dialogueBox": {
-        "geometry": "104 767 691 133",
-        "dropTextMaskPath": "!droptextMask",
-        "dropTextEnd": 5,
-        "font": "Linux Biolinum O",
-        "fontSize": 28
-    },
-    "movement": {
+    "charInfo": {
         "common": {
+            "headerGeometry": "108 717 350 42",
+            "headerFont": "MF KeKe (Noncommercial)",
+            "headerFontSize": 28,
+            "headerWeight": 500,
+
+            "dialogueGeometry": "104 767 691 133",
+            "dialogueFont": "Linux Biolinum O",
+            "dialogueFontSize": 28,
+            "dropTextMaskPath": "!droptextMask",
+            "dropTextEnd": 5,
+
             "backBrightness": 0.7,
-            "exitDuration": 0.25,
             "brightnessFadeEnd": 6,
+
             "moveEnd": 10,
             "moveCurve": "k",
             "enterEnd": 6,
+            "exitDuration": 0.25,
             "fadeInEnd": 6,
             "fadeOutEnd": 6
         },
