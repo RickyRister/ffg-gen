@@ -196,7 +196,7 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                 curr_state = State.PENDING_ENTER
                 continue
 
-            case CharEnterAll():
+            case CharEnterAll(is_player=is_player) if (is_player is None) or (is_player == context.get_char(targetName).isPlayer):
                 # force an enter transition on the next dialogue line
                 curr_state = State.PENDING_ENTER
                 continue

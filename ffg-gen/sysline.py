@@ -39,6 +39,7 @@ def parse_sysline(line: str):
         case ['expression', args]: return SetExpr.parseArgs(args.strip())
         case ['enter', args]: return CharEnter.parseArgs(args.strip())
         case ['enterall']: return CharEnterAll()
+        case ['enterall', args]: return CharEnterAll.parseArgs(args.strip())
         case ['exit', args]: return CharExit.parseArgs(args.strip())
         case ['wait', args]: return Wait.parseArgs(args.strip())
         case ['set', args]: return SetCharProperty.parseArgs(args.strip())
@@ -91,10 +92,17 @@ class CharEnter(SysLine):
 @dataclass
 class CharEnterAll(SysLine):
     """Forces all characters to enter the screen.
-    By default, all characters will start offscreen and won't enter until explicitly declared
+    Optionally lets you only affect the characters on a given side.
 
-    Usage: @enterall
+    Usage: @enterall <side>
     """
+    is_player: bool = None
+
+    def parseArgs(args: str):
+        match args:
+            case 'player' | 'players': return CharEnterAll(True)
+            case 'enemy' | 'enemies': return CharEnterAll(False)
+            case _: raise ValueError(f'Invalid args for @enterall: {args}')
 
 
 @dataclass
