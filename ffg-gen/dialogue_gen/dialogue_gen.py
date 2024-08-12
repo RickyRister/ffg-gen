@@ -3,6 +3,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 from pathlib import Path
 from typing import Generator
+import cli_args
 import configs
 from dialogue_gen import dconfigs
 from dialogue_gen.dialogueline import DialogueLine
@@ -42,15 +43,15 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 
 
 def dialogue_gen():
-    configs.loadConfigJson(configs.ARGS.config)
-    dconfigs.loadConfigJson(configs.ARGS.config)
+    configs.loadConfigJson(cli_args.ARGS.config)
+    dconfigs.loadConfigJson(cli_args.ARGS.config)
 
     common_lines: list[DialogueLine | SysLine] = None
     chapters: dict[str, list[DialogueLine | SysLine]] = None
-    with open(configs.ARGS.input) as inputFile:
+    with open(cli_args.ARGS.input) as inputFile:
         common_lines, chapters = line_parse.parseDialogueFile(inputFile)
 
-    if (chapter_name := configs.ARGS.chapter) is not None:
+    if (chapter_name := cli_args.ARGS.chapter) is not None:
         # cli args; only process this chapter
         if chapter_name not in chapters:
             raise ValueError(f'{chapter_name} is not a valid chapter.')
@@ -73,7 +74,7 @@ def process_chapter(chapter_name: str | None, lines: list[DialogueLine | SysLine
     Assumes that lines already includes the common lines
     '''
     # generate all compositions
-    compositions: list[ExtComposition] = list(process_components(configs.ARGS.components, lines))
+    compositions: list[ExtComposition] = list(process_components(cli_args.ARGS.components, lines))
 
     # reverse the list so components render in left-to-right order of cli args
     compositions.reverse()
@@ -119,11 +120,11 @@ def write_mlt(xml: Element, suffix: str = ''):
     The suffix is appended to the output name given by the cli args
     """
     path: Path
-    if configs.ARGS.output is not None:
-        path = Path(configs.ARGS.output)
+    if cli_args.ARGS.output is not None:
+        path = Path(cli_args.ARGS.output)
         path = path.with_suffix('.mlt')
     else:
-        path = Path(configs.ARGS.input)
+        path = Path(cli_args.ARGS.input)
         path = path.with_suffix('.mlt')
 
     path = path.with_stem(path.stem + suffix)

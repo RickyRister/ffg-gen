@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
-import configs
+import cli_args
 from dialogue_gen import dialogue_gen
 
 
@@ -32,9 +32,9 @@ def createArgumentParser() -> ArgumentParser:
 
 def main():
     parser = createArgumentParser()
-    configs.ARGS = parser.parse_args()
+    cli_args.ARGS = parser.parse_args()
 
-    configs.ARGS.func()
+    cli_args.ARGS.func()
 
 
 if __name__ == "__main__":

@@ -1,13 +1,9 @@
-from argparse import Namespace
 from dataclasses import dataclass
 import json
 from exceptions import MissingProperty
 
 '''Configs that are common to all operations
 '''
-
-# parsed command line args
-ARGS: Namespace
 
 
 # === Classes ===

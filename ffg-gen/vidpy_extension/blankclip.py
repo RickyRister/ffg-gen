@@ -1,7 +1,7 @@
 
 from vidpy import Clip
 from vidpy.utils import Second, Frame
-import configs
+import cli_args
 
 
 class BlankClip(Clip):
@@ -38,7 +38,7 @@ def transparent_clip(duration: Second | Frame) -> Clip:
     '''Creates a blank clip with the given duration.
     If the option --fill-blanks is on, this will instead return a transparent clip with the given duration 
     '''
-    if configs.ARGS.fill_blanks:
+    if cli_args.ARGS.fill_blanks:
         return Clip('color:#00000000', start=Frame(0)).set_duration(duration)
     else:
         return BlankClip.ofDuration(duration)
