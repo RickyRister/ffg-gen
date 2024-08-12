@@ -3,6 +3,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 from pathlib import Path
 from typing import Generator
+import json
 import cli_args
 import configs
 from dialogue_gen import dconfigs
@@ -43,14 +44,19 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 
 
 def dialogue_gen():
-    configs.loadConfigJson(cli_args.ARGS.config)
-    dconfigs.loadConfigJson(cli_args.ARGS.config)
+    # load config json into global config values
+    with open(cli_args.ARGS.config) as json_file:
+        json_dict = json.load(json_file)
+        configs.load_into_globals(json_dict)
+        dconfigs.load_into_globals(json_dict)
 
+    # load lines from dialogue text file
     common_lines: list[DialogueLine | SysLine] = None
     chapters: dict[str, list[DialogueLine | SysLine]] = None
     with open(cli_args.ARGS.input) as inputFile:
         common_lines, chapters = line_parse.parseDialogueFile(inputFile)
 
+    # determine which chapters to process
     if (chapter_name := cli_args.ARGS.chapter) is not None:
         # cli args; only process this chapter
         if chapter_name not in chapters:

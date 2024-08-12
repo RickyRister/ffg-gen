@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import json
 from durations import Threshold
 
 '''Configs that are specific to dialogue_gen
@@ -37,16 +36,7 @@ CHAR_INFO: dict[str, dict]
 CHARACTERS: dict[str, dict]
 
 
-def loadConfigJson(path: str):
-    """Reads the json file into appropriate configs, then loads the json values into the globals
-    path: path to the json file
-    """
-
-    with open(path) as configFile:
-        loadIntoGlobals(json.load(configFile))
-
-
-def loadIntoGlobals(configJson: dict):
+def load_into_globals(configJson: dict):
     """Load the json config values into the global variables
     """
 

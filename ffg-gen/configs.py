@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import json
 from exceptions import MissingProperty
 
 '''Configs that are common to all operations
@@ -26,16 +25,7 @@ RESOURCE_NAMES: dict[str, str]
 GLOBAL_ALIASES: dict[str, str]
 
 
-def loadConfigJson(path: str):
-    """Reads the json file into appropriate configs, then loads the json values into the globals
-    path: path to the json file
-    """
-
-    with open(path) as configFile:
-        loadIntoGlobals(json.load(configFile))
-
-
-def loadIntoGlobals(configJson: dict):
+def load_into_globals(configJson: dict):
     """Load the json config values into the global variables
     """
 
