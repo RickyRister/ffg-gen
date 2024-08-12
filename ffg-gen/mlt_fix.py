@@ -60,8 +60,12 @@ def handle_possible_fades(brightness_filter: Element):
 
     alpha = brightness_filter.find("./property[@name='alpha']")
     if alpha is not None:
-        pattern = re.compile(r'00:00:00\.000=(?P<initial>\d);(?P<end>.+)=\d')
+        pattern = re.compile(r'[0:\.]+=(?P<initial>\d);(?P<end>.+)=\d')
         matches: re.Match = pattern.match(alpha.text)
+
+        # skip if no match
+        if not matches:
+            return
 
         match (matches.group('initial')):
             # initial=0 => fade-in; we do add shotcut fade-in
