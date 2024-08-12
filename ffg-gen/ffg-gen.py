@@ -2,7 +2,7 @@
 
 from argparse import ArgumentParser
 import configs
-import dialogue_gen
+from dialogue_gen import dialogue_gen
 
 
 def createArgumentParser() -> ArgumentParser:

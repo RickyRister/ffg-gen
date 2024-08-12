@@ -4,11 +4,11 @@ from xml.etree.ElementTree import Element
 from pathlib import Path
 from typing import Generator
 import configs
-from dialogueline import DialogueLine
-import line_parse
-from sysline import SysLine
-from generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
-from characterinfo import CharacterInfo
+from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen import line_parse
+from dialogue_gen.sysline import SysLine
+from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
+from dialogue_gen.characterinfo import CharacterInfo
 import mlt_fix
 from vidpy_extension.ext_composition import ExtComposition, compositions_to_mlt
 

@@ -2,9 +2,8 @@ from dataclasses import dataclass
 from typing import Iterable, Generator
 import re
 import configs
-import sysline
-from sysline import SysLine
-from dialogueline import DialogueLine
+from dialogue_gen.sysline import SysLine, parse_sysline
+from dialogue_gen.dialogueline import DialogueLine
 
 
 @dataclass
@@ -62,7 +61,7 @@ def parseLine(line: str) -> DialogueLine | SysLine | ChapterLine | None:
 
     # process this line as a sysline if it begins with @
     if (line.startswith('@')):
-        return sysline.parse_sysline(line[1:])
+        return parse_sysline(line[1:])
 
     # process this line as a chapter marker if it begins with ===
     if (line.startswith('===')):

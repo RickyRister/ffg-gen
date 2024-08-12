@@ -1,5 +1,5 @@
 from typing import Self
-from characterinfo import CharacterInfo
+from dialogue_gen.characterinfo import CharacterInfo
 import configs
 
 

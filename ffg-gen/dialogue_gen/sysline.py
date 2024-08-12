@@ -5,9 +5,9 @@ import re
 import configs
 import durations
 from vidpy.utils import Frame
-from characterinfo import CharacterInfo
+from dialogue_gen.characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
-from configcontext import ConfigContext
+from dialogue_gen.configcontext import ConfigContext
 
 
 @dataclass

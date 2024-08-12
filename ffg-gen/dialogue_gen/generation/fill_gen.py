@@ -1,11 +1,11 @@
 from vidpy import Clip
-from dialogueline import DialogueLine
-from sysline import SysLine
+from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.sysline import SysLine
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 import durations
-from characterinfo import CharacterInfo
+from dialogue_gen.characterinfo import CharacterInfo
 
 
 def generate(lines: list[DialogueLine | SysLine], resource: str) -> ExtComposition:

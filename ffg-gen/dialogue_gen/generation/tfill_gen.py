@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Generator
 from vidpy import Clip
-from dialogueline import DialogueLine
-from sysline import SysLine, Wait
+from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.sysline import SysLine, Wait
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 from vidpy_extension.blankclip import transparent_clip

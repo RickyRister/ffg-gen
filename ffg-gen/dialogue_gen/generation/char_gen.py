@@ -4,12 +4,12 @@ from typing import Generator, Iterable
 from dataclasses import dataclass
 from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
-from dialogueline import DialogueLine
-from characterinfo import CharacterInfo
-from sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
+from dialogue_gen.dialogueline import DialogueLine
+from dialogue_gen.characterinfo import CharacterInfo
+from dialogue_gen.sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 import configs
 import durations
-from configcontext import ConfigContext
+from dialogue_gen.configcontext import ConfigContext
 from exceptions import expect, DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
