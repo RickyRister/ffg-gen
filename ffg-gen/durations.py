@@ -2,7 +2,6 @@ import math
 from dataclasses import dataclass
 from vidpy.utils import Frame
 import configs
-from exceptions import MissingProperty
 
 
 @dataclass
@@ -11,16 +10,11 @@ class Threshold:
     """
 
     count: int                      # bottom word/char count to hit this threshold
-    duration: int | float = None    # duration of clip. int will be intepreted as frames and float as seconds
+    duration: Frame
 
-    def get_duration(self) -> Frame:
-        '''Gets the duration, in the unit that's given in the configs
-        '''
-        if self.duration is None:
-            raise MissingProperty(
-                f'No duration value configured for threshold at count {self.count}')
-        else:
-            return to_frame(self.duration)
+    def __post_init__(self):
+        if not isinstance(self.duration, Frame):
+            self.duration = to_frame(self.duration)
 
 
 def to_frame(duration: int | float) -> Frame:

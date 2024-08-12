@@ -32,4 +32,4 @@ class DialogueLine:
 
         index = bisect(configs.DURATIONS.thresholds, count,
                        key=lambda threshold: threshold.count)
-        return configs.DURATIONS.thresholds[index-1].get_duration()
+        return configs.DURATIONS.thresholds[index-1].duration
