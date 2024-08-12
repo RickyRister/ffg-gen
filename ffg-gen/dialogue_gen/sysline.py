@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 import ast
 import re
-import configs
+from dialogue_gen import dconfigs
 import durations
 from vidpy.utils import Frame
 from dialogue_gen.characterinfo import CharacterInfo
@@ -67,7 +67,7 @@ class SetExpr(SysLine):
     expression: str
 
     def parseArgs(args: str):
-        if (matches := re.match(configs.PARSING.expressionRegex, args)):
+        if (matches := re.match(dconfigs.PARSING.expressionRegex, args)):
             return SetExpr(
                 name=matches.group('name').lower().strip(),
                 expression=matches.group('expression').strip())

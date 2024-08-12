@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable, Generator
 import re
-import configs
+from dialogue_gen import dconfigs
 from dialogue_gen.sysline import SysLine, parse_sysline
 from dialogue_gen.dialogueline import DialogueLine
 
@@ -72,12 +72,12 @@ def parseLine(line: str) -> DialogueLine | SysLine | ChapterLine | None:
     expression: str = None
 
     # try to match normal dialogue line
-    match = re.match(configs.PARSING.dialogueRegex, line)
+    match = re.match(dconfigs.PARSING.dialogueRegex, line)
     if match:
         expression = match.group('expression').strip()  # normal dialogue line exclusive group
     else:
         # try to match shortened dialogue line and throw if that match also fails
-        if not (match := re.match(configs.PARSING.shortDialogueRegex, line)):
+        if not (match := re.match(dconfigs.PARSING.shortDialogueRegex, line)):
             raise ValueError(f'line did not match regex exactly: {line}')
 
     # groups that appear in both dialogue line types

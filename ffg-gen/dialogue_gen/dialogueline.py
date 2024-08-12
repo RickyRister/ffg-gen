@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from bisect import bisect
 import re
-import configs
+from dialogue_gen import dconfigs
 from vidpy.utils import Frame
 
 
@@ -22,14 +22,14 @@ class DialogueLine:
         """
 
         count: int = None
-        match configs.DURATIONS.mode:
+        match dconfigs.DURATIONS.mode:
             case 'char':
                 count = len(self.text)
             case 'word':
                 count = len(re.findall(r'\w+', self.text))
             case _:
-                raise ValueError(f'{configs.DURATIONS.mode} is not a valid durations mode')
+                raise ValueError(f'{dconfigs.DURATIONS.mode} is not a valid durations mode')
 
-        index = bisect(configs.DURATIONS.thresholds, count,
+        index = bisect(dconfigs.DURATIONS.thresholds, count,
                        key=lambda threshold: threshold.count)
-        return configs.DURATIONS.thresholds[index-1].duration
+        return dconfigs.DURATIONS.thresholds[index-1].duration

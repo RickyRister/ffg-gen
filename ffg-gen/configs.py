@@ -1,24 +1,16 @@
 from argparse import Namespace
 from dataclasses import dataclass
 import json
-from durations import Threshold
 from exceptions import MissingProperty
+
+'''Configs that are common to all operations
+'''
 
 # parsed command line args
 ARGS: Namespace
 
-# loaded config json
-CONFIG_JSON: dict
-
 
 # === Classes ===
-
-@dataclass
-class ParsingConfigs:
-    dialogueRegex: str
-    shortDialogueRegex: str
-    expressionRegex: str
-
 
 @dataclass
 class VideoModeConfigs:
@@ -27,27 +19,10 @@ class VideoModeConfigs:
     fps: int = 30
 
 
-@dataclass
-class DurationConfigs:
-    mode: str
-    thresholds: list[Threshold]
+# === Common Global Constants ===
 
-    def __post_init__(self):
-        # convert dict to actual objects, if nessecary
-        if isinstance(self.thresholds[0], dict):
-            self.thresholds = [Threshold(**threshold) for threshold in self.thresholds]
-
-
-# === Global Constants ===
-
-# more specific configs
-PARSING: ParsingConfigs
+# common configs
 VIDEO_MODE: VideoModeConfigs
-DURATIONS: DurationConfigs
-
-# configs that are loaded by their own classes are still stored as a dict
-CHAR_INFO: dict[str, dict]
-CHARACTERS: dict[str, dict]
 
 # not handled by own class but still stored as a raw data structure
 COMPONENT_MACROS: dict[str, list[str]]
@@ -60,11 +35,8 @@ def loadConfigJson(path: str):
     path: path to the json file
     """
 
-    global CONFIG_JSON
     with open(path) as configFile:
-        CONFIG_JSON = json.load(configFile)
-
-    loadIntoGlobals(CONFIG_JSON)
+        loadIntoGlobals(json.load(configFile))
 
 
 def loadIntoGlobals(configJson: dict):
@@ -80,27 +52,19 @@ def loadIntoGlobals(configJson: dict):
             return value
 
     # bring globals into scope
-    global PARSING
     global VIDEO_MODE
-    global DURATIONS
-    global CHAR_INFO
-    global CHARACTERS
     global COMPONENT_MACROS
     global RESOURCE_NAMES
     global GLOBAL_ALIASES
 
     # assign globals
-    PARSING = ParsingConfigs(**safe_json_get('parsing'))
     VIDEO_MODE = VideoModeConfigs(**safe_json_get('videoMode'))
-    DURATIONS = DurationConfigs(**safe_json_get('durations'))
 
     # load dicts
     COMPONENT_MACROS = safe_json_get('componentMacros')
     RESOURCE_NAMES = safe_json_get('resourceNames')
 
     # load dicts for the classes to load themselves
-    CHAR_INFO = safe_json_get('charInfo')
-    CHARACTERS = safe_json_get('characters')
     GLOBAL_ALIASES = safe_json_get('aliases')
 
 

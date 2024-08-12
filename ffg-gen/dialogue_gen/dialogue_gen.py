@@ -4,6 +4,7 @@ from xml.etree.ElementTree import Element
 from pathlib import Path
 from typing import Generator
 import configs
+from dialogue_gen import dconfigs
 from dialogue_gen.dialogueline import DialogueLine
 from dialogue_gen import line_parse
 from dialogue_gen.sysline import SysLine
@@ -42,6 +43,7 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
 
 def dialogue_gen():
     configs.loadConfigJson(configs.ARGS.config)
+    dconfigs.loadConfigJson(configs.ARGS.config)
 
     common_lines: list[DialogueLine | SysLine] = None
     chapters: dict[str, list[DialogueLine | SysLine]] = None
@@ -156,7 +158,7 @@ def find_all_names(lines: list[DialogueLine | SysLine]) -> list[str]:
     # does weird stuff with dict to ensure uniqueness while preserving order
     names: dict[str] = {line.name: None for line in lines if hasattr(line, 'name')}
     names: dict[str] = {configs.follow_alias(name): None for name in names
-                        if name in configs.CHARACTERS or name in configs.GLOBAL_ALIASES}
+                        if name in dconfigs.CHARACTERS or name in configs.GLOBAL_ALIASES}
     return list(names)
 
 

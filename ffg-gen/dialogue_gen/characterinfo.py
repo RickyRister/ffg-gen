@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Any, Self
 from functools import cache
 import configs
+from dialogue_gen import dconfigs
 from exceptions import MissingProperty, expect
 
 
@@ -75,7 +76,7 @@ class CharacterInfo:
         Will load info from the global config json.
         Make sure the json is loaded in before calling this!
         '''
-        return CharacterInfo(**configs.CHAR_INFO.get('common'))
+        return CharacterInfo(**dconfigs.CHAR_INFO.get('common'))
 
     @cache
     @staticmethod
@@ -112,7 +113,7 @@ def merge_down_chain(name: str) -> dict[str, Any]:
     common -> player/enemy -> characters.name
     '''
     # grab character json
-    character_json: dict = configs.CHARACTERS.get(name)
+    character_json: dict = dconfigs.CHARACTERS.get(name)
 
     if character_json is None:
         raise MissingProperty(f'Character info for {name} not found in config json')
@@ -120,10 +121,10 @@ def merge_down_chain(name: str) -> dict[str, Any]:
     # grab player/enemy json
     isPlayer: bool = expect(character_json.get('isPlayer'), 'isPlayer', name)
     side: str = 'player' if isPlayer else 'enemy'
-    sided_json: dict = configs.CHAR_INFO.get(side)
+    sided_json: dict = dconfigs.CHAR_INFO.get(side)
 
     # grab common json
-    common_json: dict = configs.CHAR_INFO.get('common')
+    common_json: dict = dconfigs.CHAR_INFO.get('common')
 
     # perform merge
     combined_dict: dict = dict()
