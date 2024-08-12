@@ -94,9 +94,15 @@ Kiko9lo: Ahhh, I lost..
 Kiko1lo: The sun is enjoyable, so maybe it isn't so bad for the incident to end.
 Sameika8: That was really pointless, wasn't it?
 Reimu4: There's always someone who has to get in my way for no reason.
+
+@exitall player
+
 Reimu4: I wish these youkai would finally remember who I am,
 Reimu4: so I don't have to keep reminding them with a beatdown.
 Sameika1: At least we know there's nothing here.
+
+@enterall player
+
 Sameika2: The youkai are probably causing the humans lots of grievance,
 Kiko1lo: say something
 Sameika2: so onward we go.

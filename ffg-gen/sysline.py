@@ -41,6 +41,8 @@ def parse_sysline(line: str):
         case ['enterall']: return CharEnterAll()
         case ['enterall', args]: return CharEnterAll.parseArgs(args.strip())
         case ['exit', args]: return CharExit.parseArgs(args.strip())
+        case ['exitall']: return CharExitAll()
+        case ['exitall', args]: return CharExitAll.parseArgs(args.strip())
         case ['wait', args]: return Wait.parseArgs(args.strip())
         case ['set', args]: return SetCharProperty.parseArgs(args.strip())
         case ['unset', args]: return UnsetCharProperty.parseArgs(args.strip())
@@ -119,6 +121,22 @@ class CharExit(SysLine):
         match args.split():
             case [name]: return CharExit(name=name.lower())
             case _: raise ValueError(f'Invalid args for @exit: {args}')
+
+
+@dataclass
+class CharExitAll(SysLine):
+    """Forces all characters to exit the screen.
+    Optionally lets you only affect the characters on a given side.
+
+    Usage: @exitall <side>
+    """
+    is_player: bool = None
+
+    def parseArgs(args: str):
+        match args:
+            case 'player' | 'players': return CharExitAll(True)
+            case 'enemy' | 'enemies': return CharExitAll(False)
+            case _: raise ValueError(f'Invalid args for @exitall: {args}')
 
 
 @dataclass

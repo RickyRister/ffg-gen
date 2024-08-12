@@ -75,7 +75,7 @@
 
             "moveEnd": 10,
             "moveCurve": "k",
-            "enterEnd": 6,
+            "enterEnd": 8,
             "exitDuration": 0.25,
             "fadeInEnd": 6,
             "fadeOutEnd": 6
