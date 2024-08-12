@@ -38,6 +38,7 @@ def parse_sysline(line: str):
     match line.split(None, 1):
         case ['expression', args]: return SetExpr.parseArgs(args.strip())
         case ['enter', args]: return CharEnter.parseArgs(args.strip())
+        case ['enterall']: return CharEnterAll()
         case ['exit', args]: return CharExit.parseArgs(args.strip())
         case ['wait', args]: return Wait.parseArgs(args.strip())
         case ['set', args]: return SetCharProperty.parseArgs(args.strip())
@@ -85,6 +86,15 @@ class CharEnter(SysLine):
         match args.split():
             case [name]: return CharEnter(name=name.lower())
             case _: raise ValueError(f'Invalid args for @enter: {args}')
+
+
+@dataclass
+class CharEnterAll(SysLine):
+    """Forces all characters to enter the screen.
+    By default, all characters will start offscreen and won't enter until explicitly declared
+
+    Usage: @enterall
+    """
 
 
 @dataclass

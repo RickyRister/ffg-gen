@@ -6,7 +6,7 @@ from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from dialogueline import DialogueLine
 from characterinfo import CharacterInfo
-from sysline import SysLine, SetExpr, Wait, CharEnter, CharExit
+from sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit
 import configs
 import durations
 from configcontext import ConfigContext
@@ -192,6 +192,11 @@ def processLines(lines: list[DialogueLine | SysLine], targetName: str) -> Genera
                 continue
 
             case CharEnter(name=name) if context.follow_alias(name) == targetName:
+                # force an enter transition on the next dialogue line
+                curr_state = State.PENDING_ENTER
+                continue
+
+            case CharEnterAll():
                 # force an enter transition on the next dialogue line
                 curr_state = State.PENDING_ENTER
                 continue

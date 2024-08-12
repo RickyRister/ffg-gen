@@ -87,9 +87,7 @@ Kiko1: I guess I'll have to fight you, so here I go.
 
 === postbattle
 
-@enter reimu
-@enter sameika
-@enter kiko
+@enterall
 
 @expression reimu 4
 @expression sameika 8
