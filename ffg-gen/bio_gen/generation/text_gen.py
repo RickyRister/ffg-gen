@@ -7,6 +7,7 @@ import filters
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.bioinfo import BioInfo
 from bio_gen.sysline import SysLine
+from bio_gen.configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 from exceptions import expect
@@ -30,26 +31,24 @@ def generate(lines: list[Line]) -> ExtComposition:
 # === Processing Lines ===
 
 def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
+    context = ConfigContext()
+
     for index, line in enumerate(lines):
         if isinstance(line, SysLine):
             # always run the pre_hook first if it's a sysline
-            line.pre_hook()
+            line.pre_hook(context)
 
-            # match sysline (we currently don't support Wait yet)
-            match line:
-                case _: ...
         else:
             # figure out if the clip is on either boundary
             is_first = True if index == 0 else False
             is_last = True if index == len(lines) - 1 else False
 
             # create the clip
-            yield line_to_clip(line, is_first, is_last)
+            bioInfo = context.get_char(line.name)
+            yield line_to_clip(line, bioInfo, is_first, is_last)
 
 
-def line_to_clip(line: BioTextBlock, is_first: bool, is_last: bool) -> Clip:
-    bioInfo: BioInfo = BioInfo.of_name(line.name)
-
+def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: bool) -> Clip:
     # text filters
     richTextFilter: dict = filters.richTextFilterArgs(
         text=line.text,

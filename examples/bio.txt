@@ -32,7 +32,9 @@ Her ability to manipulate plant growth helps in repairing any damage done to the
 
 The small fan she holds on her right hand could be used as a weapon used in a danmaku battle or as an enhancer for her powers. Or maybe it's the tip of a green onion?
 
----
+--=
+@set kiko bioFontSize 20
+--=
 
 Spellcards:
 Plant Sign "Propagation of Goodwill" (E/N)

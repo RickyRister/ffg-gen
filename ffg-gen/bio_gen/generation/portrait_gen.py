@@ -7,6 +7,7 @@ from filters import affineFilterArgs, opacityFilterArgs
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.bioinfo import BioInfo
 from bio_gen.sysline import SysLine, SetExpr
+from bio_gen.configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 from exceptions import expect, DialogueGenException
@@ -63,13 +64,15 @@ def generate(lines: list[Line], name: str) -> ExtComposition:
 
 def process_lines(lines: list[Line], target_name: str) -> Generator[ClipInfo, None, None]:
 
+    context = ConfigContext()
+
     curr_expression: str = None
 
     # === start of loop ===
     for line in lines:
         # always run the pre_hook first if it's a sysline
         if isinstance(line, SysLine):
-            line.pre_hook()
+            line.pre_hook(context)
 
         # messy processing depending on line type
         match line:
@@ -87,7 +90,8 @@ def process_lines(lines: list[Line], target_name: str) -> Generator[ClipInfo, No
             case _: continue
 
         # if we get down here we actually have stuff to create
-        yield ClipInfo(BioInfo.of_name(target_name), curr_expression, line.duration)
+        bioInfo = context.get_char(target_name)
+        yield ClipInfo(bioInfo, curr_expression, line.duration)
 
     # === end of loop ===
     # we don't actually have to do anything lol
