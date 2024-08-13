@@ -5,6 +5,8 @@
 
 @expression kiko 1
 
+@set kiko bioFontSize 30
+
 --= 
 
 Species: Kodama
@@ -25,6 +27,7 @@ Although she doesn't have many resources to learn it - especially as it's a west
 --=
 
 @expression kiko 2
+@unset kiko bioFontSize
 
 --=
 

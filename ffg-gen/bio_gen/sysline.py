@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import ast
 from exceptions import NonExistentProperty
 from bio_gen.bioline import Line
+from bio_gen.bioinfo import BioInfo
 from bio_gen.configcontext import ConfigContext
 
 
@@ -34,6 +35,9 @@ def parse_sysline(line: str):
     match line.split(None, 1):
         case ['expression', args]: return SetExpr.parseArgs(args.strip())
         case ['set', args]: return SetCharProperty.parseArgs(args.strip())
+        case ['unset', args]: return UnsetCharProperty.parseArgs(args.strip())
+        case ['reset', args]: return ResetCharProperties.parseArgs(args.strip())
+        case ['resetall']: return ResetAllChars()
         case ['component', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
             raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
@@ -89,6 +93,70 @@ class SetCharProperty(SysLine):
 
         new_charInfo = bioInfo.with_attr(self.property, self.value)
         context.update_char(new_charInfo)
+
+
+@dataclass
+class UnsetCharProperty(SysLine):
+    '''Unsets the field in the BioInfo of a character.
+    The value will be back to what it was when loaded from config
+
+    Usage: @unset [name] [property]
+    '''
+
+    name: str       # character to modify for
+    property: str   # the BioInfo property to unset
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name, property]: return UnsetCharProperty(name, property)
+            case _: raise ValueError(f'Invalid args for @unset: {args}')
+
+    def pre_hook(self, context: ConfigContext):
+        '''Unsets the property
+        '''
+        bioInfo: BioInfo = context.get_char(self.name)
+
+        # checks that the property actually exists, to safeguard against typos
+        if not hasattr(bioInfo, self.property):
+            raise ValueError(
+                f'@unset {self.name} {self.property} failed; BioInfo does not have property {self.property}')
+
+        new_charInfo = bioInfo.with_reset_attr(self.property)
+        context.update_char(new_charInfo)
+
+
+@dataclass
+class ResetCharProperties(SysLine):
+    '''Unsets all fields in the BioInfo of a character.
+    The value will be back to what it was when loaded from config
+
+    Usage: @reset [name]
+    '''
+
+    name: str       # character to reset
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name]: return ResetCharProperties(name)
+            case _: raise ValueError(f'Invalid args for @unset: {args}')
+
+    def pre_hook(self, context: ConfigContext):
+        '''Resets the BioInfo
+        '''
+        context.reset_char(self.name)
+
+
+@dataclass
+class ResetAllChars(SysLine):
+    '''Resets the character cache, causing all set properties to be reset for all characters.
+
+    Usage: @resetall
+    '''
+
+    def pre_hook(self, context: ConfigContext):
+        '''Does the cache reset
+        '''
+        context.reset_all_char()
 
 
 @dataclass
