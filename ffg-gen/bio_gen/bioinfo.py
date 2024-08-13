@@ -5,6 +5,7 @@ from functools import cache
 from vidpy.utils import Frame
 from exceptions import MissingProperty
 import durations
+import configs
 from . import bconfigs
 
 
@@ -29,10 +30,20 @@ class BioInfo:
     # boundary fade timings
     firstFadeInDur: Frame = None
     lastFadeOutDur: Frame = None
-    
-    # fade timings
+
+    # text fade timings
     textFadeInDur: Frame = None
     textFadeOutDur: Frame = None
+
+    # progressbar
+    progbarColor: str = '#42ffffff'
+    progbarBaseY: float = None
+    progbarThickness: float = None
+    progbarFov: float = None
+    progbarAmount: float = 100
+    progbarFlip: bool = True
+    progbarGeometry: str = None
+    progbarFadeOutDur: Frame = None
 
     def __post_init__(self):
         # make sure all fields that represent durations are converted to Frame
@@ -40,6 +51,11 @@ class BioInfo:
         for duration_attr in duration_attrs:
             object.__setattr__(self, duration_attr, durations.to_frame(
                 getattr(self, duration_attr)))
+
+        # progress base defaults
+        if self.progbarBaseY is None:
+            object.__setattr__(self, 'progbarBaseY',
+                               configs.VIDEO_MODE.height/2 - self.progbarThickness/2)
 
     @cache
     @staticmethod

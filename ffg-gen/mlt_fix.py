@@ -83,6 +83,9 @@ def fix_filters(xml: Element) -> Element:
                 filter_element.append(createPropertyElement('shotcut:filter', 'affineSizePosition'))
             case 'brightness':
                 handle_possible_fades(filter_element)
+            case 'frei0r.bigsh0t_eq_to_stereo':
+                filter_element.append(createPropertyElement(
+                    'shotcut:filter', 'bigsh0t_eq_to_stereo'))
 
     return xml
 

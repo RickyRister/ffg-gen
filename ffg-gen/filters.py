@@ -80,15 +80,17 @@ def dropTextFilterArgs(resource: str, end: Frame) -> dict:
     }
 
 
-def affineFilterArgs(rect: str, halign="center", valign="middle") -> dict:
+def affineFilterArgs(rect: str, halign="center", valign="middle", distort=0) -> dict:
     """Generates the args for the transform filter. use with 'affine' filter
 
     Args:
         rect: The rect field in the filter. This includes timestamps and geometry
+        distort: 1 to use distort
     """
     return {
         'background': 'color:#00000000',
         'transition.fill': '1',
+        'transition.distort': distort,
         'transition.rect': rect,
         'transition.valign': halign,
         'transition.halign': valign,
@@ -117,4 +119,26 @@ def opacityFilterArgs(alpha: str) -> dict:
 
     return {
         'alpha': alpha,
+    }
+
+
+def eqToStereoFilterArgs(fov: float, yaw=0, roll=0, amount=100) -> dict:
+    '''Generates the args for the 360 Equirectangular to Stereographic filter. 
+    This is really only intended to map a ribbon into a circular loading bar.
+
+    Use with 'frei0r.bigsh0t_eq_to_stereo' filter.
+
+    Args:
+        fov: controls zoom of circle
+        yaw: controls rotation of circle
+        roll: also controls rotation of circle 
+        amount: also controls zoom of circle
+    '''
+    return {
+        'fov': fov,
+        'yaw': yaw,
+        'pitch': -90,
+        'roll': roll,
+        'amount': amount,
+        'interpolation': 0
     }

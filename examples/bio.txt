@@ -1,7 +1,7 @@
 
 @component names fill:!blank
 @component portrait portrait:kiko
-@component background fill:color:white
+@component background fill:color:#8D6669
 
 @expression kiko 1
 
