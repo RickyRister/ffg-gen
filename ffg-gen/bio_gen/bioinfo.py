@@ -4,6 +4,7 @@ from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
 from exceptions import MissingProperty
+from geometry import Geometry
 import durations
 import configs
 from . import bconfigs
@@ -18,14 +19,14 @@ class BioInfo:
     name: str = None                    # the dict name, for tracking purposes
 
     # bio configs
-    bioGeometry: str = None
+    bioGeometry: Geometry = None
     bioFont: str = None
     bioFontSize: int = None
     bioFontColor: str = '#ffffff'
 
     # portrait configs
     portraitPathFormat: str = None
-    portraitGeometry: str = None
+    portraitGeometry: Geometry = None
 
     # boundary fade timings
     firstFadeInDur: Frame = None
@@ -42,15 +43,21 @@ class BioInfo:
     progbarFov: float = None
     progbarAmount: float = 100
     progbarFlip: bool = True
-    progbarGeometry: str = None
+    progbarGeometry: Geometry = None
     progbarFadeOutDur: Frame = None
 
     def __post_init__(self):
         # make sure all fields that represent durations are converted to Frame
         duration_attrs = [attr for attr, type in self.__annotations__.items() if type is Frame]
         for duration_attr in duration_attrs:
-            object.__setattr__(self, duration_attr, durations.to_frame(
-                getattr(self, duration_attr)))
+            if not isinstance((value := getattr(self, duration_attr)), Frame):
+                object.__setattr__(self, duration_attr, durations.to_frame(value))
+
+         # make sure all fields that represent geometries are converted to Geometry
+        geo_attrs = [attr for attr, type in self.__annotations__.items() if type is Geometry]
+        for geo_attr in geo_attrs:
+            if not isinstance((value := getattr(self, geo_attr)), Geometry):
+                object.__setattr__(self, geo_attr, Geometry.parse(value))
 
         # progress base defaults
         if self.progbarBaseY is None:

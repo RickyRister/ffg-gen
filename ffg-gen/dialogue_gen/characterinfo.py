@@ -1,10 +1,11 @@
 import dataclasses
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field
 from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
 import configs
 import durations
+from geometry import Geometry
 from dialogue_gen import dconfigs
 from exceptions import MissingProperty, expect
 
@@ -20,7 +21,7 @@ class CharacterInfo:
     isPlayer: bool = None
 
     # header configs
-    headerGeometry: str = None
+    headerGeometry: Geometry = None
     headerFont: str = None
     headerFontSize: int = None
     headerWeight: int = 500
@@ -29,7 +30,7 @@ class CharacterInfo:
     headerOverlayPath: str = 'color:#00000000'
 
     # dialogue box configs
-    dialogueGeometry: str = None
+    dialogueGeometry: Geometry = None
     dialogueFont: str = None
     dialogueFontSize: int = None
     dialogueFontColor: str = '#ffffff'
@@ -37,11 +38,12 @@ class CharacterInfo:
     dropTextEnd: Frame = None
 
     # portrait geometry configs
-    geometry: str = None             # in case the character's base portrait needs to repositioned
-    frontGeometry: str = None
-    backGeometry: str = None
-    offstageGeometry: str = None
-    offstageBackGeometry: str = None
+    geometry: Geometry = None             # in case the character's base portrait needs to repositioned
+    frontGeometry: Geometry = field(      # defaults to no transform
+        default_factory=lambda: Geometry(0, 0))  
+    backGeometry: Geometry = None
+    offstageGeometry: Geometry = None
+    offstageBackGeometry: Geometry = None
 
     # brightness configs
     frontBrightness: float = 1
@@ -61,12 +63,14 @@ class CharacterInfo:
         # make sure all fields that represent durations are converted to Frame
         duration_attrs = [attr for attr, type in self.__annotations__.items() if type is Frame]
         for duration_attr in duration_attrs:
-            object.__setattr__(self, duration_attr, durations.to_frame(getattr(self, duration_attr)))
+            if not isinstance((value := getattr(self, duration_attr)), Frame):
+                object.__setattr__(self, duration_attr, durations.to_frame(value))
 
-        # frontGeometry defaults to no transform
-        if self.frontGeometry is None:
-            object.__setattr__(self, 'frontGeometry',
-                               f'0 0 {configs.VIDEO_MODE.width} {configs.VIDEO_MODE.height}')
+         # make sure all fields that represent geometries are converted to Geometry
+        geo_attrs = [attr for attr, type in self.__annotations__.items() if type is Geometry]
+        for geo_attr in geo_attrs:
+            if not isinstance((value := getattr(self, geo_attr)), Geometry):
+                object.__setattr__(self, geo_attr, Geometry.parse(value))
 
         # offstageBackGeometry defaults to the same as offstageGeometry
         if self.offstageBackGeometry is None:

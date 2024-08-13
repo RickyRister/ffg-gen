@@ -63,13 +63,13 @@
             "progbarColor": "#42FFFFFF",
             "progbarThickness": 200,
             "progbarFov": 178,
-            "progbarGeometry": "501 333 1280 960",
+            "progbarGeometry": "501 333",
             "progbarFadeOutDur": 10
         }
     },
     "characters": {
         "kiko": {
-            "portraitGeometry": "-320 28 1280 960",
+            "portraitGeometry": "-320 28",
             "portraitPathFormat": "!b1_folder!b1 {expression}.png",
             "bioFontColor": "#73FA79"
         }

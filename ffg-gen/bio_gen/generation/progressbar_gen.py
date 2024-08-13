@@ -10,6 +10,7 @@ from bio_gen.sysline import SysLine
 from bio_gen.configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
+from geometry import Geometry
 from exceptions import expect
 
 
@@ -50,9 +51,6 @@ def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
 
 def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: bool) -> Clip:
     # save the values here so I don't have to keep calling configs.VIDEO_MODE
-    WIDTH = configs.VIDEO_MODE.width
-    HEIGHT = configs.VIDEO_MODE.height
-
     # create base clip
     progbarColor = expect(bioInfo.progbarColor, 'progbarColor', bioInfo.name)
     clip = Clip(f'color:{progbarColor}', start=Frame(0)).set_duration(line.duration)
@@ -61,8 +59,8 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
     thickness = expect(bioInfo.progbarThickness, 'progbarThickness', bioInfo.name)
     topY = expect(bioInfo.progbarBaseY, 'progbarBaseY', bioInfo.name)
 
-    start_rect = f'0 {topY} {WIDTH} {thickness}'
-    end_rect = f'0 {topY} 0 {thickness}'
+    start_rect = Geometry(0, topY, configs.VIDEO_MODE.width, thickness)
+    end_rect = Geometry(0, topY, 0, thickness)
 
     clip.fx('affine', filters.affineFilterArgs(
         f'0={start_rect};{line.duration}={end_rect}', distort=1))

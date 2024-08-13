@@ -81,12 +81,12 @@
             "fadeOutEnd": 6
         },
         "player": {
-            "backGeometry": "-36 24 1280 960",
-            "offstageGeometry": "-72 48 1280 960"
+            "backGeometry": "-36 24",
+            "offstageGeometry": "-72 48"
         },
         "enemy": {
-            "backGeometry": "36 24 1280 960",
-            "offstageGeometry": "72 48 1280 960"
+            "backGeometry": "36 24",
+            "offstageGeometry": "72 48"
         }
     },
     "aliases":{
@@ -96,7 +96,7 @@
         "reimu": {
             "isPlayer": true,
             "displayName": "Reimu",
-            "geometry": "-315 99.7849 1280 960",
+            "geometry": "-315 99.7849",
             "portraitPathFormat": "!reimu_folder!reimu {expression}.png",
             "headerOutlineColor": "#fd6666",
             "headerOverlayPath": "!reimu_folder!overlay.png"
@@ -104,10 +104,10 @@
         "sameika": {
             "isPlayer": true,
             "displayName": "Sameika",
-            "geometry": "-342 118.71 1280 960",
-            "backGeometry": "-68 -24 1280 960",
-            "offstageGeometry": "-92 48 1280 960",
-            "offstageBackGeometry": "-104 24 1280 960",
+            "geometry": "-342 118.71",
+            "backGeometry": "-68 -24",
+            "offstageGeometry": "-92 48",
+            "offstageBackGeometry": "-104 24",
             "portraitPathFormat": "!sameika_folder!sameika {expression}.png",
             "headerOutlineColor": "#ffff9300",
             "headerOverlayPath": "!sameika_folder!overlay.png"
@@ -115,7 +115,7 @@
         "kiko": {
             "isPlayer": false,
             "displayName": "Kiko",
-            "geometry": "134 160 1280 960",
+            "geometry": "134 160",
             "portraitPathFormat": "!s1_folder!b1 {expression}.png",
             "headerOutlineColor": "#73FA79",
             "headerOverlayPath": "!s1_folder!overlay.png"
