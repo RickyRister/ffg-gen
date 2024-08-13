@@ -1,0 +1,47 @@
+
+@component names fill:!blank
+@component portrait portrait:kiko
+@component background fill:color:white
+
+@expression kiko 1
+
+--=
+
+Species: Kodama
+Abilities: Manipulating plant growth
+Location: Youkai Forest
+Music Theme: Flora Paradise
+
+An aloof kodama who spends most of her time relaxing in the Youkai Forest. No one really minds her, since she doesn't bother anyone, and no one bothers her either. 
+
+She doesn't leave the forest often though, so she doesn't have much of an idea of the world outside it.
+
+---
+
+Her main hobby is playing a guitar, which she found on the forest floor after it had been dropped by an outsider with striking yellow hair. Although she doesn't have many resources to learn it - especially as it's a western instrument - she does her best to practice and take care of it. 
+
+Her ability to manipulate plant growth helps in repairing any damage done to the frail instrument. Some tengu occasionally listen to her play, and the small friendships she's made through her passion motivates her to improve.
+
+The small fan she holds on her right hand could be used as a weapon used in a danmaku battle or as an enhancer for her powers. Or maybe it's the tip of a green onion?
+
+--=
+
+@expression kiko 2
+
+--=
+
+Spellcards:
+Plant Sign "Propagation of Goodwill" (E/N)
+Plant Sign "Propagation of Virtue" (H/L)
+
+Tree Sign "Unseen Will of Nature" (E/N)
+Tree Sign "Unseen Wonders of Nature" (H/L)
+
+Plant Sign "Sowing Seeds of Consequence" (E/N)
+Plant Sign "Sowing Salt of Cleansing" (H/L)
+
+Flower Sign “Winter Hawthorn” (E/N)
+Full Bloom “Twilight Hawthorn” (H/L)
+
+--=
+

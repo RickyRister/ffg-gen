@@ -1,0 +1,68 @@
+{
+    "componentMacros": {
+        "all": [
+            "text",
+            "group:names",
+            "progressbar",
+            "fill:!biobox",
+            "group:portrait",
+            "group:background"
+        ]
+    },
+    "resourceNames": {
+        "blank": "color:#00000000",
+        "biobox": "assets/common/bio box.png",
+        "b1_folder": "assets/s1/portraits/"
+    },
+    "videoMode": {
+        "width": 1280,
+        "height": 960,
+        "fps": 30
+    },
+    "durations": {
+        "mode": "word",
+        "thresholds": [
+            {
+                "count": 0,
+                "duration": 20.0
+            },
+            {
+                "count": 20,
+                "duration": 25.0
+            },
+            {
+                "count": 40,
+                "duration": 30.0
+            },
+            {
+                "count": 60,
+                "duration": 35.0
+            },
+            {
+                "count": 80,
+                "duration": 40.0
+            },
+            {
+                "count": 100,
+                "duration": 45.0
+            }
+        ]
+    },
+    "bioInfo": {
+        "common": {
+            "bioGeometry": "665 268 551 596",
+            "bioFont": "Linux Biolinum O",
+            "bioFontSize": 28,
+
+            "textFadeInEnd": 6,
+            "textFadeOutDur": 6
+        }
+    },
+    "characters": {
+        "kiko": {
+            "displayName": "Kiko",
+            "portraitGeometry": "-320 28 1280 960",
+            "portraitPathFormat": "!s1_folder!b1 {expression}.png"
+        }
+    }
+}
