@@ -49,7 +49,7 @@ class Durations:
         return self.thresholds[index-1].duration
 
 
-def to_frame(duration: int | float) -> Frame:
+def to_frame(duration: int | float | None) -> Frame:
     '''Converts the duration into a Frame, accounting for the settings
 
     If duration is an int: interpret as frames. 
@@ -57,8 +57,13 @@ def to_frame(duration: int | float) -> Frame:
 
     If duration is a float: interpret as seconds. 
     Multiply the duration by the fps before converting it to a Frame
+
+    Safely passes through any None.
+    Frame extends from int, so this function should be idempotent on Frames.
     '''
-    if isinstance(duration, int):
+    if duration is None:
+        return None
+    elif isinstance(duration, int):
         return Frame(duration)
     else:
         # we subtract 1 from the resulting frame if it lands on an integer

@@ -238,10 +238,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
 
     # grab charInfo again
     charInfo: CharacterInfo = context.get_char(targetName, False)
-
-    # exitDuration is stored as as either a int or float, so we need to convert it to the current unit
-    exitDuration = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
-    exitDuration: Frame = durations.to_frame(exitDuration)
+    exitDuration: Frame = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
 
     # final exit
     match curr_state:
@@ -295,12 +292,12 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
         fade_end = expect(charInfo.fadeInEnd, 'fadeInEnd', charInfo.name)
-        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=0;{fade_end}=1'))
+        clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
         fade_end = expect(charInfo.fadeOutEnd, 'fadeOutEnd', charInfo.name)
-        clip.fx('brightness', opacityFilterArgs(f'00:00:00.000=1;{fade_end}=0'))
+        clip.fx('brightness', opacityFilterArgs(f'0=1;{fade_end}=0'))
 
     return clip
 
@@ -318,17 +315,17 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
 
     match transition:
         case Transition.IN:
-            return f'00:00:00.000{moveCurve}={backGeometry};{moveEnd}={frontGeometry}'
+            return f'0{moveCurve}={backGeometry};{moveEnd}={frontGeometry}'
         case Transition.OUT:
-            return f'00:00:00.000{moveCurve}={frontGeometry};{moveEnd}={backGeometry}'
+            return f'0{moveCurve}={frontGeometry};{moveEnd}={backGeometry}'
         case Transition.FULL_ENTER:
-            return f'00:00:00.000{moveCurve}={offstageGeometry};{enterEnd}={frontGeometry}'
+            return f'0{moveCurve}={offstageGeometry};{enterEnd}={frontGeometry}'
         case Transition.HALF_ENTER:
-            return f'00:00:00.000{moveCurve}={offstageBackGeometry};{enterEnd}={backGeometry}'
+            return f'0{moveCurve}={offstageBackGeometry};{enterEnd}={backGeometry}'
         case Transition.FULL_EXIT:
-            return f'00:00:00.000{moveCurve}={frontGeometry};{moveEnd}={offstageGeometry}'
+            return f'0{moveCurve}={frontGeometry};{moveEnd}={offstageGeometry}'
         case Transition.HALF_EXIT:
-            return f'00:00:00.000{moveCurve}={backGeometry};{moveEnd}={offstageBackGeometry}'
+            return f'0{moveCurve}={backGeometry};{moveEnd}={offstageBackGeometry}'
         case Transition.STAY_IN:
             return frontGeometry
         case Transition.STAY_OUT:
@@ -342,15 +339,15 @@ def determine_brightness_levels(transition: Transition, charInfo: CharacterInfo)
 
     match transition:
         case Transition.IN:
-            return f'00:00:00.000={dim_level};{fade_end}={full_level}'
+            return f'0={dim_level};{fade_end}={full_level}'
         case Transition.OUT:
-            return f'00:00:00.000={full_level};{fade_end}={dim_level}'
+            return f'0={full_level};{fade_end}={dim_level}'
         case Transition.FULL_ENTER:
-            return f'00:00:00.000={dim_level};{fade_end}={full_level}'
+            return f'0={dim_level};{fade_end}={full_level}'
         case Transition.HALF_ENTER:
             return f'{dim_level}'
         case Transition.FULL_EXIT:
-            return f'00:00:00.000={full_level};{fade_end}={dim_level}'
+            return f'0={full_level};{fade_end}={dim_level}'
         case Transition.HALF_EXIT:
             return f'{dim_level}'
         case Transition.STAY_IN:

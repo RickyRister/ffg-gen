@@ -3,7 +3,7 @@ from dialogue_gen.dialogueline import Line
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-import durations
+from exceptions import expect
 from dialogue_gen.characterinfo import CharacterInfo
 
 
@@ -13,8 +13,10 @@ def generate(lines: list[Line], resource: str) -> ExtComposition:
     """
     # caculate duration
     all_durations: list[Frame] = [line.duration for line in lines if hasattr(line, 'duration')]
+    
     # also add the time taken for the exit
-    all_durations.append(durations.to_frame(CharacterInfo.of_common().exitDuration))
+    exitDuration: Frame = expect(CharacterInfo.of_common().exitDuration, 'exitDuration')
+    all_durations.append(exitDuration)
     total_duration: Frame = sum(all_durations)
 
     # the gap between each clip is 1 frame, so we also need to make up those durations

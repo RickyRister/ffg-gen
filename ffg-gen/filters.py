@@ -1,3 +1,4 @@
+from vidpy.utils import Frame
 
 
 def textFilterArgs(text, geometry,
@@ -67,12 +68,12 @@ def generateHtml(text: str, font: str, fontSize: int, color: str = '#ffffff') ->
     return HTML.replace("{FONT}", font).replace("{SIZE}", str(fontSize)).replace("{COLOR}", color).replace("{TEXT}", text)
 
 
-def dropTextFilterArgs(resource: str, end: str = '00:00:00.133') -> dict:
+def dropTextFilterArgs(resource: str, end: Frame) -> dict:
     """Generates the args for a mask filter to create the drop text effect. Use with 'mask_start' filter 
     """
     return {
         'filter': 'shape',
-        "filter.mix": f'00:00:00.000=0;{end}=100',
+        "filter.mix": f'0=0;{end}=100',
         "filter.resource": resource,
         "filter.use_luminance": 1,
         "filter.use_mix": 1

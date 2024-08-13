@@ -7,6 +7,7 @@ from dialogue_gen.sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
+import durations
 from exceptions import expect
 from dialogue_gen.configcontext import ConfigContext
 

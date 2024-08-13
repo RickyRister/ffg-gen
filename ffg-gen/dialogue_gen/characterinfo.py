@@ -1,8 +1,10 @@
 import dataclasses
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import Any, Self
 from functools import cache
+from vidpy.utils import Frame
 import configs
+import durations
 from dialogue_gen import dconfigs
 from exceptions import MissingProperty, expect
 
@@ -32,10 +34,10 @@ class CharacterInfo:
     dialogueFontSize: int = None
     dialogueFontColor: str = '#ffffff'
     dropTextMaskPath: str = None
-    dropTextEnd: str = None
+    dropTextEnd: Frame = None
 
     # portrait geometry configs
-    geometry: str | None = None             # in case the character's base portrait needs to repositioned
+    geometry: str = None             # in case the character's base portrait needs to repositioned
     frontGeometry: str = None
     backGeometry: str = None
     offstageGeometry: str = None
@@ -44,18 +46,23 @@ class CharacterInfo:
     # brightness configs
     frontBrightness: float = 1
     backBrightness: float = 0.7
-    brightnessFadeEnd: str = None
+    brightnessFadeEnd: Frame = None
 
     # movement timing configs
-    moveEnd: str = None
+    moveEnd: Frame = None
     # https://github.com/mltframework/mlt/blob/master/src/framework/mlt_animation.c#L68
     moveCurve: str = ''
-    enterEnd: str = None
-    exitDuration: int | float = None    # ints will be interpreted as frames and floats as seconds
-    fadeInEnd: str = None
-    fadeOutEnd: str = None
+    enterEnd: Frame = None
+    exitDuration: Frame = None    # ints will be interpreted as frames and floats as seconds
+    fadeInEnd: Frame = None
+    fadeOutEnd: Frame = None
 
     def __post_init__(self):
+        # make sure all fields that represent durations are converted to Frame
+        duration_attrs = [attr for attr, type in self.__annotations__.items() if type is Frame]
+        for duration_attr in duration_attrs:
+            object.__setattr__(self, duration_attr, durations.to_frame(getattr(self, duration_attr)))
+
         # frontGeometry defaults to no transform
         if self.frontGeometry is None:
             object.__setattr__(self, 'frontGeometry',
