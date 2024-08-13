@@ -29,10 +29,10 @@ def generate(lines: list[Line], resource: str, do_fade: bool) -> ExtComposition:
     if do_fade:
         bioInfo: BioInfo = BioInfo.of_common()
 
-        fadeInEnd = expect(bioInfo.enterFadeInEnd, 'enterFadeInEnd', bioInfo.name)
+        fadeInEnd = expect(bioInfo.firstFadeInDur, 'firstFadeInDur', bioInfo.name)
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fadeInEnd}=1'))
 
-        fadeOutDur = expect(bioInfo.textFadeOutDur, 'textFadeOutDur')
+        fadeOutDur = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur')
         fadeOutStart = total_duration - fadeOutDur
         clip.fx('brightness', opacityFilterArgs(f'{fadeOutStart}=1;{total_duration}=0'))
 

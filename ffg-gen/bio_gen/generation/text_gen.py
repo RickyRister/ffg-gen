@@ -59,10 +59,10 @@ def line_to_clip(line: BioTextBlock, is_first: bool, is_last: bool) -> Clip:
         color=expect(bioInfo.bioFontColor, 'bioFontColor'))
 
     # figure out fade filters
-    fadeInEnd = expect(bioInfo.enterFadeInEnd, 'enterFadeInEnd') if is_first\
-        else expect(bioInfo.textFadeInEnd, 'textFadeInEnd')
+    fadeInEnd = expect(bioInfo.firstFadeInDur, 'firstFadeInDur') if is_first\
+        else expect(bioInfo.textFadeInDur, 'textFadeInDur')
 
-    fadeOutDur = expect(bioInfo.exitFadeOutDur, 'exitFadeOutDur') if is_last\
+    fadeOutDur = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur') if is_last\
         else expect(bioInfo.textFadeOutDur, 'textFadeOutDur')
     fadeOutStart = line.duration - fadeOutDur
 

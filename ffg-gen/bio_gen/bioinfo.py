@@ -27,11 +27,11 @@ class BioInfo:
     portraitGeometry: str = None
 
     # boundary fade timings
-    enterFadeInEnd: Frame = None
-    exitFadeOutDur: Frame = None
+    firstFadeInDur: Frame = None
+    lastFadeOutDur: Frame = None
     
     # fade timings
-    textFadeInEnd: Frame = None
+    textFadeInDur: Frame = None
     textFadeOutDur: Frame = None
 
     def __post_init__(self):

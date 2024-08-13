@@ -111,12 +111,12 @@ def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: 
 
     # apply fade in if required
     if transition in (Transition.IN, Transition.BOTH):
-        fade_end = expect(bioInfo.enterFadeInEnd, 'enterFadeInEnd', bioInfo.name)
+        fade_end = expect(bioInfo.firstFadeInDur, 'firstFadeInDur', bioInfo.name)
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.OUT, Transition.BOTH):
-        fade_end = expect(bioInfo.exitFadeOutDur, 'exitFadeOutDur', bioInfo.name)
+        fade_end = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur', bioInfo.name)
         clip.fx('brightness', opacityFilterArgs(f'0=1;{fade_end}=0'))
 
     return clip

@@ -54,11 +54,11 @@
             "bioFont": "Linux Biolinum O",
             "bioFontSize": 28,
 
-            "enterFadeInEnd": 10,
-            "exitFadeOutDur": 10,
+            "firstFadeInDur": 8,
+            "lastFadeOutDur": 6,
 
-            "textFadeInEnd": 6,
-            "textFadeOutDur": 6
+            "textFadeInDur": 4,
+            "textFadeOutDur": 3
         }
     },
     "characters": {
