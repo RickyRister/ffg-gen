@@ -8,7 +8,7 @@ import mlt_fix
 from . import bconfigs
 from . import line_parse
 from bio_gen.bioline import Line
-from bio_gen.generation import text_gen, fill_gen
+from bio_gen.generation import text_gen, fill_gen, portrait_gen
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
@@ -104,8 +104,7 @@ def gen_progressbar(lines: list[Line]) -> Generator[ExtComposition, None, None]:
 
 def gen_portrait(lines: list[Line], character: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating portrait component for {character}")
-    if False:
-        yield  # TODO
+    yield portrait_gen.generate(lines, character)
 
 
 def gen_fill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:

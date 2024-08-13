@@ -26,6 +26,10 @@ class BioInfo:
     portraitPathFormat: str = None
     portraitGeometry: str = None
 
+    # boundary fade timings
+    enterFadeInEnd: Frame = None
+    exitFadeOutDur: Frame = None
+    
     # fade timings
     textFadeInEnd: Frame = None
     textFadeOutDur: Frame = None
