@@ -36,7 +36,8 @@ def line_to_clip(line: Line) -> Clip | None:
         match line:
             case _: return None
 
-    bioInfo: BioInfo = BioInfo.of_common()
+    # grab the appropriate info
+    bioInfo: BioInfo = BioInfo.of_name(line.name)
 
     richTextFilter: dict = filters.richTextFilterArgs(
         text=line.text,

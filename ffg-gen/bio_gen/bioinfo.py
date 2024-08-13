@@ -54,8 +54,12 @@ class BioInfo:
         Caches the result since BioInfo is immutable.
         This will always return the unmodified BioInfo for the given character.
 
+        If None, will just return the common info.
+
         Note: DOES NOT follow aliases
         '''
+        if name is None:
+            return BioInfo.of_common()
         character_json: dict = merge_down_chain(name)
         return BioInfo(name=name, **character_json)
 
