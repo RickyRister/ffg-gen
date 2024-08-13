@@ -3,12 +3,13 @@ from typing import Generator
 import json
 import cli_args
 import configs
+import mlt_fix
 from dialogue_gen import dconfigs
 from dialogue_gen.dialogueline import Line
 from dialogue_gen import line_parse
 from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
 from dialogue_gen.characterinfo import CharacterInfo
-from vidpy_extension.ext_composition import ExtComposition, fix_and_write_mlt
+from vidpy_extension.ext_composition import ExtComposition
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
@@ -85,7 +86,7 @@ def process_chapter(chapter_name: str | None, lines: list[Line]):
 
     print("Done generating. Now exporting combined mlt...")
 
-    fix_and_write_mlt(compositions, chapter_name)
+    mlt_fix.fix_and_write_mlt(compositions, chapter_name)
 
 
 def process_components(components: list[str], lines: list[Line]) -> Generator[ExtComposition, None, None]:

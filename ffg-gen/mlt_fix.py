@@ -1,5 +1,9 @@
-from xml.etree.ElementTree import Element
 import re
+from pathlib import Path
+from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
+from vidpy_extension.ext_composition import ExtComposition, compositions_to_mlt
+import cli_args
 
 
 def createPropertyElement(property: str, value: str) -> Element:
@@ -8,6 +12,36 @@ def createPropertyElement(property: str, value: str) -> Element:
     element = Element('property', {'name': property})
     element.text = value
     return element
+
+
+def fix_and_write_mlt(compositions: list[ExtComposition], file_suffix: str = None):
+    '''One-stop shop that takes care of both fixing and exporting the mlt
+
+    Args:
+        compositions: a list of ExtCompositions to export to an mlt
+        file_suffix: if you want the filename stem to have a suffix
+    '''
+    # generate initial mlt and fix it
+    xml: Element = compositions_to_mlt(compositions)
+    fixed_xml: Element = fix_mlt(xml)
+
+    # figure out the output path
+    path: Path
+    if cli_args.ARGS.output is not None:
+        path = Path(cli_args.ARGS.output)
+        path = path.with_suffix('.mlt')
+    else:
+        path = Path(cli_args.ARGS.input)
+        path = path.with_suffix('.mlt')
+
+    suffix: str = '' if file_suffix is None else '_' + file_suffix
+    path = path.with_stem(path.stem + suffix)
+
+    # write the xml
+    with open(path, 'wb') as outfile:
+        xml_string = ElementTree.tostring(fixed_xml)
+        outfile.write(xml_string)
+        print(f'Finished writing output to {path}')
 
 
 def fix_mlt(xml: Element) -> Element:

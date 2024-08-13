@@ -1,9 +1,10 @@
 from typing import Generator
 from argparse import ArgumentParser, _SubParsersAction
 import json
-from vidpy_extension.ext_composition import ExtComposition, fix_and_write_mlt
+from vidpy_extension.ext_composition import ExtComposition
 import cli_args
 import configs
+import mlt_fix
 from . import bconfigs
 from . import line_parse
 from bio_gen.bioline import Line
@@ -64,7 +65,7 @@ def process_lines(lines: list[Line]):
 
     print("Done generating. Now exporting combined mlt...")
 
-    fix_and_write_mlt(compositions)
+    mlt_fix.fix_and_write_mlt(compositions)
 
 
 def process_components(components: list[str], lines: list[Line]) -> Generator[ExtComposition, None, None]:
