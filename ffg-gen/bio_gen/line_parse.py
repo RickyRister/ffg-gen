@@ -1,6 +1,6 @@
 from typing import Iterable, Generator
 from bio_gen.bioline import Line, BioTextBlock
-from bio_gen.sysline import parse_sysline
+from bio_gen.sysline import parse_sysline, SetChar
 
 
 def parse_bio_file(lines: Iterable[str]) -> list[Line]:
@@ -39,6 +39,9 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # '--=' starts a text block
             elif (line.startswith('--=')):
                 in_text_block = True
+                # determine if we're also setting a new character
+                if (char_name := line.removeprefix('--=').strip()):
+                    yield SetChar(char_name)
 
             else:
                 raise ValueError(f'invalid line?: {line}')
@@ -56,6 +59,9 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # '---' ends the text block and immediately starts a new one
             elif line.startswith('---'):
                 yield flush_buffer(buffer)
+                # determine if we're also setting a new character
+                if (char_name := line.removeprefix('---').strip()):
+                    yield SetChar(char_name)
 
             # everything else gets parsed as text in the text block
             else:
