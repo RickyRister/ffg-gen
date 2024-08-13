@@ -15,7 +15,6 @@ class BioInfo:
     """
 
     name: str = None                    # the dict name, for tracking purposes
-    displayName: str = None             # dunno why we have this
 
     # bio configs
     bioGeometry: str = None
@@ -49,7 +48,7 @@ class BioInfo:
 
     @cache
     @staticmethod
-    def of_name(name: str) -> Self:
+    def of_name(name: str | None) -> Self:
         '''Looks up the name in the config json and parses the BioInfo from that.
         Caches the result since BioInfo is immutable.
         This will always return the unmodified BioInfo for the given character.

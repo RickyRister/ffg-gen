@@ -60,7 +60,6 @@
     },
     "characters": {
         "kiko": {
-            "displayName": "Kiko",
             "portraitGeometry": "-320 28 1280 960",
             "portraitPathFormat": "!s1_folder!b1 {expression}.png",
             "bioFontColor": "#73FA79"
