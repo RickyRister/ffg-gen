@@ -1,6 +1,6 @@
 from typing import Iterable, Generator
 from bio_gen.bioline import Line, BioTextBlock
-from bio_gen.sysline import parse_sysline, SetChar
+from bio_gen.sysline import parse_sysline
 
 
 def parse_bio_file(lines: Iterable[str]) -> list[Line]:
@@ -22,6 +22,10 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     in_text_block: bool = False     # tracks if we're in the middle of a text block
     buffer: list[str] = []
 
+    # a character set during a text block start 
+    # will persist until another character is set
+    curr_name: str = None
+
     for line in lines:
         # processing while outside text block
         if not in_text_block:
@@ -41,7 +45,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
                 in_text_block = True
                 # determine if we're also setting a new character
                 if (char_name := line.removeprefix('--=').strip()):
-                    yield SetChar(char_name)
+                    curr_name = char_name
 
             else:
                 raise ValueError(f'invalid line?: {line}')
@@ -54,21 +58,21 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # '--=' ends a text block
             if line.startswith('--='):
                 in_text_block = False
-                yield flush_buffer(buffer)
+                yield flush_buffer(curr_name, buffer)
 
             # '---' ends the text block and immediately starts a new one
             elif line.startswith('---'):
-                yield flush_buffer(buffer)
+                yield flush_buffer(curr_name, buffer)
                 # determine if we're also setting a new character
                 if (char_name := line.removeprefix('---').strip()):
-                    yield SetChar(char_name)
+                    curr_name = char_name
 
             # everything else gets parsed as text in the text block
             else:
                 buffer.append(line)
 
 
-def flush_buffer(text_lines: list[str]) -> BioTextBlock:
+def flush_buffer(curr_name: str | None, text_lines: list[str]) -> BioTextBlock:
     '''Joins all the accumulated lines into a text block.
     Strips the first leading and last blank lines, if any.
     Also clears the accumulated lines.
@@ -83,4 +87,4 @@ def flush_buffer(text_lines: list[str]) -> BioTextBlock:
 
     text: str = str.join('\n', text_lines)
     text_lines.clear()  # clear buffer before returning
-    return BioTextBlock(text)
+    return BioTextBlock(curr_name, text)

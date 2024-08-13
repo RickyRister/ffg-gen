@@ -19,6 +19,7 @@ class BioTextBlock(Line):
     Note that this can represent multiple actual lines in the script.
     We still treat this thing as a single "line" when processing
     '''
+    name: str | None
     text: str
 
     @property
