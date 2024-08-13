@@ -79,7 +79,8 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
             case 'text': yield from gen_text(lines)
             case 'progressbar': yield from gen_progressbar(lines)
             case x if x.startswith('portrait:'): yield from gen_portrait(lines, x.removeprefix('portrait:'))
-            case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
+            case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'), False)
+            case x if x.startswith('tfill:'): yield from gen_fill(lines, x.removeprefix('tfill:'), True)
             case 'groups': yield from gen_groups(lines)
             case x if x.startswith('group:'): yield from gen_group(lines, x.removeprefix('group:'))
             case _: raise ValueError(f'{component} is not a valid component.')
@@ -107,9 +108,9 @@ def gen_portrait(lines: list[Line], character: str) -> Generator[ExtComposition,
     yield portrait_gen.generate(lines, character)
 
 
-def gen_fill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:
+def gen_fill(lines: list[Line], resource: str, do_fade: bool) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
-    yield fill_gen.generate(lines, resource)
+    yield fill_gen.generate(lines, resource, do_fade)
 
 
 def gen_groups(lines: list[Line]) -> Generator[ExtComposition, None, None]:

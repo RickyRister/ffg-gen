@@ -4,7 +4,7 @@
             "text",
             "group:names",
             "progressbar",
-            "fill:!biobox",
+            "tfill:!biobox",
             "group:portrait",
             "group:background"
         ]
