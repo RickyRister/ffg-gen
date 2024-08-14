@@ -8,9 +8,8 @@ from dialogue_gen.dialogueline import DialogueLine, Line
 from dialogue_gen.characterinfo import CharacterInfo
 from dialogue_gen.sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 import configs
-import durations
 from dialogue_gen.configcontext import ConfigContext
-from exceptions import expect, DialogueGenException
+from exceptions import DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 
@@ -238,7 +237,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
 
     # grab charInfo again
     charInfo: CharacterInfo = context.get_char(targetName, False)
-    exitDuration: Frame = expect(charInfo.exitDuration, 'exitDuration', charInfo.name)
+    exitDuration: Frame=charInfo.exitDuration
 
     # final exit
     match curr_state:
@@ -274,7 +273,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
             f"Character {charInfo.name} is trying to appear on-screen with undefined expression.")
 
     # create clip with portrait
-    portraitPath = expect(charInfo.portraitPathFormat, 'portraitPathFormat', charInfo.name)\
+    portraitPath=charInfo.portraitPathFormat\
         .format(expression=expression)
     portraitPath = configs.follow_if_named(portraitPath)
     clip = Clip(portraitPath, start=Frame(0)).set_duration(duration)
@@ -291,27 +290,26 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
-        fade_end = expect(charInfo.fadeInEnd, 'fadeInEnd', charInfo.name)
+        fade_end=charInfo.fadeInEnd
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
-        fade_end = expect(charInfo.fadeOutEnd, 'fadeOutEnd', charInfo.name)
+        fade_end=charInfo.fadeOutEnd
         clip.fx('brightness', opacityFilterArgs(f'0=1;{fade_end}=0'))
 
     return clip
 
 
 def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
-    moveEnd = expect(charInfo.moveEnd, 'moveEnd', charInfo.name)
-    moveCurve = expect(charInfo.moveCurve, 'moveCurve', charInfo.name)
-    enterEnd = expect(charInfo.enterEnd, 'enterEnd', charInfo.name)
+    moveEnd=charInfo.moveEnd
+    moveCurve=charInfo.moveCurve
+    enterEnd=charInfo.enterEnd
 
-    frontGeometry = expect(charInfo.frontGeometry, 'frontGeometry', charInfo.name)
-    backGeometry = expect(charInfo.backGeometry, 'backGeometry', charInfo.name)
-    offstageGeometry = expect(charInfo.offstageGeometry, 'offstageGeometry', charInfo.name)
-    offstageBackGeometry = expect(charInfo.offstageBackGeometry,
-                                  'offstageBackGeometry', charInfo.name)
+    frontGeometry=charInfo.frontGeometry
+    backGeometry=charInfo.backGeometry
+    offstageGeometry=charInfo.offstageGeometry
+    offstageBackGeometry = charInfo.offstageBackGeometry
 
     match transition:
         case Transition.IN:
@@ -333,9 +331,9 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
 
 
 def determine_brightness_levels(transition: Transition, charInfo: CharacterInfo) -> str:
-    fade_end = expect(charInfo.brightnessFadeEnd, 'brightnessFadeEnd', charInfo.name)
-    full_level = expect(charInfo.frontBrightness, 'frontBrightness', charInfo.name)
-    dim_level = expect(charInfo.backBrightness, 'backBrightness', charInfo.name)
+    fade_end=charInfo.brightnessFadeEnd
+    full_level=charInfo.frontBrightness
+    dim_level=charInfo.backBrightness
 
     match transition:
         case Transition.IN:

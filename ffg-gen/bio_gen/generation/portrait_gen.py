@@ -10,7 +10,7 @@ from bio_gen.sysline import SysLine, SetExpr
 from bio_gen.configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-from exceptions import expect, DialogueGenException
+from exceptions import DialogueGenException
 
 
 # === Objects ====
@@ -104,8 +104,7 @@ def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: 
             f"Character {bioInfo.name} is trying to appear on-screen with undefined expression.")
 
     # create clip with portrait
-    portraitPath = expect(bioInfo.portraitPathFormat, 'portraitPathFormat', bioInfo.name)\
-        .format(expression=expression)
+    portraitPath=bioInfo.portraitPathFormat.format(expression=expression)
     portraitPath = configs.follow_if_named(portraitPath)
     clip = Clip(portraitPath, start=Frame(0)).set_duration(duration)
 
@@ -115,12 +114,12 @@ def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: 
 
     # apply fade in if required
     if transition in (Transition.IN, Transition.BOTH):
-        fade_end = expect(bioInfo.firstFadeInDur, 'firstFadeInDur', bioInfo.name)
+        fade_end=bioInfo.firstFadeInDur
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.OUT, Transition.BOTH):
-        fadeOutDur = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur')
+        fadeOutDur=bioInfo.lastFadeOutDur
         fade_start = duration - fadeOutDur
         clip.fx('brightness', opacityFilterArgs(f'{fade_start}=1;{duration}=0'))
 

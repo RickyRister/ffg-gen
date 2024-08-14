@@ -1,7 +1,5 @@
-from enum import Enum
 from typing import Generator
 from vidpy import Clip
-from dataclasses import dataclass
 from vidpy.utils import Frame
 import filters
 from bio_gen.bioline import Line, BioTextBlock
@@ -10,7 +8,6 @@ from bio_gen.sysline import SysLine
 from bio_gen.configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-from exceptions import expect
 
 
 # === Entrance ====
@@ -52,17 +49,15 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
     # text filters
     richTextFilter: dict = filters.richTextFilterArgs(
         text=line.text,
-        geometry=expect(bioInfo.bioGeometry, 'bioGeometry'),
-        font=expect(bioInfo.bioFont, 'bioFont'),
-        fontSize=expect(bioInfo.bioFontSize, 'bioFontSize'),
-        color=expect(bioInfo.bioFontColor, 'bioFontColor'))
+        geometry=bioInfo.bioGeometry,
+        font=bioInfo.bioFont,
+        fontSize=bioInfo.bioFontSize,
+        color=bioInfo.bioFontColor)
 
     # figure out fade filters
-    fadeInEnd = expect(bioInfo.firstFadeInDur, 'firstFadeInDur') if is_first\
-        else expect(bioInfo.textFadeInDur, 'textFadeInDur')
+    fadeInEnd = bioInfo.firstFadeInDur if is_first else bioInfo.textFadeInDur
 
-    fadeOutDur = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur') if is_last\
-        else expect(bioInfo.textFadeOutDur, 'textFadeOutDur')
+    fadeOutDur = bioInfo.lastFadeOutDur if is_last else bioInfo.textFadeOutDur
     fadeOutStart = line.duration - fadeOutDur
 
     # create clip

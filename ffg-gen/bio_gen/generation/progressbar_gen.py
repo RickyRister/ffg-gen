@@ -1,7 +1,5 @@
-from enum import Enum
 from typing import Generator
 from vidpy import Clip
-from dataclasses import dataclass
 from vidpy.utils import Frame
 import filters
 from bio_gen.bioline import Line, BioTextBlock
@@ -11,7 +9,6 @@ from bio_gen.configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 from geometry import Geometry
-from exceptions import expect
 
 
 # === Entrance ====
@@ -52,12 +49,12 @@ def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
 def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: bool) -> Clip:
     # save the values here so I don't have to keep calling configs.VIDEO_MODE
     # create base clip
-    progbarColor = expect(bioInfo.progbarColor, 'progbarColor', bioInfo.name)
+    progbarColor = bioInfo.progbarColor
     clip = Clip(f'color:{progbarColor}', start=Frame(0)).set_duration(line.duration)
 
     # affine (to turn color fill into strip)
-    thickness = expect(bioInfo.progbarThickness, 'progbarThickness', bioInfo.name)
-    topY = expect(bioInfo.progbarBaseY, 'progbarBaseY', bioInfo.name)
+    thickness = bioInfo.progbarThickness
+    topY = bioInfo.progbarBaseY
 
     start_rect = Geometry(0, topY, configs.VIDEO_MODE.width, thickness)
     end_rect = Geometry(0, topY, 0, thickness)
@@ -74,17 +71,15 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
         clip.fx('avfilter.vflip')
 
     # affine (reposition)
-    geometry = expect(bioInfo.progbarGeometry, 'progbarGeometry', bioInfo.name)
+    geometry = bioInfo.progbarGeometry
     clip.fx('affine', filters.affineFilterArgs(geometry))
 
     # fade in
-    fadeInEnd = expect(bioInfo.firstFadeInDur, 'firstFadeInDur', bioInfo.name) if is_first\
-        else expect(bioInfo.textFadeInDur, 'textFadeInDur', bioInfo.name)
+    fadeInEnd = bioInfo.firstFadeInDur if is_first else bioInfo.textFadeInDur
     clip.fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1'))
 
     # fade out
-    fadeOutDur = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur', bioInfo.name) if is_last\
-        else expect(bioInfo.progbarFadeOutDur, 'progbarFadeOutDur', bioInfo.name)
+    fadeOutDur = bioInfo.lastFadeOutDur if is_last else bioInfo.progbarFadeOutDur
     fadeOutStart = line.duration - fadeOutDur
     clip.fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{line.duration}=0'))
 

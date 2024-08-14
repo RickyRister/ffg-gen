@@ -3,7 +3,6 @@ from dialogue_gen.dialogueline import Line
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-from exceptions import expect
 from dialogue_gen.characterinfo import CharacterInfo
 
 
@@ -15,7 +14,7 @@ def generate(lines: list[Line], resource: str) -> ExtComposition:
     all_durations: list[Frame] = [line.duration for line in lines if hasattr(line, 'duration')]
     
     # also add the time taken for the exit
-    exitDuration: Frame = expect(CharacterInfo.of_common().exitDuration, 'exitDuration')
+    exitDuration: Frame = CharacterInfo.of_common().exitDuration
     all_durations.append(exitDuration)
     total_duration: Frame = sum(all_durations)
 

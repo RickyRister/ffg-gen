@@ -3,11 +3,14 @@ from dataclasses import dataclass, field
 from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
-import configs
 import durations
 from geometry import Geometry
-from dialogue_gen import dconfigs
-from exceptions import MissingProperty, expect
+import infohelper
+from exceptions import MissingProperty
+from . import dconfigs
+
+
+UNSET = infohelper.UNSET
 
 
 @dataclass(frozen=True)
@@ -15,70 +18,65 @@ class CharacterInfo:
     """A representation of the info of a character, read from the config json.
     This class is immutable. Use dataclasses.replace() to modify it
     """
-    name: str = None                       # the dict name, for tracking purposes
-    displayName: str = None
-    portraitPathFormat: str = None
-    isPlayer: bool = None
+    name: str = UNSET                       # the dict name, for tracking purposes
+    displayName: str = UNSET
+    portraitPathFormat: str = UNSET
+    isPlayer: bool = UNSET
 
     # header configs
-    headerGeometry: Geometry = None
-    headerFont: str = None
-    headerFontSize: int = None
+    headerGeometry: Geometry = UNSET
+    headerFont: str = UNSET
+    headerFontSize: int = UNSET
     headerWeight: int = 500
-    headerOutlineColor: str = None
+    headerOutlineColor: str = UNSET
     headerFillColor: str = '#ffffff'
     headerOverlayPath: str = 'color:#00000000'
 
     # dialogue box configs
-    dialogueGeometry: Geometry = None
-    dialogueFont: str = None
-    dialogueFontSize: int = None
+    dialogueGeometry: Geometry = UNSET
+    dialogueFont: str = UNSET
+    dialogueFontSize: int = UNSET
     dialogueFontColor: str = '#ffffff'
-    dropTextMaskPath: str = None
-    dropTextEnd: Frame = None
+    dropTextMaskPath: str = UNSET
+    dropTextEnd: Frame = UNSET
 
     # portrait geometry configs
-    geometry: Geometry = None             # in case the character's base portrait needs to repositioned
+    geometry: Geometry = UNSET             # in case the character's base portrait needs to repositioned
     frontGeometry: Geometry = field(      # defaults to no transform
-        default_factory=lambda: Geometry(0, 0))  
-    backGeometry: Geometry = None
-    offstageGeometry: Geometry = None
-    offstageBackGeometry: Geometry = None
+        default_factory=lambda: Geometry(0, 0))
+    backGeometry: Geometry = UNSET
+    offstageGeometry: Geometry = UNSET
+    offstageBackGeometry: Geometry = UNSET
 
     # brightness configs
     frontBrightness: float = 1
     backBrightness: float = 0.7
-    brightnessFadeEnd: Frame = None
+    brightnessFadeEnd: Frame = UNSET
 
     # movement timing configs
-    moveEnd: Frame = None
+    moveEnd: Frame = UNSET
     # https://github.com/mltframework/mlt/blob/master/src/framework/mlt_animation.c#L68
     moveCurve: str = ''
-    enterEnd: Frame = None
-    exitDuration: Frame = None    # ints will be interpreted as frames and floats as seconds
-    fadeInEnd: Frame = None
-    fadeOutEnd: Frame = None
+    enterEnd: Frame = UNSET
+    exitDuration: Frame = UNSET    # ints will be interpreted as frames and floats as seconds
+    fadeInEnd: Frame = UNSET
+    fadeOutEnd: Frame = UNSET
 
     def __post_init__(self):
-        # make sure all fields that represent durations are converted to Frame
-        duration_attrs = [attr for attr, type in self.__annotations__.items() if type is Frame]
-        for duration_attr in duration_attrs:
-            if not isinstance((value := getattr(self, duration_attr)), Frame):
-                object.__setattr__(self, duration_attr, durations.to_frame(value))
+        infohelper.convert_all_of_type(self, Frame, lambda value: durations.to_frame(value))
+        infohelper.convert_all_of_type(self, Geometry, lambda value: Geometry.parse(value))
 
-         # make sure all fields that represent geometries are converted to Geometry
-        geo_attrs = [attr for attr, type in self.__annotations__.items() if type is Geometry]
-        for geo_attr in geo_attrs:
-            if not isinstance((value := getattr(self, geo_attr)), Geometry):
-                object.__setattr__(self, geo_attr, Geometry.parse(value))
+        infohelper.default_to(self, 'offstageBackGeometry', 'offstageGeometry')
+        infohelper.default_to(self, 'enterEnd', 'moveEnd')
 
-        # offstageBackGeometry defaults to the same as offstageGeometry
-        if self.offstageBackGeometry is None:
-            object.__setattr__(self, 'offstageBackGeometry', self.offstageGeometry)
-
-        # enterEnd defaults to same as moveEnd
-        if self.enterEnd is None:
-            object.__setattr__(self, 'enterEnd', self.moveEnd)
+    def __getattribute__(self, attribute_name: str) -> Any:
+        '''Asserts that the value isn't UNSET before returning it.
+        Raises a MissingProperty exception otherwise.
+        '''
+        value = super(CharacterInfo, self).__getattribute__(attribute_name)
+        char_name = super(CharacterInfo, self).__getattribute__('name')
+        infohelper.expect_is_set(value, attribute_name, char_name)
+        return value
 
     @cache
     @staticmethod
@@ -124,13 +122,14 @@ def merge_down_chain(name: str) -> dict[str, Any]:
     common -> player/enemy -> characters.name
     '''
     # grab character json
-    character_json: dict = dconfigs.CHARACTERS.get(name)
+    character_json: dict | None = dconfigs.CHARACTERS.get(name)
 
     if character_json is None:
         raise MissingProperty(f'Character info for {name} not found in config json')
 
     # grab player/enemy json
-    isPlayer: bool = expect(character_json.get('isPlayer'), 'isPlayer', name)
+    isPlayer: bool = infohelper.expect_is_set(
+        character_json.get('isPlayer'), 'isPlayer', name, None)
     side: str = 'player' if isPlayer else 'enemy'
     sided_json: dict = dconfigs.CHAR_INFO.get(side)
 

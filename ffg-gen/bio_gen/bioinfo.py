@@ -7,7 +7,10 @@ from exceptions import MissingProperty
 from geometry import Geometry
 import durations
 import configs
+import infohelper
 from . import bconfigs
+
+UNSET = infohelper.UNSET
 
 
 @dataclass(frozen=True)
@@ -19,50 +22,49 @@ class BioInfo:
     name: str = None                    # the dict name, for tracking purposes
 
     # bio configs
-    bioGeometry: Geometry = None
-    bioFont: str = None
-    bioFontSize: int = None
+    bioGeometry: Geometry = UNSET
+    bioFont: str = UNSET
+    bioFontSize: int = UNSET
     bioFontColor: str = '#ffffff'
 
     # portrait configs
-    portraitPathFormat: str = None
-    portraitGeometry: Geometry = None
+    portraitPathFormat: str = UNSET
+    portraitGeometry: Geometry = UNSET
 
     # boundary fade timings
-    firstFadeInDur: Frame = None
-    lastFadeOutDur: Frame = None
+    firstFadeInDur: Frame = UNSET
+    lastFadeOutDur: Frame = UNSET
 
     # text fade timings
-    textFadeInDur: Frame = None
-    textFadeOutDur: Frame = None
+    textFadeInDur: Frame = UNSET
+    textFadeOutDur: Frame = UNSET
 
     # progressbar
     progbarColor: str = '#42ffffff'
-    progbarBaseY: float = None
-    progbarThickness: float = None
-    progbarFov: float = None
+    progbarBaseY: float = UNSET
+    progbarThickness: float = UNSET
+    progbarFov: float = UNSET
     progbarAmount: float = 100
     progbarFlip: bool = True
-    progbarGeometry: Geometry = None
-    progbarFadeOutDur: Frame = None
+    progbarGeometry: Geometry = UNSET
+    progbarFadeOutDur: Frame = UNSET
 
     def __post_init__(self):
-        # make sure all fields that represent durations are converted to Frame
-        duration_attrs = [attr for attr, type in self.__annotations__.items() if type is Frame]
-        for duration_attr in duration_attrs:
-            if not isinstance((value := getattr(self, duration_attr)), Frame):
-                object.__setattr__(self, duration_attr, durations.to_frame(value))
-
-         # make sure all fields that represent geometries are converted to Geometry
-        geo_attrs = [attr for attr, type in self.__annotations__.items() if type is Geometry]
-        for geo_attr in geo_attrs:
-            if not isinstance((value := getattr(self, geo_attr)), Geometry):
-                object.__setattr__(self, geo_attr, Geometry.parse(value))
+        infohelper.convert_all_of_type(self, Frame, lambda value: durations.to_frame(value))
+        infohelper.convert_all_of_type(self, Geometry, lambda value: Geometry.parse(value))
 
         # progress base defaults
-        if self.progbarBaseY is None:
-            object.__setattr__(self, 'progbarBaseY',
-                               configs.VIDEO_MODE.height/2 - self.progbarThickness/2)
+        infohelper.default_to_value(self, 'progbarBaseY',
+                                    configs.VIDEO_MODE.height/2 - self.progbarThickness/2)
+
+    def __getattribute__(self, attribute_name: str) -> Any:
+        '''Asserts that the value isn't UNSET before returning it.
+        Raises a MissingProperty exception otherwise.
+        '''
+        value = super(BioInfo, self).__getattribute__(attribute_name)
+        char_name = super(BioInfo, self).__getattribute__('name')
+        infohelper.expect_is_set(value, attribute_name, char_name)
+        return value
 
     @cache
     @staticmethod

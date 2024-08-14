@@ -2,7 +2,6 @@ from vidpy import Clip
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-from exceptions import expect
 from filters import opacityFilterArgs
 from bio_gen.bioline import Line
 from bio_gen.bioinfo import BioInfo
@@ -29,10 +28,10 @@ def generate(lines: list[Line], resource: str, do_fade: bool) -> ExtComposition:
     if do_fade:
         bioInfo: BioInfo = BioInfo.of_common()
 
-        fadeInEnd = expect(bioInfo.firstFadeInDur, 'firstFadeInDur')
+        fadeInEnd=bioInfo.firstFadeInDur
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fadeInEnd}=1'))
 
-        fadeOutDur = expect(bioInfo.lastFadeOutDur, 'lastFadeOutDur')
+        fadeOutDur=bioInfo.lastFadeOutDur
         fadeOutStart = total_duration - fadeOutDur
         clip.fx('brightness', opacityFilterArgs(f'{fadeOutStart}=1;{total_duration}=0'))
 

@@ -7,8 +7,6 @@ from dialogue_gen.sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-import durations
-from exceptions import expect
 from dialogue_gen.configcontext import ConfigContext
 
 
@@ -41,27 +39,25 @@ def lineToClip(line: Line, context: ConfigContext) -> Clip | None:
             case _: return None
 
     charInfo: CharacterInfo = context.get_char(line.name)
-    name = charInfo.name    # name after following alias
 
     headerFilter: dict = textFilterArgs(
-        text=expect(charInfo.displayName, 'displayName', name),
-        geometry=expect(charInfo.headerGeometry, 'headerGeometry', name),
-        font=expect(charInfo.headerFont, 'headerFont', name),
-        size=expect(charInfo.headerFontSize, 'headerFontSize', name),
-        color=expect(charInfo.headerFillColor, 'headerFillColor', name),
-        olcolor=expect(charInfo.headerOutlineColor, 'headerOutlineColor', name))
+        text=charInfo.displayName,
+        geometry=charInfo.headerGeometry,
+        font=charInfo.headerFont,
+        size=charInfo.headerFontSize,
+        color=charInfo.headerFillColor,
+        olcolor=charInfo.headerOutlineColor)
 
     dropTextFilter: dict = dropTextFilterArgs(
-        resource=configs.follow_if_named(
-            expect(charInfo.dropTextMaskPath, 'dropTextMaskPath', name)),
-        end=expect(charInfo.dropTextEnd, 'dropTextEnd', name))
+        resource=configs.follow_if_named(charInfo.dropTextMaskPath),
+        end=charInfo.dropTextEnd)
 
     richTextFilter: dict = richTextFilterArgs(
         text=line.text,
-        geometry=expect(charInfo.dialogueGeometry, 'dialogueGeometry', name),
-        font=expect(charInfo.dialogueFont, 'dialogueFont', name),
-        fontSize=expect(charInfo.dialogueFontSize, 'dialogueFontSize', name),
-        color=expect(charInfo.dialogueFontColor, 'dialogueFontColor', name))
+        geometry=charInfo.dialogueGeometry,
+        font=charInfo.dialogueFont,
+        fontSize=charInfo.dialogueFontSize,
+        color=charInfo.dialogueFontColor)
 
     return Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)\
         .fx('qtext', richTextFilter)\
