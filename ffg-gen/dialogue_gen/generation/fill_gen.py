@@ -12,7 +12,7 @@ def generate(lines: list[Line], resource: str) -> ExtComposition:
     """
     # caculate duration
     all_durations: list[Frame] = [line.duration for line in lines if hasattr(line, 'duration')]
-    
+
     # also add the time taken for the exit
     exitDuration: Frame = CharacterInfo.of_common().exitDuration
     all_durations.append(exitDuration)

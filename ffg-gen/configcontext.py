@@ -1,52 +1,59 @@
-from typing import Self
-from bio_gen.bioinfo import BioInfo
+from typing import Self, TypeVar
 import configs
+
+INFO = TypeVar('INFO')
 
 
 class ConfigContext:
     '''Encapsulates all the config changes that happens during a run
     so that we're not modifying the global state and then have to remember to reset it between each run
 
-    Tracks changes to BioInfo and aliases
+    Tracks changes to infos and aliases
     '''
 
-    def __init__(self) -> Self:
-        '''Creates a new context, with the values starting as the global config values
+    def __init__(self, info_class: type[INFO]) -> Self:
+        '''Creates a new context, with the values starting as the global config values.
+
+        All info_classes are expected to have the following:
+        - a 'name' attribute
+        - a 'of_common()' classmethod 
+        - a 'of_name(name)' classmethod  
         '''
+        self.info_class: type[INFO] = info_class
         self.local_aliases: dict[str, str] = dict()
         self.tracked_nicks: dict[str, str] = dict()
-        self.cached_chars: dict[str, BioInfo] = dict()
+        self.cached_chars: dict[str, INFO] = dict()
 
-    def get_char(self, name: str | None, follow_alias: bool = True) -> BioInfo:
-        '''Gets the BioInfo from this context corresponding to the name.
+    def get_char(self, name: str | None, follow_alias: bool = True) -> INFO:
+        '''Gets the info from this context corresponding to the name.
         Will follow aliases.
 
-        If name is None, will return common BioInfo instead
+        If name is None, will return the common info
         '''
         if name is None:
-            return BioInfo.of_common()
+            return self.info_class.of_common()
 
         name = str.lower(name)
 
         if follow_alias:
             name = self.follow_alias(name)
 
-        # create new BioInfo from default values if not present in cache
+        # create new Info from default values if not present in cache
         if name not in self.cached_chars:
-            self.cached_chars[name] = BioInfo.of_name(name)
+            self.cached_chars[name] = self.info_class.of_name(name)
 
         return self.cached_chars.get(name)
 
-    def update_char(self, new_bio_info: BioInfo):
-        '''Updates the BioInfo cache by replacing the BioInfo with the new one.
-        Gets the name to replace from the new BioInfo
+    def update_char(self, new_info: INFO):
+        '''Updates the Info cache by replacing the info with the new one.
+        Gets the name to replace from the new info
 
-        Since BioInfo is immutable, this is how we modify the bioInfo
+        Since info classes are immutable, this is how we modify the info
         '''
-        self.cached_chars[new_bio_info.name] = new_bio_info
+        self.cached_chars[new_info.name] = new_info
 
     def reset_char(self, name: str, follow_alias: bool = True):
-        '''Resets the BioInfo for the given char by deleting it from the cache.
+        '''Resets the info for the given char by deleting it from the cache.
         Will follow aliases.
         '''
         name = str.lower(name)
@@ -57,7 +64,7 @@ class ConfigContext:
         self.cached_chars.pop(name)
 
     def reset_all_char(self):
-        '''Resets all BioInfo by clearing the cache
+        '''Resets all infos by clearing the cache
         '''
         self.cached_chars.clear()
 

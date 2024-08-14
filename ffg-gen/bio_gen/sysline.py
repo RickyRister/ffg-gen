@@ -4,7 +4,7 @@ import ast
 from exceptions import NonExistentProperty
 from bio_gen.bioline import Line
 from bio_gen.bioinfo import BioInfo
-from bio_gen.configcontext import ConfigContext
+from configcontext import ConfigContext
 
 
 @dataclass

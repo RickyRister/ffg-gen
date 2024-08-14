@@ -7,7 +7,7 @@ from filters import affineFilterArgs, opacityFilterArgs
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.bioinfo import BioInfo
 from bio_gen.sysline import SysLine, SetExpr
-from bio_gen.configcontext import ConfigContext
+from configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 from exceptions import DialogueGenException
@@ -64,7 +64,7 @@ def generate(lines: list[Line], name: str) -> ExtComposition:
 
 def process_lines(lines: list[Line], target_name: str) -> Generator[ClipInfo, None, None]:
 
-    context = ConfigContext()
+    context = ConfigContext(BioInfo)
 
     curr_expression: str = None
 

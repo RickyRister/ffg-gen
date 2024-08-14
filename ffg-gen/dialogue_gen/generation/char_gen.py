@@ -8,7 +8,7 @@ from dialogue_gen.dialogueline import DialogueLine, Line
 from dialogue_gen.characterinfo import CharacterInfo
 from dialogue_gen.sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 import configs
-from dialogue_gen.configcontext import ConfigContext
+from configcontext import ConfigContext
 from exceptions import DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
@@ -152,7 +152,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
     """Returns a generator that returns a stream of ClipInfo
     """
     # Initialize context
-    context = ConfigContext()
+    context = ConfigContext(CharacterInfo)
 
     # Initialize state to offscreen
     curr_state: State = State.OFFSCREEN

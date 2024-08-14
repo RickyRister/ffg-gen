@@ -7,7 +7,7 @@ from dialogue_gen.sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
-from dialogue_gen.configcontext import ConfigContext
+from configcontext import ConfigContext
 
 
 def filter_none(lines: list) -> list:
@@ -17,7 +17,7 @@ def filter_none(lines: list) -> list:
 def generate(lines: list[Line]) -> ExtComposition:
     """Processes the list of lines into a Composition
     """
-    context = ConfigContext()
+    context = ConfigContext(CharacterInfo)
     clips: list[Clip] = filter_none([lineToClip(line, context) for line in lines])
 
     return ExtComposition(

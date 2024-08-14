@@ -5,7 +5,7 @@ import filters
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.bioinfo import BioInfo
 from bio_gen.sysline import SysLine
-from bio_gen.configcontext import ConfigContext
+from configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 
@@ -28,7 +28,7 @@ def generate(lines: list[Line]) -> ExtComposition:
 # === Processing Lines ===
 
 def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
-    context = ConfigContext()
+    context = ConfigContext(BioInfo)
 
     for index, line in enumerate(lines):
         if isinstance(line, SysLine):

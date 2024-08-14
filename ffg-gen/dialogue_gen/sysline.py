@@ -7,7 +7,7 @@ import durations
 from vidpy.utils import Frame
 from dialogue_gen.characterinfo import CharacterInfo
 from exceptions import NonExistentProperty
-from dialogue_gen.configcontext import ConfigContext
+from configcontext import ConfigContext
 from dialogue_gen.dialogueline import Line
 
 
