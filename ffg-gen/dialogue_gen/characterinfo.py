@@ -3,10 +3,9 @@ from dataclasses import dataclass, field
 from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
-import durations
 from geometry import Geometry
 import infohelper
-from exceptions import MissingProperty
+from exceptions import UndefinedPropertyError
 from . import dconfigs
 
 
@@ -124,7 +123,7 @@ def merge_down_chain(name: str) -> dict[str, Any]:
     character_json: dict | None = dconfigs.CHARACTERS.get(name)
 
     if character_json is None:
-        raise MissingProperty(f'Character info for {name} not found in config json')
+        raise UndefinedPropertyError(f'Character info for {name} not found in config json')
 
     # grab player/enemy json
     isPlayer: bool = infohelper.expect_is_set(

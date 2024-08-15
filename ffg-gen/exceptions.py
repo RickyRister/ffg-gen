@@ -9,11 +9,26 @@ class DialogueGenException(Exception):
     '''
 
 
-class MissingProperty(DialogueGenException):
-    '''A certain property is required right now, but is missing.
+class MissingInfoPropertyError(DialogueGenException):
+    '''A certain Info property is required right now, but is missing.
+    '''
+
+    def __init__(self, property_name: str, char_name: str = None):
+        self.property_name = property_name
+        self.char_name = char_name
+
+    def __str__(self) -> str:
+        if self.char_name is not None:
+            return f"Could not resolve '{self.property_name}' property for {self.char_name}"
+        else:
+            return f"Could not resolve '{self.property_name}' property"
+
+
+class UndefinedPropertyError(DialogueGenException):
+    '''A property (other than an Info property) is being referenced right now, but is missing from the configs.
     '''
 
 
-class NonExistentProperty(DialogueGenException):
+class NonExistentPropertyError(DialogueGenException):
     '''You're trying to reference a non-existent property.
     '''

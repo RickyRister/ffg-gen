@@ -3,7 +3,7 @@
 
 from typing import TypeVar, Any, Callable
 from vidpy.utils import Frame
-from exceptions import MissingProperty
+from exceptions import MissingInfoPropertyError
 import durations
 from geometry import Geometry
 
@@ -34,10 +34,8 @@ def expect_is_set(value: T | V, prop_name: str, char_name: str | None = None, se
     '''
     if value != sentinel_value:
         return value
-    elif char_name is not None:
-        raise MissingProperty(f'Could not resolve property {prop_name} for character {char_name}')
     else:
-        raise MissingProperty(f'Could not resolve property {prop_name}')
+        raise MissingInfoPropertyError(prop_name, char_name)
 
 
 # === Conversions during init ===

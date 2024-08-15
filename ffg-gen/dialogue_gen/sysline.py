@@ -6,7 +6,7 @@ from dialogue_gen import dconfigs
 import durations
 from vidpy.utils import Frame
 from dialogue_gen.characterinfo import CharacterInfo
-from exceptions import NonExistentProperty
+from exceptions import NonExistentPropertyError
 from configcontext import ConfigContext
 from dialogue_gen.dialogueline import Line
 
@@ -191,7 +191,7 @@ class SetCharProperty(SysLine):
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
-            raise NonExistentProperty(
+            raise NonExistentPropertyError(
                 f'Failed to @set {self.name} {self.property} {self.value}; CharacterInfo does not have property {self.property}')
 
         new_charInfo = charInfo.with_attr(self.property, self.value)

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
-from exceptions import MissingProperty
+from exceptions import UndefinedPropertyError
 from geometry import Geometry
 import durations
 import configs
@@ -113,10 +113,10 @@ def merge_down_chain(name: str) -> dict[str, Any]:
     common -> characters.name
     '''
     # grab character json
-    character_json: dict = bconfigs.CHARACTERS.get(name)
+    character_json: dict | None = bconfigs.CHARACTERS.get(name)
 
     if character_json is None:
-        raise MissingProperty(f'Bio info for {name} not found in config json')
+        raise UndefinedPropertyError(f'Bio info for {name} not found in config json')
 
     # grab common json
     common_json: dict = bconfigs.BIO_INFO.get('common')

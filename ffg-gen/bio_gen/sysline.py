@@ -1,7 +1,7 @@
 from typing import Any
 from dataclasses import dataclass
 import ast
-from exceptions import NonExistentProperty
+from exceptions import NonExistentPropertyError
 from bio_gen.bioline import Line
 from bio_gen.bioinfo import BioInfo
 from configcontext import ConfigContext
@@ -88,7 +88,7 @@ class SetCharProperty(SysLine):
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(bioInfo, self.property):
-            raise NonExistentProperty(
+            raise NonExistentPropertyError(
                 f'Failed to @set {self.name} {self.property} {self.value}; BioInfo does not have property {self.property}')
 
         new_charInfo = bioInfo.with_attr(self.property, self.value)

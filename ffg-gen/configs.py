@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from exceptions import MissingProperty
+from exceptions import UndefinedPropertyError
 
 '''Configs that are common to all operations
 '''
@@ -74,7 +74,7 @@ def follow_if_named(resource: str) -> str:
 
     # get name
     if name not in RESOURCE_NAMES:
-        raise MissingProperty(f"Named resource '{name}' not defined.")
+        raise UndefinedPropertyError(f"Named resource '{name}' not defined.")
     else:
         return RESOURCE_NAMES.get(name) + postfix
 
