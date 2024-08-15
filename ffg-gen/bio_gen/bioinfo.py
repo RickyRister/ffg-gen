@@ -49,6 +49,15 @@ class BioInfo:
     progbarGeometry: Geometry = UNSET
     progbarFadeOutDur: Frame = UNSET
 
+    # pagenum configs
+    pagenumGeometry: Geometry = UNSET
+    pagenumFont: str = UNSET
+    pagenumFontSize: int = UNSET
+    pagenumWeight: int = 500
+    pagenumOutlineColor: str = '#000000'
+    pagenumFillColor: str = '#ffffff'
+    pagenumCropX: float = UNSET
+
     def __post_init__(self):
         infohelper.convert_all_attrs(self)
 

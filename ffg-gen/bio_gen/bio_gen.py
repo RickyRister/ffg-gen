@@ -9,7 +9,7 @@ from mlt_resource import MltResource
 from . import bconfigs
 from . import line_parse
 from bio_gen.bioline import Line
-from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen
+from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen, pagenum_gen
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
@@ -79,6 +79,7 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
                 yield from process_components(configs.COMPONENT_MACROS.get(macro), lines)
             case 'text': yield from gen_text(lines)
             case 'progressbar': yield from gen_progressbar(lines)
+            case 'pagenum': yield from gen_pagenums(lines)
             case x if x.startswith('portrait:'): yield from gen_portrait(lines, x.removeprefix('portrait:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'), False)
             case x if x.startswith('tfill:'): yield from gen_fill(lines, x.removeprefix('tfill:'), True)
@@ -101,6 +102,11 @@ def gen_text(lines: list[Line]) -> Generator[ExtComposition, None, None]:
 def gen_progressbar(lines: list[Line]) -> Generator[ExtComposition, None, None]:
     print(f"Generating progressbar component")
     yield progressbar_gen.generate(lines)
+
+
+def gen_pagenums(lines: list[Line]) -> Generator[ExtComposition, None, None]:
+    print(f"Generating pagenum component")
+    yield pagenum_gen.generate(lines)
 
 
 def gen_portrait(lines: list[Line], character: str) -> Generator[ExtComposition, None, None]:

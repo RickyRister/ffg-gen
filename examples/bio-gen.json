@@ -2,6 +2,7 @@
     "componentMacros": {
         "all": [
             "text",
+            "pagenum",
             "group:names",
             "progressbar",
             "tfill:!biobox",
@@ -64,7 +65,13 @@
             "progbarThickness": 200,
             "progbarFov": 178,
             "progbarGeometry": "501 333",
-            "progbarFadeOutDur": 10
+            "progbarFadeOutDur": 10,
+
+            "pagenumGeometry": "938 745 225 86", 
+            "pagenumFont": "Linux Biolinum O Bold",
+            "pagenumFontSize": 32,
+            "pagenumWeight": 500,
+            "pagenumCropX": 1135
         }
     },
     "characters": {
