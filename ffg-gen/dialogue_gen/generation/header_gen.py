@@ -6,6 +6,7 @@ from dialogue_gen.sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
+from mlt_resource import MltResource
 from configcontext import ConfigContext
 
 
@@ -38,6 +39,6 @@ def lineToClip(line: Line, context: ConfigContext) -> Clip | None:
             case _: return None
 
     charInfo: CharacterInfo = context.get_char(line.name)
-    overlayPath: str = configs.follow_if_named(charInfo.headerOverlayPath)
+    overlayPath: MltResource = charInfo.headerOverlayPath
 
-    return Clip(overlayPath, start=Frame(0)).set_duration(line.duration)
+    return Clip(str(overlayPath), start=Frame(0)).set_duration(line.duration)

@@ -104,9 +104,8 @@ def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: 
             f"Character {bioInfo.name} is trying to appear on-screen with undefined expression.")
 
     # create clip with portrait
-    portraitPath=bioInfo.portraitPathFormat.format(expression=expression)
-    portraitPath = configs.follow_if_named(portraitPath)
-    clip = Clip(portraitPath, start=Frame(0)).set_duration(duration)
+    portraitPath = bioInfo.portraitPathFormat.format(expression=expression)
+    clip = Clip(str(portraitPath), start=Frame(0)).set_duration(duration)
 
     # apply base geometry correction to image if required
     if bioInfo.portraitGeometry:
@@ -114,12 +113,12 @@ def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: 
 
     # apply fade in if required
     if transition in (Transition.IN, Transition.BOTH):
-        fade_end=bioInfo.firstFadeInDur
+        fade_end = bioInfo.firstFadeInDur
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.OUT, Transition.BOTH):
-        fadeOutDur=bioInfo.lastFadeOutDur
+        fadeOutDur = bioInfo.lastFadeOutDur
         fade_start = duration - fadeOutDur
         clip.fx('brightness', opacityFilterArgs(f'{fade_start}=1;{duration}=0'))
 

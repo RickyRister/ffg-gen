@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Generator
 from vidpy import Clip
+from mlt_resource import MltResource
 from dialogue_gen.dialogueline import Line
 from dialogue_gen.sysline import Wait
 from vidpy.utils import Frame
@@ -17,7 +18,7 @@ class ClipSection:
     do_show: bool
 
 
-def generate(lines: list[Line], resource: str) -> ExtComposition:
+def generate(lines: list[Line], resource: MltResource) -> ExtComposition:
     '''Returns a composition possibly containing multiple clips
     '''
     # filter lines with duration
@@ -28,9 +29,6 @@ def generate(lines: list[Line], resource: str) -> ExtComposition:
 
     # do the merging
     merged_sections = merge_adjacents(clip_sections)
-
-    # follow resource
-    resource = configs.follow_if_named(resource)
 
     # map ClipSection to Clips
     clips: list[Clip] = [to_clip(clip_section, resource) for clip_section in merged_sections]
@@ -53,9 +51,9 @@ def to_clip_section(line: Line) -> ClipSection:
         return ClipSection(line.duration, True)
 
 
-def to_clip(clip_section: ClipSection, resource: str) -> Clip:
+def to_clip(clip_section: ClipSection, resource: MltResource) -> Clip:
     if clip_section.do_show:
-        return Clip(resource, start=Frame(0)).set_duration(clip_section.duration)
+        return Clip(str(resource), start=Frame(0)).set_duration(clip_section.duration)
     else:
         return transparent_clip(clip_section.duration)
 

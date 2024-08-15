@@ -5,7 +5,7 @@ from functools import cache
 from vidpy.utils import Frame
 from exceptions import UndefinedPropertyError
 from geometry import Geometry
-import durations
+from mlt_resource import MltResource
 import configs
 import infohelper
 from . import bconfigs
@@ -28,7 +28,7 @@ class BioInfo:
     bioFontColor: str = '#ffffff'
 
     # portrait configs
-    portraitPathFormat: str = UNSET
+    portraitPathFormat: MltResource = UNSET
     portraitGeometry: Geometry = UNSET
 
     # boundary fade timings

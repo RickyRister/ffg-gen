@@ -4,6 +4,7 @@ from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
 from geometry import Geometry
+from mlt_resource import MltResource
 import infohelper
 from exceptions import UndefinedPropertyError
 from . import dconfigs
@@ -19,7 +20,7 @@ class CharacterInfo:
     """
     name: str = UNSET                       # the dict name, for tracking purposes
     displayName: str = UNSET
-    portraitPathFormat: str = UNSET
+    portraitPathFormat: MltResource = UNSET
     isPlayer: bool = UNSET
 
     # header configs
@@ -29,14 +30,14 @@ class CharacterInfo:
     headerWeight: int = 500
     headerOutlineColor: str = UNSET
     headerFillColor: str = '#ffffff'
-    headerOverlayPath: str = 'color:#00000000'
+    headerOverlayPath: MltResource = 'color:#00000000'
 
     # dialogue box configs
     dialogueGeometry: Geometry = UNSET
     dialogueFont: str = UNSET
     dialogueFontSize: int = UNSET
     dialogueFontColor: str = '#ffffff'
-    dropTextMaskPath: str = UNSET
+    dropTextMaskPath: MltResource = UNSET
     dropTextEnd: Frame = UNSET
 
     # portrait geometry configs

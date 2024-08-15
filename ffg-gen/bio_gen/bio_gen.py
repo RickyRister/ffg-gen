@@ -5,6 +5,7 @@ from vidpy_extension.ext_composition import ExtComposition
 import cli_args
 import configs
 import mlt_fix
+from mlt_resource import MltResource
 from . import bconfigs
 from . import line_parse
 from bio_gen.bioline import Line
@@ -109,7 +110,7 @@ def gen_portrait(lines: list[Line], character: str) -> Generator[ExtComposition,
 
 def gen_fill(lines: list[Line], resource: str, do_fade: bool) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
-    yield fill_gen.generate(lines, resource, do_fade)
+    yield fill_gen.generate(lines, MltResource(resource), do_fade)
 
 
 def gen_groups(lines: list[Line]) -> Generator[ExtComposition, None, None]:

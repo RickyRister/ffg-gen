@@ -8,6 +8,7 @@ from dialogue_gen.dialogueline import DialogueLine, Line
 from dialogue_gen.characterinfo import CharacterInfo
 from dialogue_gen.sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 import configs
+import mlt_resource
 from configcontext import ConfigContext
 from exceptions import DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
@@ -71,7 +72,8 @@ def generate(lines: list[Line], name: str) -> ExtComposition:
     """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
-    names: set[str] = {configs.follow_alias(line.name) for line in lines if hasattr(line, 'name')}
+    names: set[str] = {configs.follow_global_alias(
+        line.name) for line in lines if hasattr(line, 'name')}
     if name not in names:
         raise DialogueGenException(f'{name} does not appear in the dialogue')
 
@@ -237,7 +239,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
 
     # grab charInfo again
     charInfo: CharacterInfo = context.get_char(targetName, False)
-    exitDuration: Frame=charInfo.exitDuration
+    exitDuration: Frame = charInfo.exitDuration
 
     # final exit
     match curr_state:
@@ -273,10 +275,8 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
             f"Character {charInfo.name} is trying to appear on-screen with undefined expression.")
 
     # create clip with portrait
-    portraitPath=charInfo.portraitPathFormat\
-        .format(expression=expression)
-    portraitPath = configs.follow_if_named(portraitPath)
-    clip = Clip(portraitPath, start=Frame(0)).set_duration(duration)
+    portraitPath = charInfo.portraitPathFormat.format(expression=expression)
+    clip = Clip(str(portraitPath), start=Frame(0)).set_duration(duration)
 
     # apply base geometry correction to image if required
     if charInfo.geometry:
@@ -290,25 +290,25 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
 
     # apply fade in if required
     if transition in (Transition.FULL_ENTER, Transition.HALF_ENTER):
-        fade_end=charInfo.fadeInEnd
+        fade_end = charInfo.fadeInEnd
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
     if transition in (Transition.FULL_EXIT, Transition.HALF_EXIT):
-        fade_end=charInfo.fadeOutEnd
+        fade_end = charInfo.fadeOutEnd
         clip.fx('brightness', opacityFilterArgs(f'0=1;{fade_end}=0'))
 
     return clip
 
 
 def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> str:
-    moveEnd=charInfo.moveEnd
-    moveCurve=charInfo.moveCurve
-    enterEnd=charInfo.enterEnd
+    moveEnd = charInfo.moveEnd
+    moveCurve = charInfo.moveCurve
+    enterEnd = charInfo.enterEnd
 
-    frontGeometry=charInfo.frontGeometry
-    backGeometry=charInfo.backGeometry
-    offstageGeometry=charInfo.offstageGeometry
+    frontGeometry = charInfo.frontGeometry
+    backGeometry = charInfo.backGeometry
+    offstageGeometry = charInfo.offstageGeometry
     offstageBackGeometry = charInfo.offstageBackGeometry
 
     match transition:
@@ -331,9 +331,9 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
 
 
 def determine_brightness_levels(transition: Transition, charInfo: CharacterInfo) -> str:
-    fade_end=charInfo.brightnessFadeEnd
-    full_level=charInfo.frontBrightness
-    dim_level=charInfo.backBrightness
+    fade_end = charInfo.brightnessFadeEnd
+    full_level = charInfo.frontBrightness
+    dim_level = charInfo.backBrightness
 
     match transition:
         case Transition.IN:

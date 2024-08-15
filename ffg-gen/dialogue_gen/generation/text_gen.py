@@ -49,7 +49,7 @@ def lineToClip(line: Line, context: ConfigContext) -> Clip | None:
         olcolor=charInfo.headerOutlineColor)
 
     dropTextFilter: dict = dropTextFilterArgs(
-        resource=configs.follow_if_named(charInfo.dropTextMaskPath),
+        resource=charInfo.dropTextMaskPath,
         end=charInfo.dropTextEnd)
 
     richTextFilter: dict = richTextFilterArgs(

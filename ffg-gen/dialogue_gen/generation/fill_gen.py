@@ -3,10 +3,11 @@ from dialogue_gen.dialogueline import Line
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs
+from mlt_resource import MltResource
 from dialogue_gen.characterinfo import CharacterInfo
 
 
-def generate(lines: list[Line], resource: str) -> ExtComposition:
+def generate(lines: list[Line], resource: MltResource) -> ExtComposition:
     """Returns a Composition containing a single Clip.
     The lines are used to calculate the duration of the single Clip.
     """
@@ -21,11 +22,8 @@ def generate(lines: list[Line], resource: str) -> ExtComposition:
     # the gap between each clip is 1 frame, so we also need to make up those durations
     total_duration += Frame(len(all_durations) - 1)
 
-    # follow resource
-    resource = configs.follow_if_named(resource)
-
     return ExtComposition(
-        [Clip(resource, start=Frame(0)).set_duration(total_duration)],
+        [Clip(str(resource), start=Frame(0)).set_duration(total_duration)],
         singletrack=True,
         width=configs.VIDEO_MODE.width,
         height=configs.VIDEO_MODE.height,

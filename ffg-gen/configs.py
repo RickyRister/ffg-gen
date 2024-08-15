@@ -56,35 +56,12 @@ def load_into_globals(configJson: dict):
 
 # === Getters ===
 
-def follow_if_named(resource: str) -> str:
-    '''Converts the resource to the proper link if it's a named resource.
-
-    Named resources are indicated by starting with a !
-    You can terminate the name with another !
-    '''
-
-    # return early if it's not a named resource
-    if not resource.startswith('!'):
-        return resource
-
-    # parse string
-    split = resource[1:].split('!', 1)
-    name: str = split[0]
-    postfix: str = split[1] if len(split) > 1 else ''
-
-    # get name
-    if name not in RESOURCE_NAMES:
-        raise UndefinedPropertyError(f"Named resource '{name}' not defined.")
-    else:
-        return RESOURCE_NAMES.get(name) + postfix
-
-
-def follow_alias(name: str):
+def follow_global_alias(name: str):
     '''Follows any global aliases.
     Aliases are recursive.
     '''
 
     if name in GLOBAL_ALIASES:
-        return follow_alias(GLOBAL_ALIASES.get(name))
+        return follow_global_alias(GLOBAL_ALIASES.get(name))
 
     return name

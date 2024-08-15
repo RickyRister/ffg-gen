@@ -4,6 +4,7 @@ import json
 import cli_args
 import configs
 import mlt_fix
+from mlt_resource import MltResource
 from dialogue_gen import dconfigs
 from dialogue_gen.dialogueline import Line
 from dialogue_gen import line_parse
@@ -134,7 +135,7 @@ def find_all_names(lines: list[Line]) -> list[str]:
     '''
     # does weird stuff with dict to ensure uniqueness while preserving order
     names: dict[str] = {line.name: None for line in lines if hasattr(line, 'name')}
-    names: dict[str] = {configs.follow_alias(name): None for name in names
+    names: dict[str] = {configs.follow_global_alias(name): None for name in names
                         if name in dconfigs.CHARACTERS or name in configs.GLOBAL_ALIASES}
     return list(names)
 
@@ -163,12 +164,12 @@ def gen_char(lines: list[Line], character: str) -> Generator[ExtComposition, Non
 
 def gen_fill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating fill with {resource}")
-    yield fill_gen.generate(lines, resource)
+    yield fill_gen.generate(lines, MltResource(resource))
 
 
 def gen_tfill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating tfill with {resource}")
-    yield tfill_gen.generate(lines, resource)
+    yield tfill_gen.generate(lines, MltResource(resource))
 
 
 def gen_groups(lines: list[Line]) -> Generator[ExtComposition, None, None]:
