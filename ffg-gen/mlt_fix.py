@@ -98,6 +98,8 @@ def fix_filter_element(filter_element: Element, parent_producer: Element):
             handle_possible_fades(filter_element, parent_producer)
         case 'frei0r.bigsh0t_eq_to_stereo':
             filter_element.append(createPropertyElement('shotcut:filter', 'bigsh0t_eq_to_stereo'))
+        case 'qtcrop':
+            filter_element.append(createPropertyElement('shotcut:filter', 'cropRectangle'))
 
 
 def handle_possible_fades(brightness_filter: Element, parent_producer: Element):

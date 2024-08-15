@@ -7,7 +7,7 @@ def textFilterArgs(text, geometry,
                    pad=0, font="Sans", size=1080, style="normal",
                    weight=500) -> dict:
     """
-    Generates the args for the simple text filter. Use with 'dynamictext' filter 
+    Generates the args for the simple text filter. Use with 'dynamictext' filter
     """
     return {
         'argument': text,
@@ -28,7 +28,7 @@ def textFilterArgs(text, geometry,
 
 def richTextFilterArgs(text: str, geometry: str, font: str, fontSize: int, color: str = '#ffffff') -> dict:
     """
-    Generates the args for the rich text filter. Use with 'qtext' filter 
+    Generates the args for the rich text filter. Use with 'qtext' filter
 
     Args:
         text: The text in the textbox
@@ -69,7 +69,7 @@ def generateHtml(text: str, font: str, fontSize: int, color: str = '#ffffff') ->
 
 
 def dropTextFilterArgs(resource: str, end: Frame) -> dict:
-    """Generates the args for a mask filter to create the drop text effect. Use with 'mask_start' filter 
+    """Generates the args for a mask filter to create the drop text effect. Use with 'mask_start' filter
     """
     return {
         'filter': 'shape',
@@ -123,7 +123,7 @@ def opacityFilterArgs(alpha: str) -> dict:
 
 
 def eqToStereoFilterArgs(fov: float, yaw=0, roll=0, amount=100) -> dict:
-    '''Generates the args for the 360 Equirectangular to Stereographic filter. 
+    '''Generates the args for the 360 Equirectangular to Stereographic filter.
     This is really only intended to map a ribbon into a circular loading bar.
 
     Use with 'frei0r.bigsh0t_eq_to_stereo' filter.
@@ -131,7 +131,7 @@ def eqToStereoFilterArgs(fov: float, yaw=0, roll=0, amount=100) -> dict:
     Args:
         fov: controls zoom of circle
         yaw: controls rotation of circle
-        roll: also controls rotation of circle 
+        roll: also controls rotation of circle
         amount: also controls zoom of circle
     '''
     return {
@@ -141,4 +141,21 @@ def eqToStereoFilterArgs(fov: float, yaw=0, roll=0, amount=100) -> dict:
         'roll': roll,
         'amount': amount,
         'interpolation': 0
+    }
+
+
+def cropFilterArgs(rect: str) -> dict:
+    '''Generates the args for the Crop: Rectangle filter.
+
+    Use with 'qtcrop' filter.
+
+    Args:
+        rect: geometry of the crop
+    '''
+    return {
+        'rect': rect,
+        'circle': 0,
+        'color': '#00000000',
+        'radius': 0,
+        'disable': 0
     }
