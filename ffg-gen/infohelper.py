@@ -2,7 +2,10 @@
 '''
 
 from typing import TypeVar, Any, Callable
+from vidpy.utils import Frame
 from exceptions import MissingProperty
+import durations
+from geometry import Geometry
 
 T = TypeVar("T")
 V = TypeVar("V")
@@ -39,6 +42,13 @@ def expect_is_set(value: T | V, prop_name: str, char_name: str | None = None, se
 
 # === Conversions during init ===
 
+def convert_all_attrs(obj: Any):
+    '''Converts all fields in the obj that are of a type that requires post-init conversation
+    '''
+    convert_all_of_type(obj, Frame, lambda value: durations.to_frame(value))
+    convert_all_of_type(obj, Geometry, lambda value: Geometry.parse(value))
+
+
 def convert_all_of_type(obj: Any, target_type: type, mapping_func: Callable):
     attrs = [attr for attr, type in obj.__annotations__.items() if type is target_type]
     for attr in attrs:
@@ -48,12 +58,16 @@ def convert_all_of_type(obj: Any, target_type: type, mapping_func: Callable):
 
 
 def default_to(obj: Any, target_attr: str, backup_attr: str):
+    '''Makes the given attribute default to the value of another attribute
+    '''
     value = object.__getattribute__(obj, target_attr)
     if value is UNSET:
         object.__setattr__(obj, target_attr, object.__getattribute__(obj, backup_attr))
 
 
 def default_to_value(obj: Any, target_attr: str, default_value: Any):
+    '''Makes the given attribute default to the given value
+    '''
     value = object.__getattribute__(obj, target_attr)
     if value is UNSET:
         object.__setattr__(obj, target_attr, default_value)

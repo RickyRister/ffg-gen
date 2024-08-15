@@ -63,8 +63,7 @@ class CharacterInfo:
     fadeOutEnd: Frame = UNSET
 
     def __post_init__(self):
-        infohelper.convert_all_of_type(self, Frame, lambda value: durations.to_frame(value))
-        infohelper.convert_all_of_type(self, Geometry, lambda value: Geometry.parse(value))
+        infohelper.convert_all_attrs(self)
 
         infohelper.default_to(self, 'offstageBackGeometry', 'offstageGeometry')
         infohelper.default_to(self, 'enterEnd', 'moveEnd')

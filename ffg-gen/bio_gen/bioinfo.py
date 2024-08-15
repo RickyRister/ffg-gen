@@ -50,8 +50,7 @@ class BioInfo:
     progbarFadeOutDur: Frame = UNSET
 
     def __post_init__(self):
-        infohelper.convert_all_of_type(self, Frame, lambda value: durations.to_frame(value))
-        infohelper.convert_all_of_type(self, Geometry, lambda value: Geometry.parse(value))
+        infohelper.convert_all_attrs(self)
 
         # progress base defaults
         infohelper.default_to_value(self, 'progbarBaseY',
