@@ -67,30 +67,40 @@ def fix_filters(xml: Element) -> Element:
     """Add required shotcut-exclusive tags to filters
     """
 
-    for filter_element in xml.findall('.//filter'):
-        mlt_service: Element = filter_element.find("./property[@name='mlt_service']").text
-        match(mlt_service):
-            case 'dynamictext':
-                filter_element.append(createPropertyElement('shotcut:filter', 'dynamicText'))
-                filter_element.append(createPropertyElement('shotcut:usePointSize', '1'))
-                filter_element.append(createPropertyElement(
-                    'shotcut:pointSize', filter_element.find("./property[@name='size']").text))
-            case 'qtext':
-                filter_element.append(createPropertyElement('shotcut:filter', 'richText'))
-            case 'mask_start':
-                filter_element.append(createPropertyElement('shotcut:filter', 'maskFromFile'))
-            case 'affine':
-                filter_element.append(createPropertyElement('shotcut:filter', 'affineSizePosition'))
-            case 'brightness':
-                handle_possible_fades(filter_element)
-            case 'frei0r.bigsh0t_eq_to_stereo':
-                filter_element.append(createPropertyElement(
-                    'shotcut:filter', 'bigsh0t_eq_to_stereo'))
+    # we need a reference to the parent producer element for each filter element,
+    # since certain filter fixes require info contained in the parent
+    parent_producers: list[Element] = xml.findall('.//filter/..')
+
+    for parent_producer in parent_producers:
+        for filter_element in parent_producer.findall('.//filter'):
+            fix_filter_element(filter_element, parent_producer)
 
     return xml
 
 
-def handle_possible_fades(brightness_filter: Element):
+def fix_filter_element(filter_element: Element, parent_producer: Element):
+    '''Add required shotcut-exclusive tags to the filter element.
+    '''
+    mlt_service: Element = filter_element.find("./property[@name='mlt_service']").text
+    match(mlt_service):
+        case 'dynamictext':
+            filter_element.append(createPropertyElement('shotcut:filter', 'dynamicText'))
+            filter_element.append(createPropertyElement('shotcut:usePointSize', '1'))
+            filter_element.append(createPropertyElement(
+                'shotcut:pointSize', filter_element.find("./property[@name='size']").text))
+        case 'qtext':
+            filter_element.append(createPropertyElement('shotcut:filter', 'richText'))
+        case 'mask_start':
+            filter_element.append(createPropertyElement('shotcut:filter', 'maskFromFile'))
+        case 'affine':
+            filter_element.append(createPropertyElement('shotcut:filter', 'affineSizePosition'))
+        case 'brightness':
+            handle_possible_fades(filter_element, parent_producer)
+        case 'frei0r.bigsh0t_eq_to_stereo':
+            filter_element.append(createPropertyElement('shotcut:filter', 'bigsh0t_eq_to_stereo'))
+
+
+def handle_possible_fades(brightness_filter: Element, parent_producer: Element):
     """Possibly adds the appropriate fade in/out shotcut filter tag to the known brightness filter.
     We add both fade in and fade outs
     """
@@ -112,12 +122,8 @@ def handle_possible_fades(brightness_filter: Element):
                 brightness_filter.append(createPropertyElement('shotcut:animIn', end))
                 return
 
-            # We don't have an easy way in here to tell what the actual end of clip is,
-            # so we just use the heuristic that all alpha keyframes that go 1 -> 0 and 
-            # don't start on frame 0 are fade outs.
-            # It causes it to miss any fade outs that span the entire clip, 
-            # but at least that's better than screwing up a fade out
-            elif begin != '0' and initial == '1' and final == '0':
+            # If a keyframes goes 1 -> 0 and ends at the clip's end, then it's definitely a fade-out
+            elif end == parent_producer.get('out') and initial == '1' and final == '0':
                 animOut = str(int(end) - int(begin))
                 brightness_filter.append(createPropertyElement(
                     'shotcut:filter', 'fadeOutBrightness'))
