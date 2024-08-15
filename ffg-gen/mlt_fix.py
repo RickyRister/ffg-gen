@@ -92,30 +92,42 @@ def fix_filters(xml: Element) -> Element:
 
 def handle_possible_fades(brightness_filter: Element):
     """Possibly adds the appropriate fade in/out shotcut filter tag to the known brightness filter.
-    Since we use pure opacity keyframes for fade outs, we only add fade-ins.
+    We add both fade in and fade outs
     """
 
     alpha = brightness_filter.find("./property[@name='alpha']")
     if alpha is not None:
-        pattern = re.compile(r'[0:\.]+=(?P<initial>\d);(?P<end>.+)=\d')
+        # we assume that all timestamps that we care about are given as frames,
+        # since we specifically made it so our program converts everything to frames
+        pattern = re.compile(r'(?P<begin>\d+)=(?P<initial>\d);(?P<end>\d+)=(?P<final>\d)')
         matches: re.Match = pattern.match(alpha.text)
 
-        # skip if no match
-        if not matches:
-            return
+        if matches:
+            begin, initial, end, final = matches.groups()
 
-        match (matches.group('initial')):
-            # initial=0 => fade-in; we do add shotcut fade-in
-            case '0':
+            # if a keyframe begins at frame 0 and goes 0 -> 1, then it's definitely a fade-in
+            if begin == '0' and initial == '0' and final == '1':
                 brightness_filter.append(createPropertyElement(
                     'shotcut:filter', 'fadeInBrightness'))
+                brightness_filter.append(createPropertyElement('shotcut:animIn', end))
+                return
+
+            # We don't have an easy way in here to tell what the actual end of clip is,
+            # so we just use the heuristic that all alpha keyframes that go 1 -> 0 and 
+            # don't start on frame 0 are fade outs.
+            # It causes it to miss any fade outs that span the entire clip, 
+            # but at least that's better than screwing up a fade out
+            elif begin != '0' and initial == '1' and final == '0':
+                animOut = str(int(end) - int(begin))
                 brightness_filter.append(createPropertyElement(
-                    'shotcut:animIn', matches.group('end')))
-            # initial=1 => fade out; we add shotcut opacity filter tags
-            case '1':
-                brightness_filter.append(createPropertyElement(
-                    'shotcut:filter', 'brightnessOpacity'))
-                brightness_filter.append(createPropertyElement('opacity', alpha.text))
+                    'shotcut:filter', 'fadeOutBrightness'))
+                brightness_filter.append(createPropertyElement('shotcut:animOut', animOut))
+                return
+
+        # fallthrough if didn't meet requirements for fade in or fade out
+        # no idea what the heck this is, so just add opacity filter and leave it at that
+        brightness_filter.append(createPropertyElement('shotcut:filter', 'brightnessOpacity'))
+        brightness_filter.append(createPropertyElement('opacity', alpha.text))
 
 
 def fix_affine_out(xml: Element) -> Element:
