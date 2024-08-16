@@ -1,5 +1,5 @@
 
-@component names fill:!blank
+@component names tfill:!b1_folder!title.png
 @component portrait portrait:kiko
 @component background fill:color:#8D6669
 
@@ -12,7 +12,6 @@
 Species: Kodama
 Abilities: Manipulating plant growth
 Location: Youkai Forest
-Music Theme: Flora Paradise
 
 An aloof kodama who spends most of her time relaxing in the Youkai Forest. No one really minds her, since she doesn't bother anyone, and no one bothers her either. 
 

@@ -29,23 +29,23 @@
             },
             {
                 "count": 20,
-                "duration": 25.0
+                "duration": 24.0
             },
             {
                 "count": 40,
-                "duration": 30.0
+                "duration": 28.0
             },
             {
                 "count": 60,
-                "duration": 35.0
+                "duration": 30.0
             },
             {
                 "count": 80,
-                "duration": 40.0
+                "duration": 32.0
             },
             {
                 "count": 100,
-                "duration": 45.0
+                "duration": 34.0
             }
         ]
     },
@@ -67,7 +67,7 @@
             "progbarGeometry": "501 333",
             "progbarFadeOutDur": 10,
 
-            "pagenumGeometry": "938 745 225 86", 
+            "pagenumGeometry": "940 747 225 86", 
             "pagenumFont": "Linux Biolinum O Bold",
             "pagenumFontSize": 32,
             "pagenumWeight": 500,
