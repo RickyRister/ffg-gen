@@ -23,20 +23,21 @@ Her main hobby is playing a guitar, which she found on the forest floor after it
 
 Although she doesn't have many resources to learn it - especially as it's a western instrument - she does her best to practice and take care of it. 
 
----/
+
+---
 
 @expression kiko 2
 @unset kiko bioFontSize
-
----
 
 Her ability to manipulate plant growth helps in repairing any damage done to the frail instrument. Some tengu occasionally listen to her play, and the small friendships she's made through her passion motivates her to improve.
 
 The small fan she holds on her right hand could be used as a weapon used in a danmaku battle or as an enhancer for her powers. Or maybe it's the tip of a green onion?
 
----/
-@set kiko bioFontSize 20
 ---
+@set kiko bioFontSize 20
+---*
+
+@expression kiko 3
 
 Spellcards:
 Plant Sign "Propagation of Goodwill" (E/N)

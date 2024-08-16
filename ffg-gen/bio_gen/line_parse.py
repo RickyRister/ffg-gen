@@ -1,7 +1,13 @@
+from enum import Enum, auto
 from typing import Iterable, Generator
 from exceptions import LineParseError
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.sysline import parse_sysline
+
+
+class State(Enum):
+    PENDING = auto()
+    IN_BLOCK = auto()
 
 
 def parse_bio_file(lines: Iterable[str]) -> list[Line]:
@@ -21,20 +27,20 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     '''This is a generator because bio line parsing needs to be stateful.
 
     ### Parsing Logic:
-    We start off outside of any text blocks.
+    We start off in pending state.
+    While in pending state, comments and syslines are still processed.
+    The next non-comment or sysline line will start a new text block.
 
-    '---': Marks the start of a new text block.  
-    If not currently in a text block, then start a new text block.
-    If currently in a text block, then end the current one and start a new block.
+    '---': Ends the current block and sets the state to pending.  
 
-    '---/': Marks the end of a text block.  
-    If currently in a text block, then end the current one and DO NOT start a new one.
-    If not currently in a text block, then throw a parse exception.
+    '---*': Ends the current block and immediately starts a new text block.  
+    Unlike the above, this will not set the state to pending.
+    It immediately starts the text block on the next line.
 
-    Syslines and comments are only functional outside of text blocks.
+    Syslines and comments are only processed outside of text blocks.
     They will be treated as raw text inside of text blocks.
     '''
-    in_text_block: bool = False     # tracks if we're in the middle of a text block
+    state: State = State.PENDING
     buffer: list[str] = []
 
     # a character set during a text block start
@@ -42,8 +48,8 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     curr_name: str = None
 
     for line in lines:
-        # processing while outside text block
-        if not in_text_block:
+        # processing while in pending state
+        if state is State.PENDING:
             # strip before processing
             line = line.strip()
 
@@ -55,33 +61,41 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             elif (line.startswith('@')):
                 yield parse_sysline(line[1:])
 
-            # trying to end a text block without first starting one; invalid
-            elif (line.startswith('---/')):
-                raise LineParseError(f'Trying to end a text block without being in one')
-
-            # '---' always starts a text block
-            elif (line.startswith('---')):
-                in_text_block = True
+            # '---*' immediately starts a new text block
+            elif (line.startswith('---*')):
+                state = State.IN_BLOCK
                 # determine if we're also setting a new character
+                if (char_name := line.removeprefix('---*').strip()):
+                    curr_name = char_name
+
+            # '---' sets state to pending
+            elif (line.startswith('---')):
+                # we're already in pending state, but this line can also
+                # change the character, so we still need to check that
                 if (char_name := line.removeprefix('---').strip()):
                     curr_name = char_name
 
+            # any other text starts a text block
             else:
-                raise LineParseError(f'invalid line?: {line}')
+                state = State.IN_BLOCK
+                buffer.append(line)
 
         # processing while in text block
-        else:
+        elif state is State.IN_BLOCK:
             # strip right to prevent shenanigans with trailing whitespaces
             line = line.rstrip()
 
-            # '---/' ends the text block without starting a new one
-            if line.startswith('---/'):
-                in_text_block = False
+            # '---*' ends the text block and immediately starts a new one
+            if line.startswith('---*'):
                 yield flush_buffer(curr_name, buffer)
+                # determine if we're also setting a new character
+                if (char_name := line.removeprefix('---*').strip()):
+                    curr_name = char_name
 
-            # '---' ends the text block and immediately starts a new one
+            # '---' ends the text block and puts the state in pending
             elif line.startswith('---'):
                 yield flush_buffer(curr_name, buffer)
+                state = State.PENDING
                 # determine if we're also setting a new character
                 if (char_name := line.removeprefix('---').strip()):
                     curr_name = char_name
@@ -94,16 +108,11 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
 
 
 def flush_buffer(curr_name: str | None, text_lines: list[str]) -> BioTextBlock:
-    '''Joins all the accumulated lines into a text block.
-    Strips the first leading and last blank lines, if any.
-    Also clears the accumulated lines.
+    '''Joins all the accumulated lines into a text block, then clears the accumlator.
+    Strips all trailing blank lines.
     '''
-    # remove leading line if it's blank
-    if len(text_lines) > 0 and not text_lines[0].strip():
-        text_lines.pop(0)
-
-    # remove last line if it's blank
-    if len(text_lines) > 0 and not text_lines[-1].strip():
+    # keep removing last line if it's blank
+    while len(text_lines) > 0 and not text_lines[-1].strip():
         text_lines.pop()
 
     text: str = str.join('\n', text_lines)
