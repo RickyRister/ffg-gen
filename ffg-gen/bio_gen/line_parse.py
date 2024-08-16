@@ -19,11 +19,25 @@ def isComment(line: str) -> bool:
 
 def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     '''This is a generator because bio line parsing needs to be stateful.
+
+    ### Parsing Logic:
+    We start off outside of any text blocks.
+
+    '---': Marks the start of a new text block.  
+    If not currently in a text block, then start a new text block.
+    If currently in a text block, then end the current one and start a new block.
+
+    '---/': Marks the end of a text block.  
+    If currently in a text block, then end the current one and DO NOT start a new one.
+    If not currently in a text block, then throw a parse exception.
+
+    Syslines and comments are only functional outside of text blocks.
+    They will be treated as raw text inside of text blocks.
     '''
     in_text_block: bool = False     # tracks if we're in the middle of a text block
     buffer: list[str] = []
 
-    # a character set during a text block start 
+    # a character set during a text block start
     # will persist until another character is set
     curr_name: str = None
 
@@ -41,11 +55,15 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             elif (line.startswith('@')):
                 yield parse_sysline(line[1:])
 
-            # '--=' starts a text block
-            elif (line.startswith('--=')):
+            # trying to end a text block without first starting one; invalid
+            elif (line.startswith('---/')):
+                raise LineParseError(f'Trying to end a text block without being in one')
+
+            # '---' always starts a text block
+            elif (line.startswith('---')):
                 in_text_block = True
                 # determine if we're also setting a new character
-                if (char_name := line.removeprefix('--=').strip()):
+                if (char_name := line.removeprefix('---').strip()):
                     curr_name = char_name
 
             else:
@@ -56,8 +74,8 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # strip right to prevent shenanigans with trailing whitespaces
             line = line.rstrip()
 
-            # '--=' ends a text block
-            if line.startswith('--='):
+            # '---/' ends the text block without starting a new one
+            if line.startswith('---/'):
                 in_text_block = False
                 yield flush_buffer(curr_name, buffer)
 
@@ -71,6 +89,8 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # everything else gets parsed as text in the text block
             else:
                 buffer.append(line)
+    # we don't do any post-loop processing.
+    # Any unterminated text blocks are just dropped
 
 
 def flush_buffer(curr_name: str | None, text_lines: list[str]) -> BioTextBlock:
