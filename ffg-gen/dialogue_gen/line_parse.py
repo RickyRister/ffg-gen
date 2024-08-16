@@ -4,6 +4,7 @@ import re
 from dialogue_gen import dconfigs
 from dialogue_gen.sysline import parse_sysline
 from dialogue_gen.dialogueline import DialogueLine, Line
+from exceptions import LineParseError
 
 
 @dataclass
@@ -78,7 +79,7 @@ def parseLine(line: str) -> Line | ChapterLine | None:
     else:
         # try to match shortened dialogue line and throw if that match also fails
         if not (match := re.match(dconfigs.PARSING.shortDialogueRegex, line)):
-            raise ValueError(f'line did not match regex exactly: {line}')
+            raise LineParseError(f'line did not match regex exactly: {line}')
 
     # groups that appear in both dialogue line types
     name = match.group('name').strip().lower()

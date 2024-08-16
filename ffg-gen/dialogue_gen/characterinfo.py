@@ -6,7 +6,7 @@ from vidpy.utils import Frame
 from geometry import Geometry
 from mlt_resource import MltResource
 import infohelper
-from exceptions import UndefinedPropertyError
+from exceptions import MissingConfigError
 from . import dconfigs
 
 
@@ -124,7 +124,7 @@ def merge_down_chain(name: str) -> dict[str, Any]:
     character_json: dict | None = dconfigs.CHARACTERS.get(name)
 
     if character_json is None:
-        raise UndefinedPropertyError(f'Character info for {name} not found in config json')
+        raise MissingConfigError(f'Character info for {name} not found in config json')
 
     # grab player/enemy json
     isPlayer: bool = infohelper.expect_is_set(

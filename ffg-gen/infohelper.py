@@ -3,7 +3,7 @@
 
 from typing import TypeVar, Any, Callable
 from vidpy.utils import Frame
-from exceptions import MissingInfoPropertyError
+from exceptions import MissingInfoError
 import durations
 from geometry import Geometry
 from mlt_resource import MltResource
@@ -36,7 +36,7 @@ def expect_is_set(value: T | V, prop_name: str, char_name: str | None = None, se
     if value != sentinel_value:
         return value
     else:
-        raise MissingInfoPropertyError(prop_name, char_name)
+        raise MissingInfoError(prop_name, char_name)
 
 
 # === Conversions during init ===

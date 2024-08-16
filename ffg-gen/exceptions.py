@@ -9,7 +9,7 @@ class DialogueGenException(Exception):
     '''
 
 
-class MissingInfoPropertyError(DialogueGenException):
+class MissingInfoError(DialogueGenException):
     '''A certain Info property is required right now, but is missing.
     '''
 
@@ -24,11 +24,15 @@ class MissingInfoPropertyError(DialogueGenException):
             return f"Could not resolve '{self.property_name}' property"
 
 
-class UndefinedPropertyError(DialogueGenException):
+class MissingConfigError(DialogueGenException):
     '''A property (other than an Info property) is being referenced right now, but is missing from the configs.
     '''
 
 
 class NonExistentPropertyError(DialogueGenException):
     '''You're trying to reference a non-existent property.
+    '''
+
+class LineParseError(Exception):
+    '''Invalid line
     '''

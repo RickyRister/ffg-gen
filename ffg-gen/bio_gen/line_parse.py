@@ -1,4 +1,5 @@
 from typing import Iterable, Generator
+from exceptions import LineParseError
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.sysline import parse_sysline
 
@@ -48,7 +49,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
                     curr_name = char_name
 
             else:
-                raise ValueError(f'invalid line?: {line}')
+                raise LineParseError(f'invalid line?: {line}')
 
         # processing while in text block
         else:

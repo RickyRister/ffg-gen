@@ -1,7 +1,7 @@
 from typing import Self
 from dataclasses import dataclass, replace
 import configs
-from exceptions import UndefinedPropertyError
+from exceptions import MissingConfigError
 
 
 @dataclass
@@ -47,6 +47,6 @@ class MltResource:
 
         # get name
         if name not in configs.RESOURCE_NAMES:
-            raise UndefinedPropertyError(f"Named resource '{name}' not defined.")
+            raise MissingConfigError(f"Named resource '{name}' not defined.")
         else:
             return configs.RESOURCE_NAMES.get(name) + postfix

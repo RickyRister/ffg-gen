@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from exceptions import UndefinedPropertyError
+from exceptions import MissingConfigError
 
 '''Configs that are common to all operations
 '''
