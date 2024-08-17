@@ -278,11 +278,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     portraitPath = charInfo.portraitPathFormat.format(expression=expression)
     clip = Clip(str(portraitPath), start=Frame(0)).set_duration(duration)
 
-    # apply base geometry correction to image if required
-    if charInfo.geometry:
-        clip.fx('affine', affineFilterArgs(charInfo.geometry))
-
-    # apply movement
+    # apply geometry (including movement)
     clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, charInfo)))
 
     # apply brightness
@@ -306,10 +302,10 @@ def determine_movement_rect(transition: Transition, charInfo: CharacterInfo) -> 
     moveCurve = charInfo.moveCurve
     enterEnd = charInfo.enterEnd
 
-    frontGeometry = charInfo.frontGeometry
-    backGeometry = charInfo.backGeometry
-    offstageGeometry = charInfo.offstageGeometry
-    offstageBackGeometry = charInfo.offstageBackGeometry
+    frontGeometry = charInfo.geometry + charInfo.frontOffset
+    backGeometry = charInfo.geometry + charInfo.backOffset
+    offstageGeometry = charInfo.geometry + charInfo.offstageOffset
+    offstageBackGeometry = charInfo.geometry + charInfo.backOffset + charInfo.offstageOffset
 
     match transition:
         case Transition.IN:

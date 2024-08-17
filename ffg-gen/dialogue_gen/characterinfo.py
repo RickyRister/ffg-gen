@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from typing import Any, Self
 from functools import cache
 from vidpy.utils import Frame
-from geometry import Geometry
+from geometry import Geometry, Offset
 from mlt_resource import MltResource
 import infohelper
 from exceptions import MissingConfigError
@@ -41,12 +41,10 @@ class CharacterInfo:
     dropTextEnd: Frame = UNSET
 
     # portrait geometry configs
-    geometry: Geometry = UNSET             # in case the character's base portrait needs to repositioned
-    frontGeometry: Geometry = field(      # defaults to no transform
-        default_factory=lambda: Geometry(0, 0))
-    backGeometry: Geometry = UNSET
-    offstageGeometry: Geometry = UNSET
-    offstageBackGeometry: Geometry = UNSET
+    geometry: Geometry = field(default_factory=lambda: Geometry(0,0))
+    frontOffset: Offset = Offset()
+    backOffset: Offset = Offset()
+    offstageOffset: Offset = Offset()
 
     # brightness configs
     frontBrightness: float = 1
@@ -65,7 +63,6 @@ class CharacterInfo:
     def __post_init__(self):
         infohelper.convert_all_attrs(self)
 
-        infohelper.default_to(self, 'offstageBackGeometry', 'offstageGeometry')
         infohelper.default_to(self, 'enterEnd', 'moveEnd')
 
     def __getattribute__(self, attribute_name: str) -> Any:

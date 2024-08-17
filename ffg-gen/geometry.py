@@ -1,6 +1,31 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Self
 import configs
+
+
+@dataclass(frozen=True)
+class Offset:
+    '''Represents an x-y offset for a Geometry.
+    '''
+    x: float = 0
+    y: float = 0
+
+    @staticmethod
+    def parse(input: str | Self | None) -> Self | None:
+        '''Safely parses a string into an Offset.
+        Expects the string to contain x and y, delimited by spaces.
+        '''
+        # deal with the corner cases first
+        if input is None:
+            return None
+        elif isinstance(input, Offset):
+            return input
+
+        match input.split():
+            case [x, y]:
+                return Offset(float(x), float(y))
+            case _:
+                raise ValueError(f'Cannot parse string into Offset: {input}')
 
 
 @dataclass(frozen=True)
@@ -33,9 +58,9 @@ class Geometry:
 
         match input.split(None):
             case [x, y, width, height, *_]:
-                return Geometry(x, y, width, height)
+                return Geometry(float(x), float(y), float(width), float(height))
             case [x, y]:
-                return Geometry(x, y)
+                return Geometry(float(x), float(y))
             case _:
                 raise ValueError(f'Cannot parse string into Geometry: {input}')
 
@@ -43,3 +68,8 @@ class Geometry:
         '''String representation that allows it to be used by shotcut
         '''
         return f'{self.x} {self.y} {self.width} {self.height}'
+
+    def __add__(self, other: Offset):
+        '''You can add an offset to a geometry
+        '''
+        return replace(self, x=self.x+other.x, y=self.y+other.y)

@@ -81,12 +81,12 @@
             "fadeOutEnd": 6
         },
         "player": {
-            "backGeometry": "-36 24",
-            "offstageGeometry": "-72 48"
+            "backOffset": "-36 24",
+            "offstageOffset": "-72 48"
         },
         "enemy": {
-            "backGeometry": "36 24",
-            "offstageGeometry": "72 48"
+            "backOffset": "36 24",
+            "offstageOffset": "72 48"
         }
     },
     "aliases":{
@@ -105,9 +105,8 @@
             "isPlayer": true,
             "displayName": "Sameika",
             "geometry": "-342 118.71",
-            "backGeometry": "-68 -24",
-            "offstageGeometry": "-92 48",
-            "offstageBackGeometry": "-104 24",
+            "backOffset": "-68 -24",
+            "offstageOffset": "-92 48",
             "portraitPathFormat": "!sameika_folder!sameika {expression}.png",
             "headerOutlineColor": "#ffff9300",
             "headerOverlayPath": "!sameika_folder!overlay.png"

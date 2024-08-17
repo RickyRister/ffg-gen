@@ -5,7 +5,7 @@ from typing import TypeVar, Any, Callable
 from vidpy.utils import Frame
 from exceptions import MissingInfoError
 import durations
-from geometry import Geometry
+from geometry import Geometry, Offset
 from mlt_resource import MltResource
 
 T = TypeVar("T")
@@ -46,6 +46,7 @@ def convert_all_attrs(obj: Any):
     '''
     convert_all_of_type(obj, Frame, lambda value: durations.to_frame(value))
     convert_all_of_type(obj, Geometry, lambda value: Geometry.parse(value))
+    convert_all_of_type(obj, Offset, lambda value: Offset.parse(value))
     convert_all_of_type(obj, MltResource, lambda value: MltResource(value))
 
 
