@@ -14,11 +14,10 @@ UNSET = infohelper.UNSET
 
 
 @dataclass(frozen=True)
-class CharacterInfo:
+class CharacterInfo(infohelper.Info):
     """A representation of the info of a character, read from the config json.
     This class is immutable. Use dataclasses.replace() to modify it
     """
-    name: str = UNSET                       # the dict name, for tracking purposes
     displayName: str = UNSET
     portraitPathFormat: MltResource = UNSET
     isPlayer: bool = UNSET
@@ -65,49 +64,14 @@ class CharacterInfo:
 
         infohelper.default_to(self, 'enterEnd', 'moveEnd')
 
-    def __getattribute__(self, attribute_name: str) -> Any:
-        '''Asserts that the value isn't UNSET before returning it.
-        Raises a MissingProperty exception otherwise.
-        '''
-        value = super(CharacterInfo, self).__getattribute__(attribute_name)
-        char_name = super(CharacterInfo, self).__getattribute__('name')
-        infohelper.expect_is_set(value, attribute_name, char_name)
-        return value
-
+    @classmethod
     @cache
-    @staticmethod
-    def of_common() -> Self:
-        '''Returns the singleton instance of top-level CharacterInfo.
-        Will load info from the global config json.
-        Make sure the json is loaded in before calling this!
-        '''
-        return CharacterInfo(**dconfigs.CHAR_INFO.get('common'))
+    def of_name(cls, name: str | None) -> Self:
+        if name is None:
+            return CharacterInfo(**dconfigs.CHAR_INFO.get('common'))
 
-    @cache
-    @staticmethod
-    def of_name(name: str) -> Self:
-        '''Looks up the name in the config json and parses the CharacterInfo from that.
-        Caches the result since CharacterInfo is immutable.
-        This will always return the unmodified CharacterInfo for the given character.
-
-        Note: DOES NOT follow aliases
-        '''
         character_json: dict = merge_down_chain(name)
         return CharacterInfo(name=name, **character_json)
-
-    def with_attr(self, attr: str, value: Any) -> Self:
-        '''Returns a new instance with the given field changed
-        '''
-        return dataclasses.replace(self, **{attr: value})
-
-    def with_reset_attr(self, attr: str) -> Self:
-        '''Resets the given field to what would've been loaded on startup.
-        Checks the characters in the config json, then falls back to the defaults.
-
-        returns: a new instance with the field changed
-        '''
-        default_value = getattr(CharacterInfo.of_name(self.name), attr)
-        return dataclasses.replace(self, **{attr: default_value})
 
 
 # === Config Searching ===

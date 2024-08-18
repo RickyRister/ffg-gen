@@ -1,8 +1,6 @@
 from typing import Self, TypeVar
 import configs
-
-INFO = TypeVar('INFO')
-
+from infohelper import Info
 
 class ConfigContext:
     '''Encapsulates all the config changes that happens during a run
@@ -11,20 +9,15 @@ class ConfigContext:
     Tracks changes to infos and aliases
     '''
 
-    def __init__(self, info_class: type[INFO]) -> Self:
+    def __init__(self, info_class: type[Info]) -> Self:
         '''Creates a new context, with the values starting as the global config values.
-
-        All info_classes are expected to have the following:
-        - a 'name' attribute
-        - a 'of_common()' classmethod 
-        - a 'of_name(name)' classmethod  
         '''
-        self.info_class: type[INFO] = info_class
+        self.info_class: type[Info] = info_class
         self.local_aliases: dict[str, str] = dict()
         self.tracked_nicks: dict[str, str] = dict()
-        self.cached_chars: dict[str, INFO] = dict()
+        self.cached_chars: dict[str, Info] = dict()
 
-    def get_char(self, name: str | None, follow_alias: bool = True) -> INFO:
+    def get_char(self, name: str | None, follow_alias: bool = True) -> Info:
         '''Gets the info from this context corresponding to the name.
         Will follow aliases.
 
@@ -44,7 +37,7 @@ class ConfigContext:
 
         return self.cached_chars.get(name)
 
-    def update_char(self, new_info: INFO):
+    def update_char(self, new_info: Info):
         '''Updates the Info cache by replacing the info with the new one.
         Gets the name to replace from the new info
 

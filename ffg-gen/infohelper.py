@@ -1,7 +1,6 @@
-'''Contains helper functions for dealing with the config info dataclasses
-'''
-
-from typing import TypeVar, Any, Callable
+from typing import TypeVar, Any, Callable, Self
+from dataclasses import dataclass, replace
+from abc import ABC, abstractmethod
 from vidpy.utils import Frame
 from exceptions import MissingInfoError
 import durations
@@ -39,6 +38,71 @@ def expect_is_set(value: T | V, prop_name: str, char_name: str | None = None, se
         return value
     else:
         raise MissingInfoError(prop_name, char_name)
+
+
+# ===============
+# Info base class
+# ===============
+
+@dataclass(frozen=True)
+class Info(ABC):
+    '''This class holds the config info pertaining to the scenario.
+    There should be a common info, as well as character-specific info.
+
+    All attributes of Info subclasses should default to UNSET if they don't already have a default.
+    The getattribute is overriden to raise a MissingInfoError if trying to access an UNSET attribute.
+    This allows config properties to be unset unless required by the component.
+    '''
+    name: str = None    # The dict name, for tracking purposes
+
+    def __getattribute__(self, attribute_name: str) -> Any:
+        '''Asserts that the value isn't UNSET before returning it.
+        Raises a MissingProperty exception otherwise.
+        '''
+        value = super(Info, self).__getattribute__(attribute_name)
+        char_name = super(Info, self).__getattribute__('name')
+        expect_is_set(value, attribute_name, char_name)
+        return value
+
+    @classmethod
+    @abstractmethod
+    def of_name(cls, name: str | None) -> Self:
+        '''Looks up the name in the config json and parses the Info from that.
+        Make sure the json is loaded in before calling this!
+
+        If name is None, it will look up the common info.
+
+        This will always return the unmodified Info for the given character.
+        Should cache the result since Info is immutable.
+
+        Note: DOES NOT follow aliases
+        '''
+        ...
+
+    @classmethod
+    def of_common(cls) -> Self:
+        '''Returns the singleton instance of top-level Info. 
+        Shorthand for cls.of_name(None)
+
+        Will load info from the global config json.
+        Make sure the json is loaded in before calling this!
+        '''
+        return cls.of_name(None)
+
+
+    def with_attr(self, attr: str, value: Any) -> Self:
+        '''Returns a new instance with the given field changed
+        '''
+        return replace(self, **{attr: value})
+
+    def with_reset_attr(self, attr: str) -> Self:
+        '''Resets the given field to what would've been loaded on startup.
+        Checks the characters in the config json, then falls back to the defaults.
+
+        returns: a new instance with the field changed
+        '''
+        default_value = getattr(self.__class__.of_name(self.name), attr)
+        return replace(self, **{attr: default_value})
 
 
 # =======================
