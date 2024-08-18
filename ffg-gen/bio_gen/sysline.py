@@ -1,7 +1,7 @@
 from typing import Any
 from dataclasses import dataclass
 import ast
-from exceptions import NonExistentPropertyError
+from exceptions import NonExistentPropertyError, LineParseError
 from bio_gen.bioline import Line
 from bio_gen.bioinfo import BioInfo
 from configcontext import ConfigContext
@@ -40,7 +40,7 @@ def parse_sysline(line: str):
         case ['resetall']: return ResetAllChars()
         case ['component', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
-            raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
+            raise LineParseError(f'Failure while parsing due to invalid sysline: {line}')
 
 
 @dataclass
@@ -55,7 +55,7 @@ class SetExpr(SysLine):
     def parseArgs(args: str):
         match args.split(None, 1):
             case [name, expression]: return SetExpr(name, expression)
-            case _: raise ValueError(f'Invalid args for @expr: {args}')
+            case _: raise LineParseError(f'Invalid args for @expr: {args}')
 
 
 @dataclass
@@ -76,10 +76,10 @@ class SetCharProperty(SysLine):
                 try:
                     parsed_value: Any = ast.literal_eval(value)
                     return SetCharProperty(name, property, parsed_value)
-                except (ValueError, SyntaxError):
-                    raise ValueError(
+                except (LineParseError, SyntaxError):
+                    raise LineParseError(
                         f'Invalid args for @set {args}; {value} is not a valid python literal.')
-            case _: raise ValueError(f'Invalid args for @set: {args}')
+            case _: raise LineParseError(f'Invalid args for @set: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Does the modification
@@ -109,7 +109,7 @@ class UnsetCharProperty(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name, property]: return UnsetCharProperty(name, property)
-            case _: raise ValueError(f'Invalid args for @unset: {args}')
+            case _: raise LineParseError(f'Invalid args for @unset: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Unsets the property
@@ -118,7 +118,7 @@ class UnsetCharProperty(SysLine):
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(bioInfo, self.property):
-            raise ValueError(
+            raise NonExistentPropertyError(
                 f'@unset {self.name} {self.property} failed; BioInfo does not have property {self.property}')
 
         new_charInfo = bioInfo.with_reset_attr(self.property)
@@ -138,7 +138,7 @@ class ResetCharProperties(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name]: return ResetCharProperties(name)
-            case _: raise ValueError(f'Invalid args for @unset: {args}')
+            case _: raise LineParseError(f'Invalid args for @unset: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Resets the BioInfo
@@ -173,4 +173,4 @@ class GroupedComponent(SysLine):
     def parseArgs(args: str):
         match args.split(None, 1):
             case [group, component]: return GroupedComponent(group, component)
-            case _: raise ValueError(f'Invalid args for @component: {args}')
+            case _: raise LineParseError(f'Invalid args for @component: {args}')

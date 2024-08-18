@@ -4,6 +4,7 @@ import json
 import cli_args
 import configs
 import mlt_fix
+from exceptions import CliError
 from mlt_resource import MltResource
 from dialogue_gen import dconfigs
 from dialogue_gen.dialogueline import Line
@@ -60,7 +61,7 @@ def dialogue_gen():
     if (chapter_name := cli_args.ARGS.chapter) is not None:
         # cli args; only process this chapter
         if chapter_name not in chapters:
-            raise ValueError(f'{chapter_name} is not a valid chapter.')
+            raise CliError(f'{chapter_name} is not a valid chapter.')
 
         print(f'=== Generating for chapter: {chapter_name} ===')
         process_chapter(chapter_name, common_lines + chapters[chapter_name])
@@ -108,7 +109,7 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
             case x if x.startswith('tfill:'): yield from gen_tfill(lines, x.removeprefix('tfill:'))
             case 'groups': yield from gen_groups(lines)
             case x if x.startswith('group:'): yield from gen_group(lines, x.removeprefix('group:'))
-            case _: raise ValueError(f'{component} is not a valid component.')
+            case _: raise CliError(f'{component} is not a valid component.')
 
 
 #

@@ -4,6 +4,7 @@ import ast
 import re
 from dialogue_gen import dconfigs
 import durations
+from exceptions import LineParseError, NonExistentPropertyError
 from vidpy.utils import Frame
 from dialogue_gen.characterinfo import CharacterInfo
 from exceptions import NonExistentPropertyError
@@ -55,7 +56,7 @@ def parse_sysline(line: str):
         case ['unnick', args]: return UnNick.parseArgs(args.strip())
         case ['component', args]: return GroupedComponent.parseArgs(args.strip())
         case _:
-            raise ValueError(f'Failure while parsing due to invalid sysline: {line}')
+            raise LineParseError(f'Failure while parsing due to invalid sysline: {line}')
 
 
 @dataclass
@@ -73,7 +74,7 @@ class SetExpr(SysLine):
                 name=matches.group('name').lower().strip(),
                 expression=matches.group('expression').strip())
         else:
-            raise ValueError(f'Invalid args for @expr: {args}')
+            raise LineParseError(f'Invalid args for @expr: {args}')
 
 
 @dataclass
@@ -89,7 +90,7 @@ class CharEnter(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name]: return CharEnter(name=name.lower())
-            case _: raise ValueError(f'Invalid args for @enter: {args}')
+            case _: raise LineParseError(f'Invalid args for @enter: {args}')
 
 
 @dataclass
@@ -105,7 +106,7 @@ class CharEnterAll(SysLine):
         match args:
             case 'player' | 'players': return CharEnterAll(True)
             case 'enemy' | 'enemies': return CharEnterAll(False)
-            case _: raise ValueError(f'Invalid args for @enterall: {args}')
+            case _: raise LineParseError(f'Invalid args for @enterall: {args}')
 
 
 @dataclass
@@ -121,7 +122,7 @@ class CharExit(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name]: return CharExit(name=name.lower())
-            case _: raise ValueError(f'Invalid args for @exit: {args}')
+            case _: raise LineParseError(f'Invalid args for @exit: {args}')
 
 
 @dataclass
@@ -137,7 +138,7 @@ class CharExitAll(SysLine):
         match args:
             case 'player' | 'players': return CharExitAll(True)
             case 'enemy' | 'enemies': return CharExitAll(False)
-            case _: raise ValueError(f'Invalid args for @exitall: {args}')
+            case _: raise LineParseError(f'Invalid args for @exitall: {args}')
 
 
 @dataclass
@@ -153,7 +154,7 @@ class Wait(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [duration]: return Wait(Wait.parse_duration(duration))
-            case _: raise ValueError(f'Invalid args for @wait: {args}')
+            case _: raise LineParseError(f'Invalid args for @wait: {args}')
 
     def parse_duration(duration: str):
         '''Does some duration conversions, depending on the current duration unit
@@ -179,10 +180,10 @@ class SetCharProperty(SysLine):
                 try:
                     parsed_value: Any = ast.literal_eval(value)
                     return SetCharProperty(name, property, parsed_value)
-                except (ValueError, SyntaxError):
-                    raise ValueError(
+                except (LineParseError, SyntaxError):
+                    raise LineParseError(
                         f'Invalid args for @set {args}; {value} is not a valid python literal.')
-            case _: raise ValueError(f'Invalid args for @set: {args}')
+            case _: raise LineParseError(f'Invalid args for @set: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Does the modification
@@ -212,7 +213,7 @@ class UnsetCharProperty(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name, property]: return UnsetCharProperty(name, property)
-            case _: raise ValueError(f'Invalid args for @unset: {args}')
+            case _: raise LineParseError(f'Invalid args for @unset: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Unsets the property
@@ -221,7 +222,7 @@ class UnsetCharProperty(SysLine):
 
         # checks that the property actually exists, to safeguard against typos
         if not hasattr(charInfo, self.property):
-            raise ValueError(
+            raise NonExistentPropertyError(
                 f'@unset {self.name} {self.property} failed; CharacterInfo does not have property {self.property}')
 
         new_charInfo = charInfo.with_reset_attr(self.property)
@@ -241,7 +242,7 @@ class ResetCharProperties(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name]: return ResetCharProperties(name)
-            case _: raise ValueError(f'Invalid args for @unset: {args}')
+            case _: raise LineParseError(f'Invalid args for @unset: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Resets the CharacterInfo
@@ -275,7 +276,7 @@ class SetAlias(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name, alias]: return SetAlias(name, alias)
-            case _: raise ValueError(f'Invalid args for @alias: {args}')
+            case _: raise LineParseError(f'Invalid args for @alias: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Set alias
@@ -295,7 +296,7 @@ class UnsetAlias(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [alias]: return UnsetAlias(alias)
-            case _: raise ValueError(f'Invalid args for @unalias: {args}')
+            case _: raise LineParseError(f'Invalid args for @unalias: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''unset alias
@@ -317,7 +318,7 @@ class Nick(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name, nickname]: return Nick(name, nickname)
-            case _: raise ValueError(f'Invalid args for @nick: {args}')
+            case _: raise LineParseError(f'Invalid args for @nick: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Set alias and set displayName
@@ -343,7 +344,7 @@ class UnNick(SysLine):
     def parseArgs(args: str):
         match args.split():
             case [name]: return UnNick(name)
-            case _: raise ValueError(f'Invalid args for @unnick: {args}')
+            case _: raise LineParseError(f'Invalid args for @unnick: {args}')
 
     def pre_hook(self, context: ConfigContext):
         '''Unset displayName and unset alias
@@ -370,4 +371,4 @@ class GroupedComponent(SysLine):
     def parseArgs(args: str):
         match args.split(None, 1):
             case [group, component]: return GroupedComponent(group, component)
-            case _: raise ValueError(f'Invalid args for @component: {args}')
+            case _: raise LineParseError(f'Invalid args for @component: {args}')

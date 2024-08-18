@@ -6,6 +6,7 @@ import cli_args
 import configs
 import mlt_fix
 from mlt_resource import MltResource
+from exceptions import CliError
 from . import bconfigs
 from . import line_parse
 from bio_gen.bioline import Line
@@ -85,7 +86,7 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
             case x if x.startswith('tfill:'): yield from gen_fill(lines, x.removeprefix('tfill:'), True)
             case 'groups': yield from gen_groups(lines)
             case x if x.startswith('group:'): yield from gen_group(lines, x.removeprefix('group:'))
-            case _: raise ValueError(f'{component} is not a valid component.')
+            case _: raise CliError(f'{component} is not a valid component.')
 
 
 #

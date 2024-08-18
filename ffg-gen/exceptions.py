@@ -36,3 +36,7 @@ class NonExistentPropertyError(DialogueGenException):
 class LineParseError(Exception):
     '''Invalid line
     '''
+
+class CliError(Exception):
+    '''Invalid command line args
+    '''
