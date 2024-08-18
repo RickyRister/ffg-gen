@@ -22,10 +22,8 @@ class DialogueLine(Line):
     name: str
     expression: str | None
     text: str
+    duration: Frame = None
 
-    @property
-    def duration(self) -> Frame:
-        '''How long the text should last for depending on its length.
-        Duration unit depends on configs.
-        '''
-        return dconfigs.DURATIONS.calc_duration(self.text)
+    def __post_init__(self):
+        if self.duration is None:
+            self.duration = dconfigs.DURATIONS.calc_duration(self.text)
