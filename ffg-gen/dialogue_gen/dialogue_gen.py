@@ -4,10 +4,10 @@ import json
 import cli_args
 import configs
 import mlt_fix
+from lines import Line
 from exceptions import CliError
 from mlt_resource import MltResource
 from dialogue_gen import dconfigs
-from dialogue_gen.dialogueline import Line
 from dialogue_gen import line_parse
 from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
 from dialogue_gen.characterinfo import CharacterInfo

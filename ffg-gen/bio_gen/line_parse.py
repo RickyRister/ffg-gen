@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import Iterable, Generator
-from bio_gen.bioline import Line, BioTextBlock
-from bio_gen.sysline import parse_sysline
+from lines import Line
+from bio_gen.bioline import BioTextBlock, parse_sysline
 
 
 class State(Enum):

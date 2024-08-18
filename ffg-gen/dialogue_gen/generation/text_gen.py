@@ -1,9 +1,9 @@
 from vidpy import Clip
 from vidpy.utils import Frame
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from dialogue_gen.dialogueline import Line
+from lines import Line, SysLine
+from dialogue_gen.dialogueline import Wait
 from dialogue_gen.characterinfo import CharacterInfo
-from dialogue_gen.sysline import SysLine, Wait
 from vidpy_extension.blankclip import transparent_clip
 from vidpy_extension.ext_composition import ExtComposition
 import configs

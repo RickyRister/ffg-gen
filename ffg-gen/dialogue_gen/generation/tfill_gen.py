@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import Generator
 from vidpy import Clip
 from mlt_resource import MltResource
-from dialogue_gen.dialogueline import Line
-from dialogue_gen.sysline import Wait
+from lines import Line
+from dialogue_gen.dialogueline import Wait
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 from vidpy_extension.blankclip import transparent_clip

@@ -2,9 +2,9 @@ from typing import Generator
 from vidpy import Clip
 from vidpy.utils import Frame
 import filters
-from bio_gen.bioline import Line, BioTextBlock
+from lines import Line, SysLine
+from bio_gen.bioline import BioTextBlock
 from bio_gen.bioinfo import BioInfo
-from bio_gen.sysline import SysLine
 from configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs

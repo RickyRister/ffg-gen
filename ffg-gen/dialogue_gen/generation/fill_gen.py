@@ -1,5 +1,5 @@
 from vidpy import Clip
-from dialogue_gen.dialogueline import Line
+from lines import Line
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 import configs

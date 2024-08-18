@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Iterable, Generator
 import re
-from dialogue_gen import dconfigs
-from dialogue_gen.sysline import parse_sysline
-from dialogue_gen.dialogueline import DialogueLine, Line
+from lines import Line
+from . import dconfigs
+from dialogue_gen.dialogueline import DialogueLine, parse_sysline
 from exceptions import LineParseError
 
 

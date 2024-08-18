@@ -7,9 +7,9 @@ import configs
 import mlt_fix
 from mlt_resource import MltResource
 from exceptions import CliError
+from lines import Line
 from . import bconfigs
 from . import line_parse
-from bio_gen.bioline import Line
 from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen, pagenum_gen
 
 

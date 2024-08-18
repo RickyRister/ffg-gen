@@ -4,11 +4,10 @@ from typing import Generator, Iterable
 from dataclasses import dataclass
 from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
-from dialogue_gen.dialogueline import DialogueLine, Line
+from lines import Line, SysLine
+from dialogue_gen.dialogueline import DialogueLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 from dialogue_gen.characterinfo import CharacterInfo
-from dialogue_gen.sysline import SysLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
 import configs
-import mlt_resource
 from configcontext import ConfigContext
 from exceptions import DialogueGenException
 from vidpy_extension.blankclip import transparent_clip
@@ -72,8 +71,8 @@ def generate(lines: list[Line], name: str) -> ExtComposition:
     """Processes the list of lines into a Composition for the given character
     """
     # double check that the character is actually in the scene
-    names: set[str] = {configs.follow_global_alias(
-        line.name) for line in lines if hasattr(line, 'name')}
+    names: set[str] = {configs.follow_global_alias(line.name)
+                       for line in lines if hasattr(line, 'name')}
     if name not in names:
         raise DialogueGenException(f'{name} does not appear in the dialogue')
 

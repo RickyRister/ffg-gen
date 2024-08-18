@@ -4,7 +4,7 @@ from vidpy_extension.ext_composition import ExtComposition
 import configs
 from mlt_resource import MltResource
 from filters import opacityFilterArgs
-from bio_gen.bioline import Line
+from lines import Line
 from bio_gen.bioinfo import BioInfo
 
 
