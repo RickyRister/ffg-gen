@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from exceptions import MissingConfigError
 
 '''Configs that are common to all operations
 '''
 
 
-# === Classes ===
+# =======
+# Classes
+# =======
 
 @dataclass
 class VideoModeConfigs:
@@ -14,7 +15,9 @@ class VideoModeConfigs:
     fps: int = 30
 
 
-# === Common Global Constants ===
+# =======================
+# Common Global Constants
+# =======================
 
 # common configs
 VIDEO_MODE: VideoModeConfigs
@@ -54,7 +57,9 @@ def load_into_globals(configJson: dict):
     GLOBAL_ALIASES = safe_json_get('aliases')
 
 
-# === Getters ===
+# ========
+# Getters
+# ========
 
 def follow_global_alias(name: str):
     '''Follows any global aliases.

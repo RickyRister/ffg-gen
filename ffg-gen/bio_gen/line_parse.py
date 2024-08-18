@@ -1,6 +1,5 @@
 from enum import Enum, auto
 from typing import Iterable, Generator
-from exceptions import LineParseError
 from bio_gen.bioline import Line, BioTextBlock
 from bio_gen.sysline import parse_sysline
 

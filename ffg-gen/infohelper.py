@@ -12,7 +12,9 @@ T = TypeVar("T")
 V = TypeVar("V")
 
 
-# === Sentinel Values
+# ===============
+# Sentinel Values
+# ===============
 
 class _UNSET_TYPE:
     pass
@@ -39,7 +41,9 @@ def expect_is_set(value: T | V, prop_name: str, char_name: str | None = None, se
         raise MissingInfoError(prop_name, char_name)
 
 
-# === Conversions during init ===
+# =======================
+# Conversions during init
+# =======================
 
 def convert_all_attrs(obj: Any):
     '''Converts all fields in the obj that are of a type that requires post-init conversation
