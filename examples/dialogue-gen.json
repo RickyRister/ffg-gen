@@ -78,7 +78,14 @@
             "enterEnd": 8,
             "exitDuration": 0.25,
             "fadeInEnd": 6,
-            "fadeOutEnd": 6
+            "fadeOutEnd": 6,
+
+            "nametagGeometry": "270 335 753 565",
+            "nametagInOffset": "-20 0",
+            "nametagOutOffset": "10 0",
+            "nametagDur": 4.0,
+            "nametagInDur": 10,
+            "nametagOutDur": 4
         },
         "player": {
             "backOffset": "-36 24",
@@ -117,7 +124,8 @@
             "geometry": "134 160",
             "portraitPathFormat": "!s1_folder!b1 {expression}.png",
             "headerOutlineColor": "#73FA79",
-            "headerOverlayPath": "!s1_folder!overlay.png"
+            "headerOverlayPath": "!s1_folder!overlay.png",
+            "nametagPath": "!s1_folder!nametag.png"
         }
     }
 }

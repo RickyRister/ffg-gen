@@ -40,7 +40,7 @@ class CharacterInfo(infohelper.Info):
     dropTextEnd: Frame = UNSET
 
     # portrait geometry configs
-    geometry: Geometry = field(default_factory=lambda: Geometry(0,0))
+    geometry: Geometry = field(default_factory=lambda: Geometry(0, 0))
     frontOffset: Offset = Offset()
     backOffset: Offset = Offset()
     offstageOffset: Offset = Offset()
@@ -58,6 +58,15 @@ class CharacterInfo(infohelper.Info):
     exitDuration: Frame = UNSET    # ints will be interpreted as frames and floats as seconds
     fadeInEnd: Frame = UNSET
     fadeOutEnd: Frame = UNSET
+
+    # nametag info
+    nametagPath: MltResource = 'color:#00000000'
+    nametagGeometry: Geometry = field(default_factory=lambda: Geometry(0, 0))
+    nametagDur: Frame = UNSET
+    nametagInOffset: Offset = Offset()
+    nametagOutOffset: Offset = Offset()
+    nametagInDur: Frame = UNSET
+    nametagOutDur: Frame = UNSET
 
     def __post_init__(self):
         infohelper.convert_all_attrs(self)
