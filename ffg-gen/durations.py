@@ -1,5 +1,6 @@
 import math
 import re
+import ast
 from bisect import bisect
 from dataclasses import dataclass
 from vidpy.utils import Frame
@@ -49,7 +50,7 @@ class Durations:
         return self.thresholds[index-1].duration
 
 
-def to_frame(duration: int | float | None) -> Frame:
+def to_frame(duration: int | float | str | None) -> Frame:
     '''Converts the duration into a Frame, accounting for the settings
 
     If duration is an int: interpret as frames. 
@@ -58,12 +59,22 @@ def to_frame(duration: int | float | None) -> Frame:
     If duration is a float: interpret as seconds. 
     Multiply the duration by the fps before converting it to a Frame
 
+    If duration is a string: use ast to convert string to either int or float,
+    then intepret the value as above.
+
     Safely passes through any None.
     Frame extends from int, so this function should be idempotent on Frames.
     '''
+    # safely pass through None
     if duration is None:
         return None
-    elif isinstance(duration, int):
+    
+    # parse strings
+    if isinstance(duration, str):
+        duration = ast.literal_eval(duration)
+    
+    # interpret numeral
+    if isinstance(duration, int):
         return Frame(duration)
     else:
         # we subtract 1 from the resulting frame if it lands on an integer

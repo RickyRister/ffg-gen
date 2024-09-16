@@ -1,5 +1,4 @@
 import re
-import ast
 from vidpy.utils import Frame
 from dataclasses import dataclass
 from . import dconfigs
@@ -149,13 +148,8 @@ class Wait(SysLine):
 
     def parseArgs(args: str):
         match args.split():
-            case [duration]: return Wait(Wait.parse_duration(duration))
+            case [duration]: return Wait(durations.to_frame(duration))
             case _: raise LineParseError(f'Invalid args for @wait: {args}')
-
-    def parse_duration(duration: str):
-        '''Does some duration conversions, depending on the current duration unit
-        '''
-        return durations.to_frame(ast.literal_eval(duration))
 
 
 @dataclass
