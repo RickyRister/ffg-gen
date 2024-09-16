@@ -10,7 +10,7 @@ from dialogue_gen.characterinfo import CharacterInfo
 import configs
 from configcontext import ConfigContext
 from exceptions import DialogueGenException
-from vidpy_extension.blankclip import transparent_clip
+from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
 
 
@@ -266,7 +266,7 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
 def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Frame) -> Clip:
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
-        return transparent_clip(duration)
+        return BlankClip.ofDuration(duration)
 
     # error checking empty expression
     if expression is None:

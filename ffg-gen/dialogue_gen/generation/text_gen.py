@@ -4,7 +4,7 @@ from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from lines import Line, SysLine
 from dialogue_gen.dialogueline import Wait
 from dialogue_gen.characterinfo import CharacterInfo
-from vidpy_extension.blankclip import transparent_clip
+from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
 from configcontext import ConfigContext
@@ -35,7 +35,7 @@ def lineToClip(line: Line, context: ConfigContext) -> Clip | None:
 
         # match sysline
         match line:
-            case Wait(duration=duration): return transparent_clip(duration)
+            case Wait(duration=duration): return BlankClip.ofDuration(duration)
             case _: return None
 
     charInfo: CharacterInfo = context.get_char(line.name)

@@ -1,26 +1,30 @@
-
 from vidpy import Clip
-from vidpy.utils import Second, Frame
+from vidpy.utils import Frame
 import cli_args
 
 
 class BlankClip(Clip):
     '''A Blank VidPy clip.
 
-    Use set_offset() to set the duration of the blank.
-    None of the other fields (exception singletrack) matter.
+    Instances should ONLY be created through the `ofDuration` factory method.
 
-    NOTE: This doesn't actually work because consecutive blank clips will be merged into a single blank clip.
-    This throws off the duration fixes.
-    Don't use unless you're certain that all gap lengths are covered by duration fixes.
+    DO NOT try to create this class using its normal constructor or modify it yourself after creation,
+    as it may lead to the duration being incorrectly interpreted as Second instead of Frame.
     '''
 
-    def ofDuration(duration: Frame):
+    @staticmethod
+    def ofDuration(duration: Frame | int) -> Clip:
         '''Creates a blank clip of the given duration.
+
         Only accepts Frames as duration.
-        Will cast the duration to a Frame just to be double sure that it doesn't get interpreted as a Second
+        Will cast the duration to a Frame just to be double sure that it doesn't get interpreted as a Second.
+
+        If the `--fill-blanks` option is on, will instead return a transparent clip with the given duration.
         '''
-        return BlankClip(start=Frame(0)).set_offset(Frame(duration))
+        if cli_args.ARGS.fill_blanks:
+            return Clip('color:#00000000', start=Frame(0)).set_duration(Frame(duration))
+        else:
+            return BlankClip(start=Frame(0)).set_offset(Frame(duration))
 
     def args(self, singletrack=False):
         '''Returns melt command line arguments as a list'''
@@ -34,13 +38,3 @@ class BlankClip(Clip):
             args += ['-blank', str(self.offset)]
 
         return args
-
-
-def transparent_clip(duration: Frame) -> Clip:
-    '''Creates a blank clip with the given duration.
-    If the option --fill-blanks is on, this will instead return a transparent clip with the given duration 
-    '''
-    if cli_args.ARGS.fill_blanks:
-        return Clip('color:#00000000', start=Frame(0)).set_duration(Frame(duration))
-    else:
-        return BlankClip.ofDuration(duration)

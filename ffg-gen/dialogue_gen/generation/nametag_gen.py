@@ -7,7 +7,7 @@ from dialogue_gen.dialogueline import Nametag
 from dialogue_gen.characterinfo import CharacterInfo
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
-from vidpy_extension.blankclip import transparent_clip
+from vidpy_extension.blankclip import BlankClip
 from configcontext import ConfigContext
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 import configs
@@ -66,7 +66,7 @@ def process_clip_infos(clip_infos: list[NametagClipInfo]) -> Generator[Clip, Non
     for clip_info in clip_infos:
         # add enough blank frames to get from current frame to start of nametag clip
         if clip_info.start_frame > curr_frame:
-            yield transparent_clip(clip_info.start_frame - curr_frame)
+            yield BlankClip.ofDuration(clip_info.start_frame - curr_frame)
 
         # create nametag clip
         yield create_nametag_clip(clip_info.char_info)

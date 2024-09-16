@@ -6,7 +6,7 @@ from lines import Line
 from dialogue_gen.dialogueline import Wait
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
-from vidpy_extension.blankclip import transparent_clip
+from vidpy_extension.blankclip import BlankClip
 import configs
 
 
@@ -55,7 +55,7 @@ def to_clip(clip_section: ClipSection, resource: MltResource) -> Clip:
     if clip_section.do_show:
         return Clip(str(resource), start=Frame(0)).set_duration(clip_section.duration)
     else:
-        return transparent_clip(clip_section.duration)
+        return BlankClip.ofDuration(clip_section.duration)
 
 
 def merge_adjacents(clip_sections: list[ClipSection]) -> Generator[ClipSection, None, None]:
