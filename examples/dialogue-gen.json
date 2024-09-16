@@ -6,6 +6,7 @@
     },
     "componentMacros": {
         "all": [
+            "nametags",
             "text",
             "header",
             "tfill:!textbox",

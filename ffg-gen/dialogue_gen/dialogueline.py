@@ -46,6 +46,7 @@ def parse_sysline(line: str) -> SysLine:
         case ['wait', args]: return Wait.parseArgs(args.strip())
         case ['nick', args]: return Nick.parseArgs(args.strip())
         case ['unnick', args]: return UnNick.parseArgs(args.strip())
+        case ['nametag', args]: return Nametag.parseArgs(args.strip())
         case _: raise LineParseError(f'Unrecognized sysline: {line}')
 
 
@@ -207,3 +208,18 @@ class UnNick(SysLine):
 
         if (nickname := context.pop_nick(self.name)) is not None:
             context.remove_local_alias(nickname)
+
+
+@dataclass
+class Nametag(SysLine):
+    '''Queues the start of a nametag animation
+
+    Usage: @nametag [name]
+    '''
+
+    name: str
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name]: return Nametag(name)
+            case _: raise LineParseError(f'Invalid args for @nametag: {args}')

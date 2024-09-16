@@ -63,6 +63,8 @@ Reimu1: Oh I'm red again
 
 @unnick kiko
 
+@nametag kiko
+
 木子1: oops
 
 @unset kiko frontBrightness

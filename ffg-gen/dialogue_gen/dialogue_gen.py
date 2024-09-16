@@ -9,7 +9,7 @@ from exceptions import CliError
 from mlt_resource import MltResource
 from dialogue_gen import dconfigs
 from dialogue_gen import line_parse
-from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen
+from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen, nametag_gen
 from dialogue_gen.characterinfo import CharacterInfo
 from vidpy_extension.ext_composition import ExtComposition
 
@@ -107,6 +107,7 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
             case x if x.startswith('char:'): yield from gen_char(lines, x.removeprefix('char:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'))
             case x if x.startswith('tfill:'): yield from gen_tfill(lines, x.removeprefix('tfill:'))
+            case 'nametags': yield from gen_nametags(lines)
             case 'groups': yield from gen_groups(lines)
             case x if x.startswith('group:'): yield from gen_group(lines, x.removeprefix('group:'))
             case _: raise CliError(f'{component} is not a valid component.')
@@ -171,6 +172,11 @@ def gen_fill(lines: list[Line], resource: str) -> Generator[ExtComposition, None
 def gen_tfill(lines: list[Line], resource: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating tfill with {resource}")
     yield tfill_gen.generate(lines, MltResource(resource))
+
+
+def gen_nametags(lines: list[Line]) -> Generator[ExtComposition, None, None]:
+    print(f"Generating nametags")
+    yield nametag_gen.generate(lines)
 
 
 def gen_groups(lines: list[Line]) -> Generator[ExtComposition, None, None]:
