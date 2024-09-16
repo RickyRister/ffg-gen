@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from lines import Line, SysLine
-from dialogue_gen.dialogueline import DialogueLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll
+from dialogue_gen.dialogueline import DialogueLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll, Front
 from dialogue_gen.characterinfo import CharacterInfo
 import configs
 from configcontext import ConfigContext
@@ -160,6 +160,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
     curr_expression: str = None
     curr_speaker: str = None
     pending_transition: Transition = None
+    has_pending_front: bool = False
 
     # === start of loop ===
 
@@ -215,6 +216,11 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
                     case State.BACK: pending_transition = Transition.HALF_EXIT
                 continue
 
+            case Front(name=name) if name == targetName:
+                # force bring_to_front on the next line
+                has_pending_front = True
+                continue
+
             case _: continue
 
         # this part will get run unless continue got called in the match statement
@@ -225,10 +231,14 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
         if pending_transition is None:
             pending_transition = determine_transition(curr_state, is_speaker)
 
+        # determine whether to bring character to front, and reset any pending @front
+        bring_to_front: bool = is_speaker or has_pending_front
+        has_pending_front = False
+
         charInfo: CharacterInfo = context.get_char(targetName, False)
 
         # generate clip using the transition
-        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration, is_speaker)
+        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration, bring_to_front)
 
         # update state and reset pending transition
         curr_state = Transition.state_after(pending_transition)

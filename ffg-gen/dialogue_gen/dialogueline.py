@@ -47,6 +47,7 @@ def parse_sysline(line: str) -> SysLine:
         case ['nick', args]: return Nick.parseArgs(args.strip())
         case ['unnick', args]: return UnNick.parseArgs(args.strip())
         case ['nametag', args]: return Nametag.parseArgs(args.strip())
+        case ['front', args]: return Front.parseArgs(args.strip())
         case _: raise LineParseError(f'Unrecognized sysline: {line}')
 
 
@@ -223,3 +224,19 @@ class Nametag(SysLine):
         match args.split():
             case [name]: return Nametag(name)
             case _: raise LineParseError(f'Invalid args for @nametag: {args}')
+
+
+@dataclass
+class Front(SysLine):
+    '''Forcibly brings the character to the front.
+    The behavior is undefined if multiple characters are eligable to be brought to front.
+
+    Usage: @front [name]
+    '''
+
+    name: str
+
+    def parseArgs(args: str):
+        match args.split():
+            case [name]: return Front(name)
+            case _: raise LineParseError(f'Invalid args for @front: {args}')

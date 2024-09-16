@@ -44,6 +44,8 @@ Sameika1: Still, it's a lead, so let's follow it.
 
 @unset reimu displayName
 
+@front reimu
+
 ???1: Ah! It looks like I attracted some visitors.
 
 Reimu7: at least i'm no longer bob now
