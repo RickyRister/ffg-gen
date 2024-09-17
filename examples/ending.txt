@@ -1,0 +1,78 @@
+@component background fill:!background
+
+The Nameless Hill.
+Once a place for young children to be abandoned and whisked away by youkai.
+Now, it has been transformed into an enormous festival ground out of seemingly\
+nowhere.
+---
+As the culprit sinks to the ground, it's impossible to tell whether \
+the darkness has retreated or not. 
+From inside the festival grounds, it always seems to be daytime.
+
+@wait 1.0
+
+---
+
+@bgimage !image_folder!image 1.jpg
+
+Rumia: "She wasn't lying, surprising for a backstabbing god. I don't sense myself getting any weaker, or any of the shadows outside reeling back."
+Marisa: "Seriously?! Ahh, why do I have to deal with this— an incident where just beating up the source can't solve it.."
+---
+Reimu: "Marisa? You already beat me to it.. well, whatever. I got caught up with that lantern youkai anyway."
+Sameika: ("Ahh, they already knocked her down? What a shame. At least that deals with my worries.")
+Reimu: "Who's that next to you, though? Is that an outsider?"
+Rumia: "You really don't recognise me?! Rude, isn't it!"
+---
+Reimu: "It's not my fault that you're just one of a hundred youkai.. I have too many faces to remember."
+Marisa: "Well, that's Rumia. I can explain later, right now there's a bigger problem."
+Reimu: "Aah?"
+---
+(Hikaru had already gotten back to her feet, dusting herself off.)
+---
+
+@bgimage !image_folder!image 2.png
+
+Hikaru: "To answer your question, ink-black witch, I was never the one carrying out the incident in full."
+Reimu: "Seriously.. then who? I don't have time to guess."
+---
+Hikaru: "I'm certain you can figure it out, lest you reveal how much your intelligence is worth, haha."
+Rumia: "How cocky.. so, this was never the work of you alone, then."
+Rumia: "But.. how? I've never encountered any other youkai with power over darkness."
+Rumia: "There shouldn't be anyone else who can do this."
+---
+Hikaru: "Is it the youkai of nothingness who fears the unknown now? Hahah."
+Hikaru: "Well, if you wish to brighten this dim night, then bring one of these lanterns!"
+Hikaru: "They shall push back the cruel shadows for as long as they burn."
+Reimu: ("They're kind of cheaply made, looking closely..")
+---
+Marisa: "Thanks, but.. I gotta ask why you are bothering to help us."
+Marisa: "Didn't you orchestrate this whole plan?"
+Hikaru: "Like I said, I have already succeeded. This was just a plan to gather faith, after all."
+Hikaru: "It's about time for it to wrap up."
+---
+Marisa: "Ah.. You gods will do anything for that, even stooping to the lows of youkai."
+Marisa: "Whatever, though. Where's the actual mess maker hiding out?"
+Hikaru: "..."
+---
+Marisa: "What? Spit it out."
+Hikaru: "Ahahah, about such.. You see, I cannot truly know such a thing,\
+as the world is coated in their shade.."
+Hikaru: "I'm certain you and your friend can rat them out.. Yes, certainly."
+(Marisa is pulling on her hat here.)
+---
+Marisa: "I thought this couldn't get any worse… now I have to run around the whole of Gensokyo?"
+Marisa: "Now I'm seeing why it's better for Reimu to be the one solving all these incidents..!"
+Reimu: "Oi. Don't push it onto me just so you can live easily."
+Rumia: "Groveling about it is killing our time. Get going."
+Rumia: ("I'm starting to get hungry as well… I hope this is over soon.")
+---
+Marisa: "Ahh, fine.. Let's go!"
+---
+
+@bgimage none
+
+Even with the god of light defeated, the incident refused to stop. 
+The darkness in Gensokyo continued to encroach the whole world, human and youkai alike.
+---
+Reimu and Sameika had set off towards another objective,\
+having heard something important from the strangely relaxed god.

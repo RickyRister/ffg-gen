@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import cli_args
 from dialogue_gen import dialogue_gen
 from bio_gen import bio_gen
+from ending_gen import ending_gen
 
 
 def createArgumentParser() -> ArgumentParser:
@@ -25,6 +26,7 @@ def createArgumentParser() -> ArgumentParser:
 
     dialogue_gen.attach_subparser_to(subparsers, [parentparser])
     bio_gen.attach_subparser_to(subparsers, [parentparser])
+    ending_gen.attach_subparser_to(subparsers, [parentparser])
 
     return parser
 

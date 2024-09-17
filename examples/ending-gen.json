@@ -1,0 +1,85 @@
+{
+    "parsing": {
+        "dialogueRegex": "(?P<name>.+): (?P<text>.+)"
+    },
+    "componentMacros": {
+        "all": [
+            "text",
+            "tfill:!gradient",
+            "bgimage",
+            "group:background"
+        ]
+    },
+    "resourceNames": {
+        "gradient": "assets/ending/ending gradient.png",
+        "background": "assets/ending/background.jpg",
+        "image_folder": "assets/ending/images/",
+        "droptextMask": "assets/ending/droptext mask.png"
+    },
+    "videoMode": {
+        "width": 1280,
+        "height": 960,
+        "fps": 30
+    },
+    "durations": {
+        "mode": "char",
+        "thresholds": [
+            {
+                "count": 0,
+                "duration": 2.0
+            },
+            {
+                "count": 30,
+                "duration": 2.5
+            },
+            {
+                "count": 60,
+                "duration": 3.0
+            },
+            {
+                "count": 80,
+                "duration": 3.5
+            },
+            {
+                "count": 100,
+                "duration": 4.5
+            },
+            {
+                "count": 120,
+                "duration": 5.0
+            }
+        ]
+    },
+    "endingInfo": {
+        "common": {
+            "dialogueGeometry": "42 712 1208 222",
+            "dialogueFont": "Righteous",
+            "dialogueFontSize": 29,
+            "dropTextMaskPath": "!droptextMask",
+            "dropTextDur": 5,
+
+            "fadeInDur": 8,
+            "fadeOutDur": 6,
+
+            "bgFadeInDur": 8,
+            "bgFadeOutDur": 6
+        }
+    },
+    "aliases":{
+        "灵梦": "reimu"
+    },
+    "characters": {
+        "narrator": {
+
+        },
+        "reimu": {
+            "dialogueFontColor": "#73FA79"
+        },
+        "sameika": {
+            "dialogueFontColor": "#73FA79"
+        },
+        "kiko": {
+            "dialogueFontColor": "#73FA79"
+        }
+    }
+}
