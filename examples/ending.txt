@@ -1,5 +1,7 @@
 @component background fill:!background
 
+@speaker narrator
+
 The Nameless Hill.
 Once a place for young children to be abandoned and whisked away by youkai.
 Now, it has been transformed into an enormous festival ground out of seemingly\
@@ -35,6 +37,7 @@ Marisa: Well, that's Rumia. I can explain later, right now there's a bigger\
 problem.
 Reimu: Aah?
 ---
+@speaker narrator
 (Hikaru had already gotten back to her feet, dusting herself off.)
 ---
 
@@ -88,6 +91,7 @@ Marisa: Ahh, fine.. Let's go!
 
 @bgimage none
 
+@speaker narrator
 Even with the god of light defeated, the incident refused to stop. 
 The darkness in Gensokyo continued to encroach the whole world,\
 human and youkai alike.

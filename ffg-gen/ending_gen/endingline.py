@@ -75,7 +75,7 @@ class SetSpeaker(SysLine):
     Usage: @speaker [name]
     '''
 
-    name: str
+    name: str | None
 
     def parseArgs(args: str):
         match args.split(None, 1):

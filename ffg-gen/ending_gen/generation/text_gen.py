@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import Generator, Iterable
 from itertools import zip_longest
@@ -5,11 +6,12 @@ from vidpy import Clip
 from vidpy.utils import Frame
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from lines import Line, SysLine
-from ending_gen.endingline import TextLine, PageTurn, Wait
+from ending_gen.endingline import TextLine, PageTurn, Wait, SetSpeaker
 from ending_gen.endinginfo import EndingInfo
 from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
 import configs
+from ending_gen import econfigs
 from configcontext import ConfigContext
 
 
@@ -86,6 +88,7 @@ def process_lines(lines: list[Line]) -> Generator[PageGroup, None, None]:
     # === start of loop ===
 
     buffer: list[LineInfo] = list()
+    curr_speaker: str = None
 
     for line in lines:
         # always run the pre_hook first if it's a sysline
@@ -96,11 +99,25 @@ def process_lines(lines: list[Line]) -> Generator[PageGroup, None, None]:
         match line:
             # Wait will get added to the buffer as a LineInfo with None text
             case Wait(duration=duration):
-                buffer.append(LineInfo(None, context.get_char(None), duration))
+                buffer.append(LineInfo(None, context.get_char(curr_speaker), duration))
+
+            # manual speaker change
+            case SetSpeaker(name=name):
+                curr_speaker = name
 
             # normal TextLine
             case TextLine(text=text, duration=duration):
-                buffer.append(LineInfo(text, context.get_char(None), duration))
+                # figure out if automatic speaker change is required
+                if (match := re.match(econfigs.PARSING.dialogueRegex, text)):
+                    name = match.group('name').strip().lower()
+
+                    # Check if name even matches a known char name.
+                    # Leave speaker unchanged if not
+                    if context.char_exists(name):
+                        curr_speaker = name
+
+                # add text to PageGroup buffer
+                buffer.append(LineInfo(text, context.get_char(curr_speaker), duration))
 
             # page turn; yield the current buffer and start a new buffer
             case PageTurn():
@@ -166,13 +183,13 @@ def flatten_pagegroup(pagegroup: PageGroup) -> ClipGroup:
             # The +1 overshoots since the gap is already covered by being a new clip.
             # But double check to prevent negative offsets.
             offset = curr_offset - Frame(1) if curr_offset != 0 else 0
-            
+
             # add new clip to group
             clipgroup.append(ClipInfo(
                 '\n' * curr_newline_count + text,
                 lineinfo.charInfo,
                 lineinfo.duration,
-                offset))  
+                offset))
 
             # update the newline count
             curr_newline_count += text.count('\n') + 1
@@ -211,7 +228,7 @@ def info_to_clip(clipinfo: ClipInfo) -> Clip:
         outline=charInfo.dialogueOutlineSize,
         color=charInfo.dialogueFontColor,
         olcolor=charInfo.dialougeOutlineColor)
-    
+
     clip.fx('dynamictext', textFilter)
 
     # only apply drop text if the duration actually
@@ -219,7 +236,7 @@ def info_to_clip(clipinfo: ClipInfo) -> Clip:
         dropTextFilter: dict = dropTextFilterArgs(
             resource=charInfo.dropTextMaskPath,
             end=charInfo.dropTextDur)
-        
+
         clip.fx('mask_start', dropTextFilter)
 
     return clip

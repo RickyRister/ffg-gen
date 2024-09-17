@@ -1,12 +1,21 @@
+from dataclasses import dataclass
 from durations import Durations
 
 '''Configs that are specific to ending_gen
 '''
 
 
+# === Classes ===
+
+@dataclass
+class ParsingConfigs:
+    dialogueRegex: str  # used to determine if a speaker change is needed
+
+
 # === Global Constants ===
 
 # more specific configs
+PARSING: ParsingConfigs
 DURATIONS: Durations
 
 # configs that are loaded by their own classes are still stored as a dict
@@ -27,11 +36,13 @@ def load_into_globals(configJson: dict):
             return value
 
     # bring globals into scope
+    global PARSING
     global DURATIONS
     global ENDING_INFO
     global CHARACTERS
 
     # assign globals
+    PARSING = ParsingConfigs(**safe_json_get('parsing'))
     DURATIONS = Durations(**safe_json_get('durations'))
 
     # load dicts for the classes to load themselves
