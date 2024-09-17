@@ -70,16 +70,21 @@
     },
     "characters": {
         "narrator": {
-
         },
         "reimu": {
-            "dialogueFontColor": "#73FA79"
+            "dialogueFontColor": "#fd6666"
         },
         "sameika": {
-            "dialogueFontColor": "#73FA79"
+            "dialogueFontColor": "#ffff93"
         },
-        "kiko": {
-            "dialogueFontColor": "#73FA79"
+        "marisa": {
+            "dialogueFontColor": "#fcf403"
+        },
+        "rumia": {
+            "dialogueFontColor": "#d2de97"
+        },
+        "hikaru": {
+            "dialogueFontColor": "#d9a5b6"
         }
     }
 }
