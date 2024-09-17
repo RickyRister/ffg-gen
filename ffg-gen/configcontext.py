@@ -1,6 +1,7 @@
 from typing import Self, TypeVar
 import configs
 from infohelper import Info
+from exceptions import MissingConfigError
 
 class ConfigContext:
     '''Encapsulates all the config changes that happens during a run
@@ -16,6 +17,18 @@ class ConfigContext:
         self.local_aliases: dict[str, str] = dict()
         self.tracked_nicks: dict[str, str] = dict()
         self.cached_chars: dict[str, Info] = dict()
+
+    def char_exists(self, name: str | None, follow_alias: bool = True) -> bool:
+        '''Determines if the given character exists.
+        Will follow aliases.
+
+        None will return True, since None gets the common info
+        '''
+        try:
+            self.get_char(name, follow_alias)
+        except MissingConfigError:
+            return False
+        return True
 
     def get_char(self, name: str | None, follow_alias: bool = True) -> Info:
         '''Gets the info from this context corresponding to the name.
