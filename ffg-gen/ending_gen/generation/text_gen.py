@@ -121,8 +121,9 @@ def process_lines(lines: list[Line]) -> Generator[PageGroup, None, None]:
 
             # page turn; yield the current buffer and start a new buffer
             case PageTurn():
-                yield buffer
-                buffer = list()
+                if len(buffer) > 0:
+                    yield buffer
+                    buffer = list()
 
             # everything else just gets ignored
             case _: continue
