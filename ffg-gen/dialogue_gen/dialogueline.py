@@ -42,7 +42,7 @@ def parse_sysline(line: str) -> SysLine:
         case ['exit', args]: return CharExit.parseArgs(args.strip())
         case ['exitall']: return CharExitAll()
         case ['exitall', args]: return CharExitAll.parseArgs(args.strip())
-        case ['wait', args]: return Wait.parseArgs(args.strip())
+        case ['sleep', args]: return Sleep.parseArgs(args.strip())
         case ['nick', args]: return Nick.parseArgs(args.strip())
         case ['unnick', args]: return UnNick.parseArgs(args.strip())
         case ['nametag', args]: return Nametag.parseArgs(args.strip())
@@ -137,19 +137,20 @@ class CharExitAll(SysLine):
 
 
 @dataclass
-class Wait(SysLine):
+class Sleep(SysLine):
     """Makes nothing happen for the given duration.
+    `tfill` components will not display during this time.
     Interprets integer durations as frames and float durations as seconds.
 
-    Usage: @wait [duration]
+    Usage: @sleep [duration]
     """
 
     duration: Frame
 
     def parseArgs(args: str):
         match args.split():
-            case [duration]: return Wait(durations.to_frame(duration))
-            case _: raise LineParseError(f'Invalid args for @wait: {args}')
+            case [duration]: return Sleep(durations.to_frame(duration))
+            case _: raise LineParseError(f'Invalid args for @sleep: {args}')
 
 
 @dataclass

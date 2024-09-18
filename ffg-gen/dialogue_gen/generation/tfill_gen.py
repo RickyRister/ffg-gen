@@ -3,7 +3,7 @@ from typing import Generator
 from vidpy import Clip
 from mlt_resource import MltResource
 from lines import Line
-from dialogue_gen.dialogueline import Wait
+from dialogue_gen.dialogueline import Sleep
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 from vidpy_extension.blankclip import BlankClip
@@ -45,7 +45,7 @@ def to_clip_section(line: Line) -> ClipSection:
     '''Maps the Line to a ClipSection.
     expects the Line to have a duration.
     '''
-    if isinstance(line, Wait):
+    if isinstance(line, Sleep):
         return ClipSection(line.duration, False)
     else:
         return ClipSection(line.duration, True)

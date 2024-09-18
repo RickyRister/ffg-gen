@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from vidpy.utils import Frame
 from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
 from lines import Line, SysLine
-from dialogue_gen.dialogueline import DialogueLine, SetExpr, Wait, CharEnter, CharEnterAll, CharExit, CharExitAll, Front
+from dialogue_gen.dialogueline import DialogueLine, SetExpr, Sleep, CharEnter, CharEnterAll, CharExit, CharExitAll, Front
 from dialogue_gen.characterinfo import CharacterInfo
 import configs
 from configcontext import ConfigContext
@@ -177,7 +177,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
                 if curr_speaker == targetName and expression is not None:
                     curr_expression = expression
 
-            case Wait(duration=duration):
+            case Sleep(duration=duration):
                 if curr_speaker is None:
                     # if no one is on screen yet, then we leave a gap
                     yield ClipInfo(None, Transition.STAY_OFFSCREEN, curr_expression, duration)
