@@ -61,7 +61,7 @@ def to_clip(clip_section: ClipSection) -> Clip:
         info = EndingInfo.of_common()
 
         # figure out fade filters
-        fadeInEnd = info.bgFadeOutDur
+        fadeInEnd = info.bgFadeInDur
         fadeOutStart = clip_section.duration - info.bgFadeOutDur
         fadeOutEnd = clip_section.duration
 
