@@ -2,6 +2,8 @@
 
 @sleep 2.0
 
+@wait 0.5
+
 @speaker narrator
 
 The Nameless Hill.

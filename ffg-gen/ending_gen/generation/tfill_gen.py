@@ -1,13 +1,16 @@
 from dataclasses import dataclass
 from typing import Generator
 from vidpy import Clip
+import filters
+import configs
 from mlt_resource import MltResource
 from lines import Line
 from ending_gen.endingline import Sleep
 from vidpy.utils import Frame
 from vidpy_extension.ext_composition import ExtComposition
 from vidpy_extension.blankclip import BlankClip
-import configs
+from ending_gen.endinginfo import EndingInfo
+
 
 @dataclass
 class ClipSection:
@@ -52,7 +55,19 @@ def to_clip_section(line: Line) -> ClipSection:
 
 def to_clip(clip_section: ClipSection, resource: MltResource) -> Clip:
     if clip_section.do_show:
-        return Clip(str(resource), start=Frame(0)).set_duration(clip_section.duration)
+        # use common info for now because I can't think of a good way to decide
+        # which char info to use
+        info = EndingInfo.of_common()
+
+        # figure out fade filters
+        fadeInEnd = info.fadeInDur
+        fadeOutStart = clip_section.duration - info.fadeOutDur
+        fadeOutEnd = clip_section.duration
+
+        return Clip(str(resource), start=Frame(0))\
+            .set_duration(clip_section.duration)\
+            .fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1'))\
+            .fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{fadeOutEnd}=0'))
     else:
         return BlankClip.ofDuration(clip_section.duration)
 
