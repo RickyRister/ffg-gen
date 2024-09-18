@@ -48,6 +48,7 @@ def parse_sysline(line: str) -> SysLine:
 
     match line.split(None, 1):
         case ['wait', args]: return Wait.parseArgs(args.strip())
+        case ['sleep', args]: return Sleep.parseArgs(args.strip())
         case ['speaker', args]: return SetSpeaker.parseArgs(args.strip())
         case ['bgimage', args]: return SetBgImage.parseArgs(args.strip())
         case _: raise LineParseError(f'Unrecognized sysline: {line}')
@@ -55,7 +56,7 @@ def parse_sysline(line: str) -> SysLine:
 
 @dataclass
 class Wait(SysLine):
-    """Makes nothing happen for the given duration.
+    """Makes the preceeding text line stay for longer.
     Interprets integer durations as frames and float durations as seconds.
 
     Usage: @wait [duration]
@@ -67,6 +68,23 @@ class Wait(SysLine):
         match args.split():
             case [duration]: return Wait(durations.to_frame(duration))
             case _: raise LineParseError(f'Invalid args for @wait: {args}')
+
+
+@dataclass
+class Sleep(SysLine):
+    """Makes nothing happen for the given duration.
+    `tfill` components will not display during this time.
+    Interprets integer durations as frames and float durations as seconds.
+
+    Usage: @sleep [duration]
+    """
+
+    duration: Frame
+
+    def parseArgs(args: str):
+        match args.split():
+            case [duration]: return Sleep(durations.to_frame(duration))
+            case _: raise LineParseError(f'Invalid args for @sleep: {args}')
 
 
 @dataclass

@@ -1,5 +1,7 @@
 @component background fill:!background
 
+@sleep 2.0
+
 @speaker narrator
 
 The Nameless Hill.
@@ -99,5 +101,5 @@ human and youkai alike.
 Reimu and Sameika had set off towards another objective,
 having heard something important from the strangely relaxed god.
 
-@wait 3.0
+@sleep 3.0
 

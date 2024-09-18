@@ -6,7 +6,7 @@ from vidpy import Clip
 from vidpy.utils import Frame
 from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
 from lines import Line, SysLine
-from ending_gen.endingline import TextLine, PageTurn, Wait, SetSpeaker
+from ending_gen.endingline import TextLine, PageTurn, Wait, Sleep, SetSpeaker
 from ending_gen.endinginfo import EndingInfo
 from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
@@ -97,8 +97,8 @@ def process_lines(lines: list[Line]) -> Generator[PageGroup, None, None]:
 
         # process depending on line type
         match line:
-            # Wait will get added to the buffer as a LineInfo with None text
-            case Wait(duration=duration):
+            # Wait/Sleep will get added to the buffer as a LineInfo with None text
+            case Wait(duration=duration) | Sleep(duration=duration):
                 buffer.append(LineInfo(None, context.get_char(curr_speaker), duration))
 
             # manual speaker change
