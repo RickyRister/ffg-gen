@@ -102,8 +102,10 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # everything else gets parsed as text in the text block
             else:
                 buffer.append(line)
-    # we don't do any post-loop processing.
-    # Any unterminated text blocks are just dropped
+    
+    # handle any unterminated text blocks at end
+    if len(buffer) > 0:
+        yield flush_buffer(curr_name, buffer)
 
 
 def flush_buffer(curr_name: str | None, text_lines: list[str]) -> BioTextBlock:
