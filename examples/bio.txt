@@ -1,5 +1,5 @@
 
-@component names tfill:!b1_folder!title.png
+@component names title:kiko
 @component portrait portrait:kiko
 @component background fill:color:#8D6669
 

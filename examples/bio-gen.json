@@ -78,6 +78,8 @@
         "kiko": {
             "portraitGeometry": "-320 28",
             "portraitPathFormat": "!b1_folder!b1 {expression}.png",
+            "titleGeometry": "300 -329",
+            "titlePathFormat": "!b1_folder!nametag.png",
             "bioFontColor": "#73FA79"
         }
     }

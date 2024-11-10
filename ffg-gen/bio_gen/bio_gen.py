@@ -10,7 +10,7 @@ from exceptions import CliError
 from lines import Line
 from . import bconfigs
 from . import line_parse
-from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen, pagenum_gen
+from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen, pagenum_gen, title_gen
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
@@ -101,6 +101,7 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
             case 'progressbar': yield from gen_progressbar(lines)
             case 'pagenum': yield from gen_pagenums(lines)
             case x if x.startswith('portrait:'): yield from gen_portrait(lines, x.removeprefix('portrait:'))
+            case x if x.startswith('title:'): yield from gen_title(lines, x.removeprefix('title:'))
             case x if x.startswith('fill:'): yield from gen_fill(lines, x.removeprefix('fill:'), False)
             case x if x.startswith('tfill:'): yield from gen_fill(lines, x.removeprefix('tfill:'), True)
             case 'groups': yield from gen_groups(lines)
@@ -132,6 +133,11 @@ def gen_pagenums(lines: list[Line]) -> Generator[ExtComposition, None, None]:
 def gen_portrait(lines: list[Line], character: str) -> Generator[ExtComposition, None, None]:
     print(f"Generating portrait component for {character}")
     yield portrait_gen.generate(lines, character)
+
+
+def gen_title(lines: list[Line], character: str) -> Generator[ExtComposition, None, None]:
+    print(f"Generating title component for {character}")
+    yield title_gen.generate(lines, character)
 
 
 def gen_fill(lines: list[Line], resource: str, do_fade: bool) -> Generator[ExtComposition, None, None]:

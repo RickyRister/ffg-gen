@@ -29,6 +29,10 @@ class BioInfo(infohelper.Info):
     portraitPathFormat: MltResource = UNSET
     portraitGeometry: Geometry = UNSET
 
+    # title configs
+    titlePathFormat: MltResource = UNSET
+    titleGeometry: Geometry = UNSET
+
     # boundary fade timings
     firstFadeInDur: Frame = UNSET
     lastFadeOutDur: Frame = UNSET
