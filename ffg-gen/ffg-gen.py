@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from argparse import ArgumentParser
 import cli_args
 from dialogue_gen import dialogue_gen
