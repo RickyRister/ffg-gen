@@ -35,6 +35,9 @@ def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:
     parser.add_argument(
         '--input', '-i', type=str, default='bio.txt',
         help='path to the input bio file')
+    parser.add_argument(
+        '--chapter', '-c', type=str, default=None,
+        help='Only generate this chapter')
 
     parser.set_defaults(func=bio_gen)
 
@@ -47,17 +50,33 @@ def bio_gen():
         bconfigs.load_into_globals(json_dict)
 
     # load lines from bio text file
-    lines: list[Line]
+    common_lines: list[Line] = None
+    chapters: dict[str, list[Line]] = None
     with open(cli_args.ARGS.input) as inputFile:
-        lines = line_parse.parse_bio_file(inputFile)
+        common_lines, chapters = line_parse.parse_bio_file(inputFile)
 
-    # process the lines
-    process_lines(lines)
+    # determine which chapters to process
+    if (chapter_name := cli_args.ARGS.chapter) is not None:
+        # cli args; only process this chapter
+        if chapter_name not in chapters:
+            raise CliError(f'{chapter_name} is not a valid chapter.')
+
+        print(f'=== Generating for chapter: {chapter_name} ===')
+        process_chapter(chapter_name, common_lines + chapters[chapter_name])
+    elif len(chapters) == 0:
+        # no chapters; just process all lines
+        process_chapter(None, common_lines)
+    else:
+        # otherwise, process each chapter separately,
+        for chapter_name, lines in chapters.items():
+            print(f'=== Generating for chapter: {chapter_name} ===')
+            # make sure to include the common lines the start
+            process_chapter(chapter_name, common_lines + lines)
 
 
-def process_lines(lines: list[Line]):
-    '''Processes the lines.
-    Here in case we add chapter support in the future
+def process_chapter(chapter_name: str | None, lines: list[Line]):
+    '''Processes a single chapter
+    Assumes that lines already includes the common lines
     '''
     # generate all compositions
     compositions: list[ExtComposition] = list(process_components(cli_args.ARGS.components, lines))
@@ -67,7 +86,7 @@ def process_lines(lines: list[Line]):
 
     print("Done generating. Now exporting combined mlt...")
 
-    mlt_fix.fix_and_write_mlt(compositions)
+    mlt_fix.fix_and_write_mlt(compositions, chapter_name)
 
 
 def process_components(components: list[str], lines: list[Line]) -> Generator[ExtComposition, None, None]:

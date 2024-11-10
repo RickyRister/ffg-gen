@@ -1,7 +1,15 @@
 from enum import Enum, auto
 from typing import Iterable, Generator
+from dataclasses import dataclass
 from lines import Line
 from bio_gen.bioline import BioTextBlock, parse_sysline
+
+
+@dataclass
+class ChapterLine:
+    '''Indicates the start of a new chapter
+    '''
+    name: str
 
 
 class State(Enum):
@@ -9,13 +17,39 @@ class State(Enum):
     IN_BLOCK = auto()
 
 
-def parse_bio_file(lines: Iterable[str]) -> list[Line]:
+def parse_bio_file(lines: Iterable[str]) -> tuple[list[Line], dict[str, list[Line]]]:
     '''Parse the script into the internal representation.
-    The output is given as a list of Lines.
-
-    (We might add chapter support in the future)
+    The output is given as a tuple of (common, dict[chapters])
     '''
-    return list(parse_lines(lines))
+    # parse all lines
+    parsed = list(parse_lines(lines))
+
+    # get indexes of all chapter markers
+    chapter_indexes = [i for i, line in enumerate(parsed) if isinstance(line, ChapterLine)]
+    chapter_indexes.append(len(parsed))     # append final index to make iteration logic easier
+
+    # get common lines (goes from start to first chapter marker)
+    common_lines = parsed[0:chapter_indexes[0]]
+
+    # build chapter map
+    # parsed[start_index] gets ChapterLine; parsed[start_index+1: end_index] gets all Lines until the next chapter
+    chapters = {parsed[start_index].name: parsed[start_index+1: end_index]
+                for start_index, end_index in iterate_by_pairs(chapter_indexes)}
+
+    return common_lines, chapters
+
+
+def iterate_by_pairs(iterable: Iterable) -> Generator[tuple[int, int], None, None]:
+    '''[1 2 3 4] -> (1 2), (2 3), (3 4)
+    '''
+    if len(iterable) < 2:
+        return
+
+    second = iterable[0]
+    for next_item in iterable[1:]:
+        first = second
+        second = next_item
+        yield first, second
 
 
 def isComment(line: str) -> bool:
@@ -38,6 +72,8 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
 
     Syslines and comments are only processed outside of text blocks.
     They will be treated as raw text inside of text blocks.
+
+    '===': Starts a new chapter, which will naturally end the current block.
     '''
     state: State = State.PENDING
     buffer: list[str] = []
@@ -74,6 +110,11 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
                 if (char_name := line.removeprefix('---').strip()):
                     curr_name = char_name
 
+            # '===' ends the current chapter and starts a new one
+            elif (line.startswith('===')):
+                # we don't need to flush the buffer since we're in PENDING state
+                yield ChapterLine(line.removeprefix('===').strip())
+
             # any other text starts a text block
             else:
                 state = State.IN_BLOCK
@@ -99,10 +140,17 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
                 if (char_name := line.removeprefix('---').strip()):
                     curr_name = char_name
 
+            # '===' ends the current chapter and starts a new one
+            elif (line.startswith('===')):
+                # reset everything before moving on
+                yield flush_buffer(curr_name, buffer)
+                state = State.PENDING
+                yield ChapterLine(line.removeprefix('===').strip())
+
             # everything else gets parsed as text in the text block
             else:
                 buffer.append(line)
-    
+
     # handle any unterminated text blocks at end
     if len(buffer) > 0:
         yield flush_buffer(curr_name, buffer)
