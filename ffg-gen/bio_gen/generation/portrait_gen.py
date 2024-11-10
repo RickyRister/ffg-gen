@@ -15,12 +15,6 @@ from exceptions import DialogueGenException
 
 # === Objects ====
 
-class Transition(Enum):
-    IN = 1
-    OUT = 2
-    BOTH = 3    # we only have this for the edge case when there's a single clip
-
-
 @dataclass
 class ClipInfo:
     '''An intermediate representation that stores each processed line before it gets turned into clips.
@@ -29,10 +23,11 @@ class ClipInfo:
     bioInfo: BioInfo
     expression: str
     duration: Frame
-    transition: Transition = None   # This field will be mutated after the fact
+    fade_in: bool = False   # These fields will be mutated after the fact
+    fade_out: bool = False
 
     def to_clip(self) -> Clip:
-        return create_clip(self.bioInfo, self.expression, self.duration, self.transition)
+        return create_clip(self.bioInfo, self.expression, self.duration, self.fade_in, self.fade_out)
 
 
 # === Entrance ====
@@ -43,11 +38,8 @@ def generate(lines: list[Line], name: str) -> ExtComposition:
     clip_infos: list[ClipInfo] = list(process_lines(lines, name))
 
     # attach transitions to first and last clip infos
-    if len(clip_infos) == 1:
-        clip_infos[0] = Transition.BOTH
-    elif len(clip_infos) > 1:
-        clip_infos[0].transition = Transition.IN
-        clip_infos[-1].transition = Transition.OUT
+    clip_infos[0].fade_in = True
+    clip_infos[-1].fade_out = True
 
     # map clip infos to clips
     clips = [clip_info.to_clip() for clip_info in clip_infos]
@@ -97,7 +89,7 @@ def process_lines(lines: list[Line], target_name: str) -> Generator[ClipInfo, No
     # we don't actually have to do anything lol
 
 
-def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: Transition) -> Clip:
+def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, fade_in: bool, fade_out: bool) -> Clip:
     # error checking empty expression
     if expression is None:
         raise DialogueGenException(
@@ -112,12 +104,12 @@ def create_clip(bioInfo: BioInfo, expression: str, duration: Frame, transition: 
         clip.fx('affine', affineFilterArgs(bioInfo.portraitGeometry))
 
     # apply fade in if required
-    if transition in (Transition.IN, Transition.BOTH):
+    if fade_in:
         fade_end = bioInfo.firstFadeInDur
         clip.fx('brightness', opacityFilterArgs(f'0=0;{fade_end}=1'))
 
     # apply fade out if required
-    if transition in (Transition.OUT, Transition.BOTH):
+    if fade_out:
         fadeOutDur = bioInfo.lastFadeOutDur
         fade_start = duration - fadeOutDur
         clip.fx('brightness', opacityFilterArgs(f'{fade_start}=1;{duration}=0'))
