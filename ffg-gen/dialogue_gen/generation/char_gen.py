@@ -178,15 +178,10 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
                 if curr_speaker == targetName and expression is not None:
                     curr_expression = expression
 
-            case Sleep(duration=duration):
-                if curr_speaker is None:
-                    # if no one is on screen yet, then we leave a gap
-                    yield ClipInfo(None, Transition.STAY_OFFSCREEN, curr_expression, duration, line)
-                    continue
-                else:
-                    # otherwise, we fall through and generate a clip using the previous line's state,
-                    # except there is no speaker
-                    curr_speaker = None
+            case Sleep():
+                # we fall through and generate a clip using the previous line's state,
+                # except there is no speaker
+                curr_speaker = None
 
             case SetExpr(name=name, expression=expression) if context.follow_alias(name) == targetName:
                 # set the expression, then continue to next dialogue line
