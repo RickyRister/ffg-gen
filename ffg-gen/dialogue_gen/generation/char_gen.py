@@ -54,7 +54,8 @@ class ClipInfo:
     charInfo: CharacterInfo     # character info at that point
     transition: Transition      # The transition that happens at the start of the clip
     expression: str | None      # label for the portait expression
-    duration: Frame    # duration used for the clip
+    duration: Frame             # duration used for the clip
+    line: Line = None             # The Line corresponding to this clip, for debugging purposes
     bring_to_front: bool = False  # whether this clip should bring the character to the front
 
     @property
@@ -62,7 +63,7 @@ class ClipInfo:
         return self.charInfo.name
 
     def to_clip(self) -> Clip:
-        return create_clip(self.transition, self.charInfo, self.expression, self.duration)
+        return create_clip(self.transition, self.charInfo, self.expression, self.duration, self.line)
 
 
 # === Entrance ====
@@ -180,7 +181,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
             case Sleep(duration=duration):
                 if curr_speaker is None:
                     # if no one is on screen yet, then we leave a gap
-                    yield ClipInfo(None, Transition.STAY_OFFSCREEN, curr_expression, duration)
+                    yield ClipInfo(None, Transition.STAY_OFFSCREEN, curr_expression, duration, line)
                     continue
                 else:
                     # otherwise, we fall through and generate a clip using the previous line's state,
@@ -238,7 +239,7 @@ def processLines(lines: list[Line], targetName: str) -> Generator[ClipInfo, None
         charInfo: CharacterInfo = context.get_char(targetName, False)
 
         # generate clip using the transition
-        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration, bring_to_front)
+        yield ClipInfo(charInfo, pending_transition, curr_expression, line.duration, line, bring_to_front)
 
         # update state and reset pending transition
         curr_state = Transition.state_after(pending_transition)
@@ -273,7 +274,7 @@ def determine_transition(curr_state: State, is_speaker: bool) -> Transition:
 
 # === Mapping ClipInfo into Clips ===
 
-def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Frame) -> Clip:
+def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str, duration: Frame, line: Line) -> Clip:
     # return early if we're still staying offscreen
     if transition is Transition.STAY_OFFSCREEN:
         return BlankClip.ofDuration(duration)
@@ -281,7 +282,7 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     # error checking empty expression
     if expression is None:
         raise DialogueGenException(
-            f"Character {charInfo.name} is trying to appear on-screen with undefined expression.")
+            f"Character {charInfo.name} is trying to appear on-screen with undefined expression on line: " + str(line))
 
     # create clip with portrait
     portraitPath = charInfo.portraitPathFormat.format(expression=expression)
