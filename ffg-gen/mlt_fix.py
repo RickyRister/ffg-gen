@@ -31,7 +31,8 @@ def fix_and_write_mlt(compositions: list[ExtComposition], file_suffix: str = Non
         path = Path(cli_args.ARGS.output)
         path = path.with_suffix('.mlt')
     else:
-        path = Path(cli_args.ARGS.input)
+        input_file_name = Path(cli_args.ARGS.input).name
+        path = Path(input_file_name)
         path = path.with_suffix('.mlt')
 
     suffix: str = '' if file_suffix is None else '_' + file_suffix
