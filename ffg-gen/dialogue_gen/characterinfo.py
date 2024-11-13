@@ -44,6 +44,7 @@ class CharacterInfo(infohelper.Info):
     frontOffset: Offset = Offset()
     backOffset: Offset = Offset()
     offstageOffset: Offset = Offset()
+    isMirrored: bool = False
 
     # brightness configs
     frontBrightness: float = 1

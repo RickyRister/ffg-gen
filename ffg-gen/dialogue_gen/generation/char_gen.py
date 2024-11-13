@@ -283,6 +283,10 @@ def create_clip(transition: Transition, charInfo: CharacterInfo, expression: str
     portraitPath = charInfo.portraitPathFormat.format(expression=expression)
     clip = Clip(str(portraitPath), start=Frame(0)).set_duration(duration)
 
+    # apply mirroring
+    if charInfo.isMirrored:
+        clip.fx('avfilter.hflip')
+
     # apply geometry (including movement)
     clip.fx('affine', affineFilterArgs(determine_movement_rect(transition, charInfo)))
 
