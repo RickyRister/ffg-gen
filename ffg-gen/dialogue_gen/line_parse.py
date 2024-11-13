@@ -18,9 +18,8 @@ def parseDialogueFile(lines: Iterable[str]) -> tuple[list[Line], dict[str, list[
     """Parse the script into the internal representation
     The output is given as a tuple of (common, dict[chapters])
     """
-    # parse all lines and filter out empty lines
-    parsed = [parseLine(line) for line in lines]
-    parsed = [line for line in parsed if line is not None]
+    # parse all lines
+    parsed = list(parse_lines(lines))
 
     # get indexes of all chapter markers
     chapter_indexes = [i for i, line in enumerate(parsed) if isinstance(line, ChapterLine)]
@@ -50,43 +49,44 @@ def iterate_by_pairs(iterable: Iterable) -> Generator[tuple[int, int], None, Non
         yield first, second
 
 
-def parseLine(line: str) -> Line | ChapterLine | None:
-    """Parse a single line of the file
-    """
-    # strip before processing
-    line = line.strip()
+def parse_lines(lines: str) -> Generator[Line, None, None]:
+    '''Parse all the lines in the file.
+    '''
+    for line in lines:
+        # strip before processing
+        line = line.strip()
 
-    # skip this line if it's empty or it's a comment
-    if (isComment(line)):
-        return None
+        # skip this line if it's empty or it's a comment
+        if (isComment(line)):
+            continue
 
-    # process this line as a sysline if it begins with @
-    if (line.startswith('@')):
-        return parse_sysline(line[1:])
+        # process this line as a sysline if it begins with @
+        if (line.startswith('@')):
+            yield parse_sysline(line[1:])
+            continue
 
-    # process this line as a chapter marker if it begins with ===
-    if (line.startswith('===')):
-        return ChapterLine(line.removeprefix('===').strip())
+        # process this line as a chapter marker if it begins with ===
+        if (line.startswith('===')):
+            yield ChapterLine(line.removeprefix('===').strip())
+            continue
 
-    text: str = None
-    name: str = None
-    expression: str = None
+        expression: str = None
 
-    # try to match normal dialogue line
-    match = re.match(dconfigs.PARSING.dialogueRegex, line)
-    if match:
-        expression = match.group('expression').strip()  # normal dialogue line exclusive group
-    else:
-        # try to match shortened dialogue line and throw if that match also fails
-        if not (match := re.match(dconfigs.PARSING.shortDialogueRegex, line)):
-            raise LineParseError(f'line did not match regex exactly: {line}')
+        # try to match normal dialogue line
+        match = re.match(dconfigs.PARSING.dialogueRegex, line)
+        if match:
+            expression = match.group('expression').strip()  # normal dialogue line exclusive group
+        else:
+            # try to match shortened dialogue line and throw if that match also fails
+            if not (match := re.match(dconfigs.PARSING.shortDialogueRegex, line)):
+                raise LineParseError(f'Unrecognized line: {line}')
 
-    # groups that appear in both dialogue line types
-    name = match.group('name').strip().lower()
-    text = match.group('text').strip()
+        # groups that appear in both dialogue line types
+        name = match.group('name').strip().lower()
+        text = match.group('text').strip()
 
-    # process match into a dialogueLine
-    return DialogueLine(name, expression, text)
+        # process match into a dialogueLine
+        yield DialogueLine(name, expression, text)
 
 
 def isComment(line: str) -> bool:
