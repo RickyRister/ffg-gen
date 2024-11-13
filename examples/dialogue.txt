@@ -67,6 +67,7 @@ Reimu1: Oh I'm red again
 
 @nametag kiko
 
+!dur 30
 木子1: oops
 
 @unset kiko frontBrightness
@@ -81,6 +82,8 @@ Kiko8: Really..? That's so bothersome.
 木子8: I was just getting to enjoy the cool air and the shade..
 Sameika5: It's too gloomy and pathetic here for silence to be relaxing.
 Reimu6: Well, we're not stopping.
+
+!dur +3.0
 Reimu7: (..Doesn't her tree need sunlight anyway?)
 
 (Boss theme starts)

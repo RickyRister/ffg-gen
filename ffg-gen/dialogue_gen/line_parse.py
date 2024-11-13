@@ -4,7 +4,8 @@ import re
 from lines import Line
 from . import dconfigs
 from dialogue_gen.dialogueline import DialogueLine, parse_sysline
-from exceptions import LineParseError
+from exceptions import LineParseError, DialogueGenException
+from durations import Frame, to_frame
 
 
 @dataclass
@@ -52,6 +53,8 @@ def iterate_by_pairs(iterable: Iterable) -> Generator[tuple[int, int], None, Non
 def parse_lines(lines: str) -> Generator[Line, None, None]:
     '''Parse all the lines in the file.
     '''
+    active_directives: list[Directive] = []
+
     for line in lines:
         # strip before processing
         line = line.strip()
@@ -70,6 +73,11 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
             yield ChapterLine(line.removeprefix('===').strip())
             continue
 
+        # process this line as a line parse directive if it begins with !
+        if (line.startswith('!')):
+            active_directives.append(parse_directive(line[1:]))
+            continue
+
         expression: str = None
 
         # try to match normal dialogue line
@@ -86,8 +94,68 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
         text = match.group('text').strip()
 
         # process match into a dialogueLine
-        yield DialogueLine(name, expression, text)
+        dialogueLine = DialogueLine(name, expression, text)
+
+        # apply any active directives and reset the directive list
+        for directive in active_directives:
+            directive.apply(dialogueLine)
+
+        active_directives.clear()
+
+        yield dialogueLine
 
 
 def isComment(line: str) -> bool:
     return len(line) == 0 or line.startswith('#') or line.startswith('//') or line.startswith('(')
+
+#
+# Line parse directives
+#
+
+
+@dataclass
+class Directive:
+    '''Abstract base class for Directive lines
+    '''
+
+    def apply(self, line: DialogueLine) -> None: ...
+
+
+def parse_directive(line: str) -> Directive:
+    match line.split(None, 1):
+        case ['dur', args]: return Dur.parseArgs(args.strip())
+        case _: raise LineParseError(f'Unrecognized directive: {line}')
+
+
+@dataclass
+class Dur(Directive):
+    ''' Affects the duration of the next DialogueLine.
+
+    Usage example: !dur +1.0
+
+    Give frames in integers and seconds in floats.
+    Putting a `+` or `-` in front will add that much duration.
+    Otherwise it directly overwrites the duration. 
+    '''
+    operation: str   # one of +, - , =
+    value: Frame
+
+    @staticmethod
+    def parseArgs(line: str) -> Directive:
+        match line[0]:
+            case '+': return Dur('+', to_frame(line[1:]))
+            case '-': return Dur('-', to_frame(line[1:]))
+            case _: return Dur('=', to_frame(line))
+
+    def apply(self, line: DialogueLine) -> None:
+        new_duration: Frame = None
+        match self.operation:
+            case '=': new_duration = self.value
+            case '+': new_duration = line.duration + self.value
+            case '-': new_duration = line.duration - self.value
+
+        if new_duration <= 0:
+            raise DialogueGenException(
+                f'Dialogue line will have negative duration after applying {self}: {line}')
+
+        line.duration = new_duration
