@@ -9,9 +9,9 @@
 
 ---
 
-Species: Kodama
-Abilities: Manipulating plant growth
-Location: Youkai Forest
+<b>Species:</b> Kodama
+<b>Abilities:</b> Manipulating plant growth
+<b>Location:</b> Youkai Forest
 
 An aloof kodama who spends most of her time relaxing in the Youkai Forest. No one really minds her, since she doesn't bother anyone, and no one bothers her either. 
 
@@ -39,8 +39,8 @@ The small fan she holds on her right hand could be used as a weapon used in a da
 
 @expression kiko 3
 
-Spellcards:
-Plant Sign "Propagation of Goodwill" (E/N)
+<b>Spellcards:</b>
+<i>Plant Sign "Propagation of Goodwill" (E/N)</i>
 Plant Sign "Propagation of Virtue" (H/L)
 
 Tree Sign "Unseen Will of Nature" (E/N)
