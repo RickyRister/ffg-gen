@@ -78,6 +78,18 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     state: State = State.PENDING
     buffer: list[str] = []
 
+    def flush_buffer(curr_name: str | None) -> BioTextBlock:
+        '''Joins all the accumulated lines into a text block, then clears the accumlator.
+        Strips all trailing blank lines.
+        '''
+        # keep removing last line if it's blank
+        while len(buffer) > 0 and not buffer[-1].strip():
+            buffer.pop()
+
+        text: str = str.join('\n', buffer)
+        buffer.clear()  # clear buffer before returning
+        return BioTextBlock(curr_name, text)
+
     # a character set during a text block start
     # will persist until another character is set
     curr_name: str = None
@@ -127,14 +139,14 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
 
             # '---*' ends the text block and immediately starts a new one
             if line.startswith('---*'):
-                yield flush_buffer(curr_name, buffer)
+                yield flush_buffer(curr_name)
                 # determine if we're also setting a new character
                 if (char_name := line.removeprefix('---*').strip()):
                     curr_name = char_name
 
             # '---' ends the text block and puts the state in pending
             elif line.startswith('---'):
-                yield flush_buffer(curr_name, buffer)
+                yield flush_buffer(curr_name)
                 state = State.PENDING
                 # determine if we're also setting a new character
                 if (char_name := line.removeprefix('---').strip()):
@@ -143,7 +155,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # '===' ends the current chapter and starts a new one
             elif (line.startswith('===')):
                 # reset everything before moving on
-                yield flush_buffer(curr_name, buffer)
+                yield flush_buffer(curr_name)
                 state = State.PENDING
                 yield ChapterLine(line.removeprefix('===').strip())
 
@@ -153,17 +165,4 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
 
     # handle any unterminated text blocks at end
     if len(buffer) > 0:
-        yield flush_buffer(curr_name, buffer)
-
-
-def flush_buffer(curr_name: str | None, text_lines: list[str]) -> BioTextBlock:
-    '''Joins all the accumulated lines into a text block, then clears the accumlator.
-    Strips all trailing blank lines.
-    '''
-    # keep removing last line if it's blank
-    while len(text_lines) > 0 and not text_lines[-1].strip():
-        text_lines.pop()
-
-    text: str = str.join('\n', text_lines)
-    text_lines.clear()  # clear buffer before returning
-    return BioTextBlock(curr_name, text)
+        yield flush_buffer(curr_name)
