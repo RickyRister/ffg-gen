@@ -53,7 +53,7 @@ def iterate_by_pairs(iterable: Iterable) -> Generator[tuple[int, int], None, Non
 def parse_lines(lines: str) -> Generator[Line, None, None]:
     '''Parse all the lines in the file.
     '''
-    active_directives: list[Directive] = []
+    pending_directives: list[Directive] = []
 
     for line in lines:
         # strip before processing
@@ -75,7 +75,7 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
 
         # process this line as a line parse directive if it begins with !
         if (line.startswith('!')):
-            active_directives.append(parse_directive(line[1:]))
+            pending_directives.append(parse_directive(line[1:]))
             continue
 
         expression: str = None
@@ -96,11 +96,11 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
         # process match into a dialogueLine
         dialogueLine = DialogueLine(name, expression, text)
 
-        # apply any active directives and reset the directive list
-        for directive in active_directives:
+        # apply any pending directives and reset the directive list
+        for directive in pending_directives:
             directive.apply(dialogueLine)
 
-        active_directives.clear()
+        pending_directives.clear()
 
         yield dialogueLine
 
@@ -108,10 +108,10 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
 def isComment(line: str) -> bool:
     return len(line) == 0 or line.startswith('#') or line.startswith('//') or line.startswith('(')
 
+
 #
 # Line parse directives
 #
-
 
 @dataclass
 class Directive:
