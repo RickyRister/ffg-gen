@@ -2,6 +2,8 @@ from enum import Enum, auto
 from typing import Iterable, Generator
 from dataclasses import dataclass
 from lines import Line
+from exceptions import LineParseError, DialogueGenException
+from durations import Frame, to_frame
 from bio_gen.bioline import BioTextBlock, parse_sysline
 
 
@@ -77,6 +79,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     '''
     state: State = State.PENDING
     buffer: list[str] = []
+    pending_directives: list[Directive] = []
 
     def flush_buffer(curr_name: str | None) -> BioTextBlock:
         '''Joins all the accumulated lines into a text block, then clears the accumlator.
@@ -86,9 +89,19 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
         while len(buffer) > 0 and not buffer[-1].strip():
             buffer.pop()
 
+        # create text block
         text: str = str.join('\n', buffer)
-        buffer.clear()  # clear buffer before returning
-        return BioTextBlock(curr_name, text)
+        textblock = BioTextBlock(curr_name, text)
+
+        # apply any pending directives
+        for directive in pending_directives:
+            directive.apply(textblock)
+
+        # clear accumlators before returning
+        buffer.clear()
+        pending_directives.clear()
+
+        return textblock
 
     # a character set during a text block start
     # will persist until another character is set
@@ -107,6 +120,11 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             # process this line as a sysline if it begins with @
             elif (line.startswith('@')):
                 yield parse_sysline(line[1:])
+
+            # process this line as a line parse directive if it begins with !
+            elif (line.startswith('!')):
+                pending_directives.append(parse_directive(line[1:]))
+                continue
 
             # '---*' immediately starts a new text block
             elif (line.startswith('---*')):
@@ -166,3 +184,55 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     # handle any unterminated text blocks at end
     if len(buffer) > 0:
         yield flush_buffer(curr_name)
+
+
+#
+# Line parse directives
+#
+
+@dataclass
+class Directive:
+    '''Abstract base class for Directive lines
+    '''
+
+    def apply(self, line: BioTextBlock) -> None: ...
+
+
+def parse_directive(line: str) -> Directive:
+    match line.split(None, 1):
+        case ['dur', args]: return Dur.parseArgs(args.strip())
+        case _: raise LineParseError(f'Unrecognized directive: {line}')
+
+
+@dataclass
+class Dur(Directive):
+    ''' Affects the duration of the next BioTextBlock.
+
+    Usage example: !dur +1.0
+
+    Give frames in integers and seconds in floats.
+    Putting a `+` or `-` in front will add that much duration.
+    Otherwise it directly overwrites the duration. 
+    '''
+    operation: str   # one of +, - , =
+    value: Frame
+
+    @staticmethod
+    def parseArgs(line: str) -> Directive:
+        match line[0]:
+            case '+': return Dur('+', to_frame(line[1:]))
+            case '-': return Dur('-', to_frame(line[1:]))
+            case _: return Dur('=', to_frame(line))
+
+    def apply(self, line: BioTextBlock) -> None:
+        new_duration: Frame = None
+        match self.operation:
+            case '=': new_duration = self.value
+            case '+': new_duration = line.duration + self.value
+            case '-': new_duration = line.duration - self.value
+
+        if new_duration <= 0:
+            raise DialogueGenException(
+                f'Bio block will have negative duration after applying {self}: {line}')
+
+        line.duration = new_duration

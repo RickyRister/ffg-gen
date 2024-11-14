@@ -25,7 +25,7 @@ Although she doesn't have many resources to learn it - especially as it's a west
 
 
 ---
-
+!dur -10.0
 @expression kiko 2
 @unset kiko bioFontSize
 
@@ -35,6 +35,7 @@ The small fan she holds on her right hand could be used as a weapon used in a da
 
 ---
 @set kiko bioFontSize 20
+!dur 5.0
 ---*
 
 @expression kiko 3
