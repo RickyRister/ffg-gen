@@ -6,6 +6,7 @@ import filters
 from geometry import Geometry
 from lines import Line, SysLine
 from bio_gen.bioinfo import BioInfo
+from bio_gen.bioline import BioTextBlock
 from configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
 import configs
@@ -53,20 +54,15 @@ def generate(lines: list[Line]) -> ExtComposition:
 def process_lines(lines: list[Line]) -> Generator[ClipInfo, None, None]:
     context = ConfigContext(BioInfo)
 
-    pagenum = 0    # track page num manually with a counter
-
     for line in lines:
         if isinstance(line, SysLine):
             # always run the pre_hook first if it's a sysline
             line.pre_hook(context)
 
-        else:
-            # increment pagenum
-            pagenum += 1
-
+        elif isinstance(line, BioTextBlock):
             # create the clip info
             bioInfo = context.get_char(line.name)
-            yield ClipInfo(bioInfo, pagenum, line.duration)
+            yield ClipInfo(bioInfo, line.pagenum, line.duration)
 
 
 def to_clip(clip_info: ClipInfo, page_count: int) -> Clip:

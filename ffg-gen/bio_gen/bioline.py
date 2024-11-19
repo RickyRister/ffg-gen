@@ -13,6 +13,7 @@ class BioTextBlock(TextLine):
     '''
     name: str | None
     text: str
+    pagenum: int
     duration: Frame = None
 
     def __post_init__(self):

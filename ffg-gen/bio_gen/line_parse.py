@@ -79,6 +79,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     '''
     state: State = State.PENDING
     buffer: list[str] = []
+    pagenum: int = 0
     pending_directives: list[Directive] = []
 
     def flush_buffer(curr_name: str | None) -> BioTextBlock:
@@ -89,9 +90,13 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
         while len(buffer) > 0 and not buffer[-1].strip():
             buffer.pop()
 
+        # increment pagenum
+        nonlocal pagenum
+        pagenum += 1
+
         # create text block
         text: str = str.join('\n', buffer)
-        textblock = BioTextBlock(curr_name, text)
+        textblock = BioTextBlock(curr_name, text, pagenum)
 
         # apply any pending directives
         for directive in pending_directives:
