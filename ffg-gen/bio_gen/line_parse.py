@@ -26,6 +26,12 @@ def parse_bio_file(lines: Iterable[str]) -> tuple[list[Line], dict[str, list[Lin
     # parse all lines
     parsed = list(parse_lines(lines))
 
+    # set total_pages on all bio lines
+    total_pagenum = len([line for line in parsed if isinstance(line, BioTextBlock)])
+    for line in parsed:
+        if isinstance(line, BioTextBlock):
+            line.total_pages = total_pagenum
+
     # get indexes of all chapter markers
     chapter_indexes = [i for i, line in enumerate(parsed) if isinstance(line, ChapterLine)]
     chapter_indexes.append(len(parsed))     # append final index to make iteration logic easier

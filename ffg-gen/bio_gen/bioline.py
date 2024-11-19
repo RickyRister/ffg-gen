@@ -14,6 +14,7 @@ class BioTextBlock(TextLine):
     name: str | None
     text: str
     pagenum: int
+    total_pages: int | None = None  # this field is set on the second pass
     duration: Frame = None
 
     def __post_init__(self):

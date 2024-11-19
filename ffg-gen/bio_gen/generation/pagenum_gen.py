@@ -21,6 +21,7 @@ class ClipInfo:
     '''
     bioInfo: BioInfo
     pagenum: int
+    total_pages: int
     duration: Frame
     is_first: bool = False  # these fields will be modified after creation
     is_last: bool = False
@@ -39,7 +40,7 @@ def generate(lines: list[Line]) -> ExtComposition:
     clip_infos[-1].is_last = True
 
     # convert to clips
-    clips = [to_clip(clip_info, len(clip_infos)) for clip_info in clip_infos]
+    clips = [to_clip(clip_info) for clip_info in clip_infos]
 
     return ExtComposition(
         clips,
@@ -62,17 +63,17 @@ def process_lines(lines: list[Line]) -> Generator[ClipInfo, None, None]:
         elif isinstance(line, BioTextBlock):
             # create the clip info
             bioInfo = context.get_char(line.name)
-            yield ClipInfo(bioInfo, line.pagenum, line.duration)
+            yield ClipInfo(bioInfo, line.pagenum, line.total_pages, line.duration)
 
 
-def to_clip(clip_info: ClipInfo, page_count: int) -> Clip:
+def to_clip(clip_info: ClipInfo) -> Clip:
     bioInfo = clip_info.bioInfo
 
     # create base clip
     clip: Clip = Clip('color:#00000000', start=Frame(0)).set_duration(clip_info.duration)
 
     text_filter_args = filters.textFilterArgs(
-        text=f'{clip_info.pagenum}/{page_count}',
+        text=f'{clip_info.pagenum}/{clip_info.total_pages}',
         geometry=bioInfo.pagenumGeometry,
         font=bioInfo.pagenumFont,
         size=bioInfo.pagenumFontSize,
@@ -102,7 +103,7 @@ def to_clip(clip_info: ClipInfo, page_count: int) -> Clip:
 
     # apply second text layer
     text_filter_args = text_filter_args.copy()
-    text_filter_args['argument'] = f'/{page_count}'
+    text_filter_args['argument'] = f'/{clip_info.total_pages}'
 
     clip.fx('dynamictext', text_filter_args)
 
