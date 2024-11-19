@@ -13,6 +13,10 @@ ffg-gen.py dialogue all
 ffg-gen.py bio all
 ```
 
+```sh
+ffg-gen.py ending all
+```
+
 The files here have the default names so you don't have to provide them as args.
 
 The tool should generate a completed mlt with all the components. 
