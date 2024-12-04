@@ -21,8 +21,7 @@
         "s1_bg_stage": "assets/s1/bg-stage.png",
         "droptextMask": "assets/common/drop text mask.png",
         "reimu_folder": "assets/common/reimu/",
-        "sameika_folder": "assets/common/sameika/",
-        "s1_folder": "assets/s1/portraits/"
+        "sameika_folder": "assets/common/sameika/"
     },
     "videoMode": {
         "width": 1280,
@@ -123,10 +122,10 @@
             "isPlayer": false,
             "displayName": "Kiko",
             "geometry": "134 160",
-            "portraitPathFormat": "!s1_folder!b1 {expression}.png",
+            "portraitPathFormat": "!stage_folder!b1 {expression}.png",
             "headerOutlineColor": "#73FA79",
-            "headerOverlayPath": "!s1_folder!overlay.png",
-            "nametagPath": "!s1_folder!nametag.png"
+            "headerOverlayPath": "!stage_folder!overlay.png",
+            "nametagPath": "!stage_folder!nametag.png"
         }
     }
 }

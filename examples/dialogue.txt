@@ -7,6 +7,8 @@
 @component background fill:!frame
 @component background fill:!s1_bg_stage 
 
+!define stage_folder assets/s1/portraits/
+
 === prebattle
 
 @enterall player

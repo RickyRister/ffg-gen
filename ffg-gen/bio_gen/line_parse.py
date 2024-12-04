@@ -1,6 +1,7 @@
 from enum import Enum, auto
 from typing import Iterable, Generator
 from dataclasses import dataclass
+import configs
 from lines import Line
 from exceptions import LineParseError, DialogueGenException
 from durations import Frame, to_frame
@@ -134,7 +135,8 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
 
             # process this line as a line parse directive if it begins with !
             elif (line.startswith('!')):
-                pending_directives.append(parse_directive(line[1:]))
+                if (directive := parse_directive(line[1:])) is not None:
+                    pending_directives.append(directive)
                 continue
 
             # '---*' immediately starts a new text block
@@ -209,9 +211,10 @@ class Directive:
     def apply(self, line: BioTextBlock) -> None: ...
 
 
-def parse_directive(line: str) -> Directive:
+def parse_directive(line: str) -> Directive | None:
     match line.split(None, 1):
         case ['dur', args]: return Dur.parseArgs(args.strip())
+        case ['define', args]: Define.parseArgs(args.strip())
         case _: raise LineParseError(f'Unrecognized directive: {line}')
 
 
@@ -247,3 +250,18 @@ class Dur(Directive):
                 f'Bio block will have negative duration after applying {self}: {line}')
 
         line.duration = new_duration
+
+
+@dataclass
+class Define(Directive):
+    ''' Modifies the global named resources dictionary. 
+    Yes, I know this is really bad practice. I just don't feel like finding a better way right now.
+
+    Usage example: !define stage_folder _textless/s1/
+    '''
+
+    @staticmethod
+    def parseArgs(line: str) -> None:
+        match line.split(None, 1):
+            case [name, value]: configs.RESOURCE_NAMES[name] = value
+            case _: LineParseError(f'Unrecognized !define directive: {line}')

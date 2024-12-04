@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable, Generator
 import re
+import configs
 from lines import Line
 from . import dconfigs
 from dialogue_gen.dialogueline import DialogueLine, parse_sysline
@@ -75,7 +76,8 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
 
         # process this line as a line parse directive if it begins with !
         if (line.startswith('!')):
-            pending_directives.append(parse_directive(line[1:]))
+            if (directive := parse_directive(line[1:])) is not None:
+                pending_directives.append(directive)
             continue
 
         expression: str = None
@@ -121,9 +123,10 @@ class Directive:
     def apply(self, line: DialogueLine) -> None: ...
 
 
-def parse_directive(line: str) -> Directive:
+def parse_directive(line: str) -> Directive | None:
     match line.split(None, 1):
         case ['dur', args]: return Dur.parseArgs(args.strip())
+        case ['define', args]: Define.parseArgs(args.strip())
         case _: raise LineParseError(f'Unrecognized directive: {line}')
 
 
@@ -159,3 +162,18 @@ class Dur(Directive):
                 f'Dialogue line will have negative duration after applying {self}: {line}')
 
         line.duration = new_duration
+
+
+@dataclass
+class Define(Directive):
+    ''' Modifies the global named resources dictionary. 
+    Yes, I know this is really bad practice. I just don't feel like finding a better way right now.
+
+    Usage example: !define stage_folder _textless/s1/
+    '''
+
+    @staticmethod
+    def parseArgs(line: str) -> None:
+        match line.split(None, 1):
+            case [name, value]: configs.RESOURCE_NAMES[name] = value
+            case _: LineParseError(f'Unrecognized !define directive: {line}')
