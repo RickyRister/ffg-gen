@@ -34,6 +34,8 @@ class MltResource:
 
         Named resources are indicated by starting with a !
         You can terminate the name with another !
+
+        Named resources are recursive :)
         '''
 
         # return early if it's not a named resource
@@ -49,4 +51,5 @@ class MltResource:
         if name not in configs.RESOURCE_NAMES:
             raise MissingConfigError(f"Named resource '{name}' not defined.")
         else:
-            return configs.RESOURCE_NAMES.get(name) + postfix
+            resource = MltResource.follow_if_named(configs.RESOURCE_NAMES.get(name))
+            return resource + postfix

@@ -16,12 +16,13 @@
         ]
     },
     "resourceNames": {
-        "textbox": "assets/common/textbox default.png",
-        "frame": "assets/common/frame.png",
+        "common": "assets/common/",
+        "textbox": "!common!/textbox default.png",
+        "frame": "!common!/frame.png",
         "s1_bg_stage": "assets/s1/bg-stage.png",
-        "droptextMask": "assets/common/drop text mask.png",
-        "reimu_folder": "assets/common/reimu/",
-        "sameika_folder": "assets/common/sameika/"
+        "droptextMask": "!common!/drop text mask.png",
+        "reimu_folder": "!common!/reimu/",
+        "sameika_folder": "!common!/sameika/"
     },
     "videoMode": {
         "width": 1280,
