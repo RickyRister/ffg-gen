@@ -230,7 +230,7 @@ def info_to_clip(clipinfo: ClipInfo) -> Clip:
         weight=charInfo.dialogueFontWeight,
         outline=charInfo.dialogueOutlineSize,
         color=charInfo.dialogueFontColor,
-        olcolor=charInfo.dialougeOutlineColor)
+        olcolor=charInfo.dialogueOutlineColor)
 
     clip.fx('dynamictext', textFilter)
 

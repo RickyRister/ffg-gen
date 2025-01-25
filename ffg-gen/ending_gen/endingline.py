@@ -57,7 +57,7 @@ def parse_sysline(line: str) -> SysLine:
 
 @dataclass
 class Wait(SysLine):
-    """Makes the preceeding text line stay for longer.
+    """Makes the preceding text line stay for longer.
     Interprets integer durations as frames and float durations as seconds.
 
     Usage: @wait [duration]

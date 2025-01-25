@@ -62,7 +62,7 @@ def to_frame(duration: int | float | str | None) -> Frame:
     Multiply the duration by the fps before converting it to a Frame
 
     If duration is a string: use ast to convert string to either int or float,
-    then intepret the value as above.
+    then interpret the value as above.
 
     Safely passes through any None.
     Frame extends from int, so this function should be idempotent on Frames.

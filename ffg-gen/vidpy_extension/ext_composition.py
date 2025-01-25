@@ -90,7 +90,7 @@ def combine_args(compositions: list[ExtComposition]) -> list[str]:
 
     args: list[str] = []
 
-    # add the the background track
+    # add the background track
     args += ['-track', f'color:{cli_args.ARGS.bg_color}', 'out=0']
 
     # add the combined args for all comps
@@ -109,7 +109,7 @@ def args_to_xml(args: list[str], exemplar: Composition = None) -> Element:
 
     Args:
         args: the command line args to melt. DO NOT include the call to melt itself
-        exemplar: A Composition to copy the profile/metdata and duration from, in order to fix the mlt
+        exemplar: A Composition to copy the profile/metadata and duration from, in order to fix the mlt
     '''
 
     xml = subprocess.check_output([config.MELT_BINARY] + args + ['-consumer', 'xml'])

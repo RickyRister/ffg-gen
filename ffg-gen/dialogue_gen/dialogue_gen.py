@@ -133,7 +133,7 @@ def gen_header(lines: list[Line]) -> Generator[ExtComposition, None, None]:
 
 def find_all_names(lines: list[Line]) -> list[str]:
     '''Figures out which names appear in the lines.
-    Handles wierdness with aliases
+    Handles weirdness with aliases
     Preserves the order of appearance in the script.
     '''
     # does weird stuff with dict to ensure uniqueness while preserving order

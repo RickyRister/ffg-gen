@@ -226,7 +226,7 @@ class Nametag(SysLine):
 @dataclass
 class Front(SysLine):
     '''Forcibly brings the character to the front.
-    The behavior is undefined if multiple characters are eligable to be brought to front.
+    The behavior is undefined if multiple characters are eligible to be brought to front.
 
     Usage: @front [name]
     '''

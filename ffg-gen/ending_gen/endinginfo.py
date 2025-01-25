@@ -26,7 +26,7 @@ class EndingInfo(infohelper.Info):
     dialogueFontWeight: int = 500
     dialogueFontColor: str = '#ffffff'
     dialogueOutlineSize: int = 1
-    dialougeOutlineColor: int = '#000000'
+    dialogueOutlineColor: int = '#000000'
 
     dropTextMaskPath: MltResource = UNSET
     dropTextDur: Frame = Frame(0)

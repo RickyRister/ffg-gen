@@ -11,7 +11,7 @@ def generate(lines: list[Line], resource: MltResource) -> ExtComposition:
     """Returns a Composition containing a single Clip.
     The lines are used to calculate the duration of the single Clip.
     """
-    # caculate duration
+    # calculate duration
     all_durations: list[Frame] = [line.duration for line in lines if hasattr(line, 'duration')]
 
     # TODO: also add the time taken for the exit

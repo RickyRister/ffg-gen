@@ -56,7 +56,7 @@ class ClipInfo:
     '''
     charInfo: CharacterInfo     # character info at that point
     transition: Transition      # The transition that happens at the start of the clip
-    expression: str | None      # label for the portait expression
+    expression: str | None      # label for the portrait expression
     duration: Frame             # duration used for the clip
     line: Line = None             # The Line corresponding to this clip, for debugging purposes
     bring_to_front: bool = False  # whether this clip should bring the character to the front

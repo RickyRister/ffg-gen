@@ -52,7 +52,7 @@ class Info(ABC):
     There should be a common info, as well as character-specific info.
 
     All attributes of Info subclasses should default to UNSET if they don't already have a default.
-    The getattribute is overriden to raise a MissingInfoError if trying to access an UNSET attribute.
+    The getattribute is overridden to raise a MissingInfoError if trying to access an UNSET attribute.
     This allows config properties to be unset unless required by the component.
     '''
     name: str = None    # The dict name, for tracking purposes

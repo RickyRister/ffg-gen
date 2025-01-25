@@ -91,7 +91,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
     pending_directives: list[Directive] = []
 
     def flush_buffer(curr_name: str | None) -> BioTextBlock:
-        '''Joins all the accumulated lines into a text block, then clears the accumlator.
+        '''Joins all the accumulated lines into a text block, then clears the accumulator.
         Strips all trailing blank lines.
         '''
         # keep removing last line if it's blank
@@ -110,7 +110,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
         for directive in pending_directives:
             directive.apply(textblock)
 
-        # clear accumlators before returning
+        # clear accumulators before returning
         buffer.clear()
         pending_directives.clear()
 
