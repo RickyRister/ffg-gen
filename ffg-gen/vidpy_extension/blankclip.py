@@ -1,5 +1,6 @@
 from vidpy import Clip
 from vidpy.utils import Frame
+
 import cli_args
 
 

@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+
 from vidpy.utils import Frame
-from lines import TextLine, SysLine, parse_common_sysline
+
 from exceptions import LineParseError
+from lines import TextLine, SysLine, parse_common_sysline
 from . import bconfigs
 
 

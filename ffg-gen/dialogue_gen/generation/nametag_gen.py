@@ -1,16 +1,17 @@
 from dataclasses import dataclass
 from typing import Generator
+
 from vidpy import Clip
-from mlt_resource import MltResource
-from lines import Line, SysLine
-from dialogue_gen.dialogueline import Nametag
-from dialogue_gen.characterinfo import CharacterInfo
 from vidpy.utils import Frame
-from vidpy_extension.ext_composition import ExtComposition
-from vidpy_extension.blankclip import BlankClip
-from configcontext import ConfigContext
-from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
+
 import configs
+from configcontext import ConfigContext
+from dialogue_gen.characterinfo import CharacterInfo
+from dialogue_gen.dialogueline import Nametag
+from filters import affineFilterArgs, opacityFilterArgs
+from lines import Line, SysLine
+from vidpy_extension.blankclip import BlankClip
+from vidpy_extension.ext_composition import ExtComposition
 
 
 @dataclass

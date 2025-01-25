@@ -1,11 +1,12 @@
+from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Iterable, Generator
-from dataclasses import dataclass
+
 import configs
-from lines import Line
-from exceptions import LineParseError, DialogueGenException
-from durations import Frame, to_frame
 from bio_gen.bioline import BioTextBlock, parse_sysline
+from durations import Frame, to_frame
+from exceptions import LineParseError, DialogueGenException
+from lines import Line
 
 
 @dataclass

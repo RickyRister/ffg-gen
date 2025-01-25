@@ -1,15 +1,17 @@
-from typing import Generator
 from dataclasses import dataclass
+from typing import Generator
+
 from vidpy import Clip
 from vidpy.utils import Frame
+
+import configs
 import filters
-from geometry import Geometry
-from lines import Line, SysLine
 from bio_gen.bioinfo import BioInfo
 from bio_gen.bioline import BioTextBlock
 from configcontext import ConfigContext
+from geometry import Geometry
+from lines import Line, SysLine
 from vidpy_extension.ext_composition import ExtComposition
-import configs
 
 
 # === Objects ====

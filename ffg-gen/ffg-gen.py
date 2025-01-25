@@ -1,7 +1,8 @@
 from argparse import ArgumentParser
+
 import cli_args
-from dialogue_gen import dialogue_gen
 from bio_gen import bio_gen
+from dialogue_gen import dialogue_gen
 from ending_gen import ending_gen
 
 

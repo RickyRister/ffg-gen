@@ -1,7 +1,9 @@
-import subprocess
 import itertools
+import subprocess
 from xml.etree.ElementTree import Element, fromstring
+
 from vidpy import Composition, config
+
 import cli_args
 
 '''Code heavily referenced from vidpy

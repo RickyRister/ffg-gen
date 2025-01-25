@@ -2,8 +2,9 @@ import re
 from pathlib import Path
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
-from vidpy_extension.ext_composition import ExtComposition, compositions_to_mlt
+
 import cli_args
+from vidpy_extension.ext_composition import ExtComposition, compositions_to_mlt
 
 
 def createPropertyElement(property: str, value: str) -> Element:

@@ -1,11 +1,13 @@
 from dataclasses import dataclass
-from typing import Any, Self
 from functools import cache
+from typing import Any, Self
+
 from vidpy.utils import Frame
+
+import infohelper
 from exceptions import MissingConfigError
 from geometry import Geometry
 from mlt_resource import MltResource
-import infohelper
 from . import econfigs
 
 UNSET = infohelper.UNSET

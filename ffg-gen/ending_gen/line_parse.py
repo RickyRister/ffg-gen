@@ -1,7 +1,7 @@
-from enum import Enum, auto
 from typing import Iterable, Generator
-from lines import Line
+
 from ending_gen.endingline import TextLine, PageTurn, parse_sysline
+from lines import Line
 
 
 def parse_ending_file(lines: Iterable[str]) -> list[Line]:

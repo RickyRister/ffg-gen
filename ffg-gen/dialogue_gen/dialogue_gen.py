@@ -1,16 +1,17 @@
+import json
 from argparse import ArgumentParser, _SubParsersAction
 from typing import Generator
-import json
+
 import cli_args
 import configs
 import mlt_fix
-from lines import Line
-from exceptions import CliError
-from mlt_resource import MltResource
 from dialogue_gen import dconfigs
 from dialogue_gen import line_parse
-from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen, nametag_gen
 from dialogue_gen.characterinfo import CharacterInfo
+from dialogue_gen.generation import text_gen, char_gen, header_gen, fill_gen, tfill_gen, nametag_gen
+from exceptions import CliError
+from lines import Line
+from mlt_resource import MltResource
 from vidpy_extension.ext_composition import ExtComposition
 
 

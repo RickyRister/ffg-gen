@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from durations import Durations
 
 '''Configs that are specific to ending_gen

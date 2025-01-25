@@ -1,9 +1,11 @@
-from typing import TypeVar, Any, Callable, Self
-from dataclasses import dataclass, replace
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, replace
+from typing import TypeVar, Any, Callable, Self
+
 from vidpy.utils import Frame
-from exceptions import MissingInfoError
+
 import durations
+from exceptions import MissingInfoError
 from geometry import Geometry, Offset
 from mlt_resource import MltResource
 

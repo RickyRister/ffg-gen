@@ -1,7 +1,9 @@
-from typing import Self, TypeVar
+from typing import Self
+
 import configs
-from infohelper import Info
 from exceptions import MissingConfigError
+from infohelper import Info
+
 
 class ConfigContext:
     '''Encapsulates all the config changes that happens during a run

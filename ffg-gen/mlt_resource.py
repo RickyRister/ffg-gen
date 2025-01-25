@@ -1,5 +1,6 @@
-from typing import Self
 from dataclasses import dataclass, replace
+from typing import Self
+
 import configs
 from exceptions import MissingConfigError
 

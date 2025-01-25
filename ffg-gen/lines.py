@@ -1,7 +1,8 @@
 import ast
 from abc import ABC
-from typing import Any
 from dataclasses import dataclass
+from typing import Any
+
 from configcontext import ConfigContext
 from exceptions import NonExistentPropertyError, LineParseError
 

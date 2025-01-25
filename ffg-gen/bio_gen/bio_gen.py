@@ -1,16 +1,17 @@
-from typing import Generator
-from argparse import ArgumentParser, _SubParsersAction
 import json
-from vidpy_extension.ext_composition import ExtComposition
+from argparse import ArgumentParser, _SubParsersAction
+from typing import Generator
+
 import cli_args
 import configs
 import mlt_fix
-from mlt_resource import MltResource
+from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen, pagenum_gen, title_gen
 from exceptions import CliError
 from lines import Line
+from mlt_resource import MltResource
+from vidpy_extension.ext_composition import ExtComposition
 from . import bconfigs
 from . import line_parse
-from bio_gen.generation import text_gen, fill_gen, portrait_gen, progressbar_gen, pagenum_gen, title_gen
 
 
 def attach_subparser_to(subparsers: _SubParsersAction, parents) -> None:

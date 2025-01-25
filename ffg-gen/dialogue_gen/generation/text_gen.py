@@ -1,13 +1,14 @@
 from vidpy import Clip
 from vidpy.utils import Frame
-from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from lines import Line, SysLine
-from dialogue_gen.dialogueline import Sleep
-from dialogue_gen.characterinfo import CharacterInfo
-from vidpy_extension.blankclip import BlankClip
-from vidpy_extension.ext_composition import ExtComposition
+
 import configs
 from configcontext import ConfigContext
+from dialogue_gen.characterinfo import CharacterInfo
+from dialogue_gen.dialogueline import Sleep
+from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
+from lines import Line, SysLine
+from vidpy_extension.blankclip import BlankClip
+from vidpy_extension.ext_composition import ExtComposition
 
 
 def filter_none(lines: list) -> list:

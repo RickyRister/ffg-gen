@@ -1,11 +1,12 @@
-import ast
 from dataclasses import dataclass
+
 from vidpy.utils import Frame
-from lines import TextLine, SysLine, parse_common_sysline
-from exceptions import LineParseError
-from . import econfigs
-from mlt_resource import MltResource
+
 import durations
+from exceptions import LineParseError
+from lines import TextLine, SysLine, parse_common_sysline
+from mlt_resource import MltResource
+from . import econfigs
 
 
 @dataclass

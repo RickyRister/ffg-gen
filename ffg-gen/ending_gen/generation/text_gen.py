@@ -1,18 +1,20 @@
 import re
 from dataclasses import dataclass
-from typing import Generator, Iterable
 from itertools import zip_longest
+from typing import Generator, Iterable
+
 from vidpy import Clip
 from vidpy.utils import Frame
-from filters import textFilterArgs, richTextFilterArgs, dropTextFilterArgs
-from lines import Line, SysLine
-from ending_gen.endingline import TextLine, PageTurn, Wait, Sleep, SetSpeaker
+
+import configs
+from configcontext import ConfigContext
+from ending_gen import econfigs
 from ending_gen.endinginfo import EndingInfo
+from ending_gen.endingline import TextLine, PageTurn, Wait, Sleep, SetSpeaker
+from filters import textFilterArgs, dropTextFilterArgs
+from lines import Line, SysLine
 from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
-import configs
-from ending_gen import econfigs
-from configcontext import ConfigContext
 
 
 # === Objects ====

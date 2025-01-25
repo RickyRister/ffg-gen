@@ -1,9 +1,10 @@
 from vidpy import Clip
-from lines import Line
 from vidpy.utils import Frame
-from vidpy_extension.ext_composition import ExtComposition
+
 import configs
+from lines import Line
 from mlt_resource import MltResource
+from vidpy_extension.ext_composition import ExtComposition
 
 
 def generate(lines: list[Line], resource: MltResource) -> ExtComposition:

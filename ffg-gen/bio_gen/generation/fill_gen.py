@@ -1,11 +1,12 @@
 from vidpy import Clip
 from vidpy.utils import Frame
-from vidpy_extension.ext_composition import ExtComposition
+
 import configs
-from mlt_resource import MltResource
+from bio_gen.bioinfo import BioInfo
 from filters import opacityFilterArgs
 from lines import Line
-from bio_gen.bioinfo import BioInfo
+from mlt_resource import MltResource
+from vidpy_extension.ext_composition import ExtComposition
 
 
 def generate(lines: list[Line], resource: MltResource, do_fade: bool) -> ExtComposition:

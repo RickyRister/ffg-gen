@@ -1,12 +1,13 @@
+import re
 from dataclasses import dataclass
 from typing import Iterable, Generator
-import re
+
 import configs
+from dialogue_gen.dialogueline import DialogueLine, parse_sysline
+from durations import Frame, to_frame
+from exceptions import LineParseError, DialogueGenException
 from lines import Line
 from . import dconfigs
-from dialogue_gen.dialogueline import DialogueLine, parse_sysline
-from exceptions import LineParseError, DialogueGenException
-from durations import Frame, to_frame
 
 
 @dataclass

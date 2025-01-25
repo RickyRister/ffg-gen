@@ -1,13 +1,15 @@
 from dataclasses import dataclass
 from typing import Generator
+
 from vidpy import Clip
-from mlt_resource import MltResource
-from lines import Line
-from dialogue_gen.dialogueline import Sleep
 from vidpy.utils import Frame
-from vidpy_extension.ext_composition import ExtComposition
-from vidpy_extension.blankclip import BlankClip
+
 import configs
+from dialogue_gen.dialogueline import Sleep
+from lines import Line
+from mlt_resource import MltResource
+from vidpy_extension.blankclip import BlankClip
+from vidpy_extension.ext_composition import ExtComposition
 
 
 @dataclass

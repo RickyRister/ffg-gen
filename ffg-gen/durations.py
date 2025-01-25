@@ -1,9 +1,11 @@
+import ast
 import math
 import re
-import ast
 from bisect import bisect
 from dataclasses import dataclass
+
 from vidpy.utils import Frame
+
 import configs
 
 

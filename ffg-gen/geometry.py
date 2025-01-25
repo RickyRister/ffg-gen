@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field, replace
 from typing import Self
+
 import configs
 
 

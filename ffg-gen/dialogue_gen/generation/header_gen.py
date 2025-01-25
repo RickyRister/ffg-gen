@@ -1,13 +1,14 @@
 from vidpy import Clip
 from vidpy.utils import Frame
-from lines import Line, SysLine
-from dialogue_gen.dialogueline import Sleep
+
+import configs
+from configcontext import ConfigContext
 from dialogue_gen.characterinfo import CharacterInfo
+from dialogue_gen.dialogueline import Sleep
+from lines import Line, SysLine
+from mlt_resource import MltResource
 from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
-import configs
-from mlt_resource import MltResource
-from configcontext import ConfigContext
 
 
 def filter_none(lines: list) -> list:

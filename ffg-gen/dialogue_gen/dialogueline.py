@@ -1,11 +1,13 @@
 import re
-from vidpy.utils import Frame
 from dataclasses import dataclass
-from . import dconfigs
-from lines import TextLine, SysLine, parse_common_sysline
+
+from vidpy.utils import Frame
+
 import durations
 from configcontext import ConfigContext
 from exceptions import LineParseError
+from lines import TextLine, SysLine, parse_common_sysline
+from . import dconfigs
 
 
 @dataclass

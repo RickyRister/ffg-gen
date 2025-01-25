@@ -1,16 +1,17 @@
-from enum import Enum
-from typing import Generator
 from dataclasses import dataclass
+from typing import Generator
+
 from vidpy import Clip
 from vidpy.utils import Frame
+
+import configs
+from bio_gen.bioinfo import BioInfo
+from bio_gen.bioline import BioTextBlock, SetExpr
+from configcontext import ConfigContext
+from exceptions import DialogueGenException
 from filters import affineFilterArgs, opacityFilterArgs
 from lines import Line, SysLine
-from bio_gen.bioline import BioTextBlock, SetExpr
-from bio_gen.bioinfo import BioInfo
-from configcontext import ConfigContext
 from vidpy_extension.ext_composition import ExtComposition
-import configs
-from exceptions import DialogueGenException
 
 
 # === Objects ====

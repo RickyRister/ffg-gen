@@ -1,15 +1,18 @@
-from vidpy import Clip
+from dataclasses import dataclass
 from enum import Enum
 from typing import Generator, Iterable
-from dataclasses import dataclass
+
+from vidpy import Clip
 from vidpy.utils import Frame
-from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
-from lines import Line, SysLine
-from dialogue_gen.dialogueline import DialogueLine, SetExpr, Sleep, CharEnter, CharEnterAll, CharExit, CharExitAll, Front
-from dialogue_gen.characterinfo import CharacterInfo
+
 import configs
 from configcontext import ConfigContext
+from dialogue_gen.characterinfo import CharacterInfo
+from dialogue_gen.dialogueline import DialogueLine, SetExpr, Sleep, CharEnter, CharEnterAll, CharExit, CharExitAll, \
+    Front
 from exceptions import DialogueGenException
+from filters import affineFilterArgs, brightnessFilterArgs, opacityFilterArgs
+from lines import Line, SysLine
 from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
 
