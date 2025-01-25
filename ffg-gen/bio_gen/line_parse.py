@@ -131,31 +131,31 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
                 continue
 
             # process this line as a sysline if it begins with @
-            elif (line.startswith('@')):
+            elif line.startswith('@'):
                 yield parse_sysline(line[1:])
 
             # process this line as a line parse directive if it begins with !
-            elif (line.startswith('!')):
+            elif line.startswith('!'):
                 if (directive := parse_directive(line[1:])) is not None:
                     pending_directives.append(directive)
                 continue
 
             # '---*' immediately starts a new text block
-            elif (line.startswith('---*')):
+            elif line.startswith('---*'):
                 state = State.IN_BLOCK
                 # determine if we're also setting a new character
-                if (char_name := line.removeprefix('---*').strip()):
+                if char_name := line.removeprefix('---*').strip():
                     curr_name = char_name
 
             # '---' sets state to pending
-            elif (line.startswith('---')):
+            elif line.startswith('---'):
                 # we're already in pending state, but this line can also
                 # change the character, so we still need to check that
-                if (char_name := line.removeprefix('---').strip()):
+                if char_name := line.removeprefix('---').strip():
                     curr_name = char_name
 
             # '===' ends the current chapter and starts a new one
-            elif (line.startswith('===')):
+            elif line.startswith('==='):
                 # we don't need to flush the buffer since we're in PENDING state
                 yield ChapterLine(line.removeprefix('===').strip())
 
@@ -173,7 +173,7 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
             if line.startswith('---*'):
                 yield flush_buffer(curr_name)
                 # determine if we're also setting a new character
-                if (char_name := line.removeprefix('---*').strip()):
+                if char_name := line.removeprefix('---*').strip():
                     curr_name = char_name
 
             # '---' ends the text block and puts the state in pending
@@ -181,11 +181,11 @@ def parse_lines(lines: Iterable[str]) -> Generator[Line, None, None]:
                 yield flush_buffer(curr_name)
                 state = State.PENDING
                 # determine if we're also setting a new character
-                if (char_name := line.removeprefix('---').strip()):
+                if char_name := line.removeprefix('---').strip():
                     curr_name = char_name
 
             # '===' ends the current chapter and starts a new one
-            elif (line.startswith('===')):
+            elif line.startswith('==='):
                 # reset everything before moving on
                 yield flush_buffer(curr_name)
                 state = State.PENDING

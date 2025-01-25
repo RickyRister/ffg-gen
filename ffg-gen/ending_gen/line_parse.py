@@ -46,11 +46,11 @@ def parse_lines(lines: list[str]) -> Generator[Line, None, None]:
             continue
 
         # process this line as a sysline if it begins with @
-        elif (line.startswith('@')):
+        elif line.startswith('@'):
             yield parse_sysline(line[1:])
 
         # `---` always marks a page turn
-        elif (line.startswith('---')):
+        elif line.startswith('---'):
             yield PageTurn()
 
         # process line as normal text

@@ -84,7 +84,7 @@ def fix_filter_element(filter_element: Element, parent_producer: Element):
     '''Add required shotcut-exclusive tags to the filter element.
     '''
     mlt_service: Element = filter_element.find("./property[@name='mlt_service']").text
-    match(mlt_service):
+    match mlt_service:
         case 'dynamictext':
             filter_element.append(createPropertyElement('shotcut:filter', 'dynamicText'))
             filter_element.append(createPropertyElement('shotcut:usePointSize', '1'))

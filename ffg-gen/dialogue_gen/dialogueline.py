@@ -66,7 +66,7 @@ class SetExpr(SysLine):
     expression: str
 
     def parseArgs(args: str):
-        if (matches := re.match(dconfigs.PARSING.expressionRegex, args)):
+        if matches := re.match(dconfigs.PARSING.expressionRegex, args):
             return SetExpr(
                 name=matches.group('name').lower().strip(),
                 expression=matches.group('expression').strip())

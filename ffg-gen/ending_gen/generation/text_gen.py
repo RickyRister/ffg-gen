@@ -110,7 +110,7 @@ def process_lines(lines: list[Line]) -> Generator[PageGroup, None, None]:
             # normal TextLine
             case TextLine(text=text, duration=duration):
                 # figure out if automatic speaker change is required
-                if (match := re.match(econfigs.PARSING.dialogueRegex, text)):
+                if match := re.match(econfigs.PARSING.dialogueRegex, text):
                     name = match.group('name').strip().lower()
 
                     # Check if name even matches a known char name.

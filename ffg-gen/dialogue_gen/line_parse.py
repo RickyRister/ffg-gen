@@ -62,21 +62,21 @@ def parse_lines(lines: str) -> Generator[Line, None, None]:
         line = line.strip()
 
         # skip this line if it's empty or it's a comment
-        if (isComment(line)):
+        if isComment(line):
             continue
 
         # process this line as a sysline if it begins with @
-        if (line.startswith('@')):
+        if line.startswith('@'):
             yield parse_sysline(line[1:])
             continue
 
         # process this line as a chapter marker if it begins with ===
-        if (line.startswith('===')):
+        if line.startswith('==='):
             yield ChapterLine(line.removeprefix('===').strip())
             continue
 
         # process this line as a line parse directive if it begins with !
-        if (line.startswith('!')):
+        if line.startswith('!'):
             if (directive := parse_directive(line[1:])) is not None:
                 pending_directives.append(directive)
             continue
