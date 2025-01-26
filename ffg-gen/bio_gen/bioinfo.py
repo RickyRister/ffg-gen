@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Self
 
@@ -28,11 +28,11 @@ class BioInfo(infohelper.Info):
 
     # portrait configs
     portraitPathFormat: MltResource = UNSET
-    portraitGeometry: Geometry = UNSET
+    portraitGeometry: Geometry = field(default_factory=lambda: Geometry(0, 0))
 
     # title configs
     titlePathFormat: MltResource = UNSET
-    titleGeometry: Geometry = UNSET
+    titleGeometry: Geometry = field(default_factory=lambda: Geometry(0, 0))
 
     # boundary fade timings
     firstFadeInDur: Frame = UNSET
