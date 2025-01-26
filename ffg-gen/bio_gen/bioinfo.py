@@ -25,6 +25,7 @@ class BioInfo(infohelper.Info):
     bioFont: str = UNSET
     bioFontSize: int = UNSET
     bioFontColor: str = '#ffffff'
+    bioFontAlign: str = 'left'
 
     # portrait configs
     portraitPathFormat: MltResource = UNSET
@@ -66,14 +67,14 @@ class BioInfo(infohelper.Info):
 
         # progress base defaults
         infohelper.default_to_value(self, 'progbarBaseY',
-                                    configs.VIDEO_MODE.height/2 - self.progbarThickness/2)
+                                    configs.VIDEO_MODE.height / 2 - self.progbarThickness / 2)
 
     @classmethod
     @cache
     def of_name(cls, name: str | None) -> Self:
         if name is None:
             return BioInfo(**bconfigs.BIO_INFO.get('common'))
-        
+
         character_json: dict = merge_down_chain(name)
         return BioInfo(name=name, **character_json)
 

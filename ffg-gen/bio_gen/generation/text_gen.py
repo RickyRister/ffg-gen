@@ -54,7 +54,8 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
         geometry=bioInfo.bioGeometry,
         font=bioInfo.bioFont,
         fontSize=bioInfo.bioFontSize,
-        color=bioInfo.bioFontColor)
+        color=bioInfo.bioFontColor,
+        align=bioInfo.bioFontAlign)
 
     # figure out fade filters
     fadeInEnd = bioInfo.firstFadeInDur if is_first else bioInfo.textFadeInDur
@@ -63,7 +64,7 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
     fadeOutStart = line.duration - fadeOutDur
 
     # create clip
-    return Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)\
-        .fx('qtext', richTextFilter)\
-        .fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1'))\
+    return Clip('color:#00000000', start=Frame(0)).set_duration(line.duration) \
+        .fx('qtext', richTextFilter) \
+        .fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1')) \
         .fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{line.duration}=0'))

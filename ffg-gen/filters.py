@@ -26,7 +26,8 @@ def textFilterArgs(text, geometry,
     }
 
 
-def richTextFilterArgs(text: str, geometry: str, font: str, fontSize: int, color: str = '#ffffff') -> dict:
+def richTextFilterArgs(text: str, geometry: str, font: str, fontSize: int, color: str = '#ffffff',
+                       align: str = "left") -> dict:
     """
     Generates the args for the rich text filter. Use with 'qtext' filter
 
@@ -36,11 +37,12 @@ def richTextFilterArgs(text: str, geometry: str, font: str, fontSize: int, color
         font: The font
         fontSize: The font size
         color: The font color. White by default
+        align: The text alignment
     """
     return {
         'argument': 'text',
         'geometry': geometry,
-        'html': generateHtml(text, font, fontSize, color),
+        'html': generateHtml(text, font, fontSize, color, align),
         'pixel_ratio': 1,
         'overflow-y': 1,
         'bgcolour': '#00000000'
@@ -55,17 +57,21 @@ hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: "\2610"; }
 li.checked::marker { content: "\2612"; }
 </style></head><body>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'{FONT}'; font-size:{SIZE}pt; color:{COLOR};">{TEXT}</span></p></body></html>
+<p align="{ALIGN}" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-family:'{FONT}'; font-size:{SIZE}pt; color:{COLOR};">{TEXT}</span></p></body></html>
 """
 
 
-def generateHtml(text: str, font: str, fontSize: int, color: str = '#ffffff') -> str:
+def generateHtml(text: str, font: str, fontSize: int, color: str = '#ffffff', align: str = "left") -> str:
     """Generates the html for the rich text filter
     """
     # replace newlines with <br/> so that they show up as newlines in html
     text = text.replace('\n', '<br/>')
 
-    return HTML.replace("{FONT}", font).replace("{SIZE}", str(fontSize)).replace("{COLOR}", color).replace("{TEXT}", text)
+    return HTML.replace("{FONT}", font) \
+        .replace("{SIZE}", str(fontSize)) \
+        .replace("{COLOR}", color) \
+        .replace("{TEXT}", text) \
+        .replace("{ALIGN}", str(align))
 
 
 def dropTextFilterArgs(resource: str, end: Frame) -> dict:
