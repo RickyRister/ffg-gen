@@ -27,6 +27,11 @@ class BioInfo(infohelper.Info):
     bioFontColor: str = '#ffffff'
     bioFontAlign: str = 'left'
 
+    # text shadow configs
+    textShadowBlur: float = 0
+    textShadowLightness: float = 200
+    textShadowGain: str = "1 1 1"  # gain_r, gain_g, gain_b; convert to floats before using
+
     # portrait configs
     portraitPathFormat: MltResource = UNSET
     portraitGeometry: Geometry = field(default_factory=lambda: Geometry(0, 0))

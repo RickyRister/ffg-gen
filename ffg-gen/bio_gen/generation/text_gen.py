@@ -47,8 +47,30 @@ def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
             yield line_to_clip(line, bioInfo, is_first, is_last)
 
 
+def parse_gain(string: str) -> tuple[float]:
+    """
+    The textShadowGain property is given as list string of floats, so we have to parse it
+    """
+    return *(float(value) for value in string.split()),
+
+
 def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: bool) -> Clip:
-    # text filters
+    clip = Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)
+
+    # possible text shadow
+    if bioInfo.textShadowBlur > 0:
+        gain: tuple[float] = parse_gain(bioInfo.textShadowGain)
+        clip.fx('qtext', filters.richTextFilterArgs(
+            text=line.text,
+            geometry=bioInfo.bioGeometry,
+            font=bioInfo.bioFont,
+            fontSize=bioInfo.bioFontSize,
+            align=bioInfo.bioFontAlign)) \
+            .fx('avfilter.hue', filters.hueFilterArgs(lightness=bioInfo.textShadowLightness)) \
+            .fx('lift_gamma_gain', filters.colorGradingFilterArgs(gain_r=gain[0], gain_g=gain[1], gain_b=gain[2])) \
+            .fx('avfilter.gblur', filters.gaussianBlurFilterArgs(bioInfo.textShadowBlur))
+
+    # actual text
     richTextFilter: dict = filters.richTextFilterArgs(
         text=line.text,
         geometry=bioInfo.bioGeometry,
@@ -57,14 +79,15 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
         color=bioInfo.bioFontColor,
         align=bioInfo.bioFontAlign)
 
+    clip.fx('qtext', richTextFilter)
+
     # figure out fade filters
     fadeInEnd = bioInfo.firstFadeInDur if is_first else bioInfo.textFadeInDur
 
     fadeOutDur = bioInfo.lastFadeOutDur if is_last else bioInfo.textFadeOutDur
     fadeOutStart = line.duration - fadeOutDur
 
-    # create clip
-    return Clip('color:#00000000', start=Frame(0)).set_duration(line.duration) \
-        .fx('qtext', richTextFilter) \
-        .fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1')) \
+    clip.fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1')) \
         .fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{line.duration}=0'))
+
+    return clip
