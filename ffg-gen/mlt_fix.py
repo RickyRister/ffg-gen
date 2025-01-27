@@ -102,6 +102,8 @@ def fix_filter_element(filter_element: Element, parent_producer: Element):
             filter_element.append(createPropertyElement('shotcut:filter', 'bigsh0t_eq_to_stereo'))
         case 'qtcrop':
             filter_element.append(createPropertyElement('shotcut:filter', 'cropRectangle'))
+        case 'avfilter.gblur':
+            filter_element.append(createPropertyElement('shotcut:filter', 'blur_gaussian_av'))
 
 
 def handle_possible_fades(brightness_filter: Element, parent_producer: Element):

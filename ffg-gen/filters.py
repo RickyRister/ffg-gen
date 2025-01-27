@@ -165,3 +165,20 @@ def cropFilterArgs(rect: str) -> dict:
         'radius': 0,
         'disable': 0
     }
+
+
+def gaussianBlurFilterArgs(amount: float, blur_alpha: bool = True) -> dict:
+    """
+    Generates the args for the Blur: Gaussian filter
+
+    Use with the 'avfilter.gblur' filter
+
+    Args:
+        amount: percent amount of blur
+        blur_alpha: whether Blur Alpha is checked
+    """
+    return {
+        'av.sigma': amount,
+        'av.sigmaV': amount,
+        'av.planes': '0xf' if blur_alpha else '0x7'
+    }
