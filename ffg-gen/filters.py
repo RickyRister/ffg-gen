@@ -182,3 +182,26 @@ def gaussianBlurFilterArgs(amount: float, blur_alpha: bool = True) -> dict:
         'av.sigmaV': amount,
         'av.planes': '0xf' if blur_alpha else '0x7'
     }
+
+
+def hueFilterArgs(hue: int = 0, lightness: float = 100, saturation: float = 100) -> dict:
+    """
+    Generates the args for the Hue/Lightness/Saturation filter.
+    The param values are given as shotcut filter values and are mapped to avfilter values.
+
+    Use with the 'avfilter.hue' filter
+
+    Args:
+        hue: Ranges from -360 to 360 °, default 0
+        lightness: Ranges from 0 to 200 %, default 100
+        saturation: Ranges from 0 to 500 %, default 100
+    """
+    # Hue: maps directly to value in shotcut
+    # Lightness: ranges from -10 to 10 with shotcut 100% -> 0
+    # Saturation: ranges from 0 to 5 with shotcut 100% -> 1
+
+    return {
+        'av.h': hue,
+        'av.b': (lightness - 100) / 10,
+        'av.s': saturation / 100
+    }
