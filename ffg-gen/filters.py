@@ -205,3 +205,26 @@ def hueFilterArgs(hue: int = 0, lightness: float = 100, saturation: float = 100)
         'av.b': (lightness - 100) / 10,
         'av.s': saturation / 100
     }
+
+
+def colorGradingFilterArgs(lift_r: float = 0, lift_g: float = 0, lift_b: float = 0,
+                           gamma_r: float = 1, gamma_g: float = 1, gamma_b: float = 1,
+                           gain_r: float = 1, gain_g: float = 1, gain_b: float = 1) -> dict:
+    """
+    Generates the args for the Color Grading filter.
+    These will be in pure internal values instead of Shotcut values since I'm too lazy to figure out the conversion.
+    Just configure the filter in shotcut and then examine the mlt file to find the values.
+
+    Use with the 'lift_gamma_gain' filter
+    """
+    return {
+        'lift_r': lift_r,
+        'lift_g': lift_g,
+        'lift_b': lift_b,
+        'gamma_r': gamma_r,
+        'gamma_g': gamma_g,
+        'gamma_b': gamma_b,
+        'gain_r': gain_r,
+        'gain_g': gain_g,
+        'gain_b': gain_b
+    }
