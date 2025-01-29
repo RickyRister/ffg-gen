@@ -99,6 +99,7 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
             case macro if macro in configs.COMPONENT_MACROS:
                 yield from process_components(configs.COMPONENT_MACROS.get(macro), lines)
             case 'text': yield from gen_text(lines)
+            case 'textsplit': yield from gen_textsplit(lines)
             case 'progressbar': yield from gen_progressbar(lines)
             case 'pagenum': yield from gen_pagenums(lines)
             case x if x.startswith('portrait:'): yield from gen_portrait(lines, x.removeprefix('portrait:'))
@@ -119,6 +120,11 @@ def process_components(components: list[str], lines: list[Line]) -> Generator[Ex
 def gen_text(lines: list[Line]) -> Generator[ExtComposition, None, None]:
     print(f"Generating text component")
     yield text_gen.generate(lines)
+
+
+def gen_textsplit(lines: list[Line]) -> Generator[ExtComposition, None, None]:
+    print(f"Generating textsplit component")
+    yield from text_gen.generate_split(lines)
 
 
 def gen_progressbar(lines: list[Line]) -> Generator[ExtComposition, None, None]:

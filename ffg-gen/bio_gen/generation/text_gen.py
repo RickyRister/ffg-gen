@@ -1,5 +1,7 @@
+import dataclasses
 from dataclasses import dataclass
-from typing import Generator
+from itertools import zip_longest
+from typing import Generator, Iterable
 
 from vidpy import Clip
 from vidpy.utils import Frame
@@ -9,6 +11,7 @@ import filters
 from bio_gen.bioinfo import BioInfo
 from configcontext import ConfigContext
 from lines import Line, SysLine
+from vidpy_extension.blankclip import BlankClip
 from vidpy_extension.ext_composition import ExtComposition
 
 
@@ -28,7 +31,7 @@ class ClipInfo:
 def generate(lines: list[Line]) -> ExtComposition:
     """Processes the list of lines into a Composition
     """
-    clip_infos: list[ClipInfo] = list(process_lines(lines))
+    clip_infos: Iterable[ClipInfo] = process_lines(lines)
 
     clips = [to_clip(clip_info) for clip_info in clip_infos]
 
@@ -109,3 +112,102 @@ def to_clip(clip_info: ClipInfo) -> Clip:
         .fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{clip_info.duration}=0'))
 
     return clip
+
+
+# ==================
+# text split stuff
+# ==================
+
+def generate_split(lines: list[Line]) -> Generator[ExtComposition, None, None]:
+    """Processes the list of lines into multiple Compositions.
+    Each paragraph of the text will be on its own track.
+    """
+    clip_infos: Iterable[ClipInfo] = process_lines(lines)
+
+    clip_lists: list[list[Clip]] = to_tracks(clip_infos)
+
+    for clips in clip_lists:
+        yield ExtComposition(
+            clips,
+            singletrack=True,
+            width=configs.VIDEO_MODE.width,
+            height=configs.VIDEO_MODE.height,
+            fps=configs.VIDEO_MODE.fps)
+
+
+def to_tracks(clip_infos: Iterable[ClipInfo]) -> list[list[Clip]]:
+    """Maps the list of unsplit ClipInfos into a list of list of Clips, where each inner list represents a track.
+    """
+    # split each ClipInfo into a list of single-paragraph ClipInfos
+    clip_stacks: list[list[ClipInfo]] = [split_clip_info(clip_info) for clip_info in clip_infos]
+
+    # figure out the maximum number of tracks needed
+    num_tracks = max([len(clip_stack) for clip_stack in clip_stacks])
+
+    track_list: list[list[Clip]] = [list() for _ in range(num_tracks)]
+
+    for clip_stack in clip_stacks:
+        # we know track_list is always same or longer than clip_stack,
+        # so only clipinfo can be None
+        for (clipinfo, track) in zip_longest(clip_stack, track_list, fillvalue=None):
+            # fill with blank if the clip_stack doesn't reach this track
+            if clipinfo is None:
+                track.append(BlankClip.ofDuration(clip_stack[0].duration))
+            else:
+                # actual text portion
+                track.append(to_clip(clipinfo))
+
+    # the clip stacks are ordered from top to bottom, meaning the first text is on the top of the stack
+    # we want it so that the first text is on the bottom of the stack, since that fits how we edit
+    track_list.reverse()
+
+    return track_list
+
+
+def split_clip_info(clip_info: ClipInfo) -> list[ClipInfo]:
+    """Splits the single ClipInfo into a separate ClipInfo for each paragraph.
+    The new ClipInfos will contain the split text, padded with leading newlines to ensure they all line up.
+    The new text will already have the lineWrapGuide symbols removed.
+    """
+    new_texts: Iterable[str] = split_text(clip_info.text, clip_info.bioInfo.lineWrapGuide)
+    return [dataclasses.replace(clip_info, text=new_text) for new_text in new_texts]
+
+
+def split_text(text_block: str, lineWrapGuide: str) -> Generator[str, None, None]:
+    """Splits the entire text block string into individual strings for each paragraph.
+    Each resulting string is padded with leading newlines and has the lineWrapGuide symbols removed
+    """
+    buffer: list[str] = []
+    leading_lines = 0  # number of leading lines before the current buffer start
+
+    def flush_buffer() -> Generator[str, None, None]:
+        """Flushes the buffer, removing the lineWrapGuide symbols from the text.
+        Also updates the leading_lines count
+        returns: A generator that might return one or zero strings
+        """
+        nonlocal leading_lines
+        if len(buffer) > 0:
+            joined = str.join('\n', buffer)
+            yield '\n' * leading_lines + joined.replace(lineWrapGuide, '')
+
+            # update numbers and clean up
+            leading_lines += joined.count(lineWrapGuide)
+            leading_lines += len(buffer)
+            buffer.clear()
+        # always increment leading_lines to account for the blank newline
+        leading_lines += 1
+
+    for line in text_block.splitlines():
+        # strip right to prevent shenanigans with trailing whitespaces
+        line = line.rstrip()
+
+        # empty line after rstrip means it's a paragraph break; flush buffer
+        if line == '':
+            yield from flush_buffer()
+
+        # everything else gets processed as text and added to the buffer
+        else:
+            buffer.append(line)
+
+    # handle any unterminated text blocks at end
+    yield from flush_buffer()
