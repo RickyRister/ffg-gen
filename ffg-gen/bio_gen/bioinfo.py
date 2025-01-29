@@ -32,6 +32,14 @@ class BioInfo(infohelper.Info):
     textShadowLightness: float = 200
     textShadowGain: str = "1 1 1"  # gain_r, gain_g, gain_b; convert to floats before using
 
+    lineWrapGuide: str = ""
+    """ 
+    Use this symbol in the text to indicate that a line wrap would have happened.
+    This is used for counting how many newlines are required when separating the text block into individual clips, so 
+    the location doesn't actually have to be precise. It just has to show up somewhere in that line.
+    This symbol will be deleted from the final text.
+    """
+
     # portrait configs
     portraitPathFormat: MltResource = UNSET
     portraitGeometry: Geometry = field(default_factory=lambda: Geometry(0, 0))

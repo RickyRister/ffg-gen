@@ -57,11 +57,14 @@ def parse_gain(string: str) -> tuple[float]:
 def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: bool) -> Clip:
     clip = Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)
 
+    # delete all occurrences of the line wrap guide
+    text: str = line.text.replace(bioInfo.lineWrapGuide, '')
+
     # possible text shadow
     if bioInfo.textShadowBlur > 0:
         gain: tuple[float] = parse_gain(bioInfo.textShadowGain)
         clip.fx('qtext', filters.richTextFilterArgs(
-            text=line.text,
+            text=text,
             geometry=bioInfo.bioGeometry,
             font=bioInfo.bioFont,
             fontSize=bioInfo.bioFontSize,
@@ -72,7 +75,7 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
 
     # actual text
     richTextFilter: dict = filters.richTextFilterArgs(
-        text=line.text,
+        text=text,
         geometry=bioInfo.bioGeometry,
         font=bioInfo.bioFont,
         fontSize=bioInfo.bioFontSize,
