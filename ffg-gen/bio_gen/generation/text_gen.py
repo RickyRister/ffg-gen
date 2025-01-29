@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Generator
 
 from vidpy import Clip
@@ -6,10 +7,20 @@ from vidpy.utils import Frame
 import configs
 import filters
 from bio_gen.bioinfo import BioInfo
-from bio_gen.bioline import BioTextBlock
 from configcontext import ConfigContext
 from lines import Line, SysLine
 from vidpy_extension.ext_composition import ExtComposition
+
+
+@dataclass
+class ClipInfo:
+    """An intermediate representation that stores each processed line before it gets turned into clips.
+    """
+    text: str
+    bioInfo: BioInfo
+    duration: Frame
+    is_first: bool = False
+    is_last: bool = False
 
 
 # === Entrance ====
@@ -17,7 +28,9 @@ from vidpy_extension.ext_composition import ExtComposition
 def generate(lines: list[Line]) -> ExtComposition:
     """Processes the list of lines into a Composition
     """
-    clips: list[Clip] = list(process_lines(lines))
+    clip_infos: list[ClipInfo] = list(process_lines(lines))
+
+    clips = [to_clip(clip_info) for clip_info in clip_infos]
 
     return ExtComposition(
         clips,
@@ -29,7 +42,7 @@ def generate(lines: list[Line]) -> ExtComposition:
 
 # === Processing Lines ===
 
-def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
+def process_lines(lines: list[Line]) -> Generator[ClipInfo, None, None]:
     context = ConfigContext(BioInfo)
 
     for index, line in enumerate(lines):
@@ -44,7 +57,7 @@ def process_lines(lines: list[Line]) -> Generator[Clip, None, None]:
 
             # create the clip
             bioInfo = context.get_char(line.name)
-            yield line_to_clip(line, bioInfo, is_first, is_last)
+            yield ClipInfo(line.text, bioInfo, line.duration, is_first, is_last)
 
 
 def parse_gain(string: str) -> tuple[float]:
@@ -54,11 +67,13 @@ def parse_gain(string: str) -> tuple[float]:
     return *(float(value) for value in string.split()),
 
 
-def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: bool) -> Clip:
-    clip = Clip('color:#00000000', start=Frame(0)).set_duration(line.duration)
+def to_clip(clip_info: ClipInfo) -> Clip:
+    clip = Clip('color:#00000000', start=Frame(0)).set_duration(clip_info.duration)
+
+    bioInfo: BioInfo = clip_info.bioInfo
 
     # delete all occurrences of the line wrap guide
-    text: str = line.text.replace(bioInfo.lineWrapGuide, '')
+    text: str = clip_info.text.replace(bioInfo.lineWrapGuide, '')
 
     # possible text shadow
     if bioInfo.textShadowBlur > 0:
@@ -85,12 +100,12 @@ def line_to_clip(line: BioTextBlock, bioInfo: BioInfo, is_first: bool, is_last: 
     clip.fx('qtext', richTextFilter)
 
     # figure out fade filters
-    fadeInEnd = bioInfo.firstFadeInDur if is_first else bioInfo.textFadeInDur
+    fadeInEnd = bioInfo.firstFadeInDur if clip_info.is_first else bioInfo.textFadeInDur
 
-    fadeOutDur = bioInfo.lastFadeOutDur if is_last else bioInfo.textFadeOutDur
-    fadeOutStart = line.duration - fadeOutDur
+    fadeOutDur = bioInfo.lastFadeOutDur if clip_info.is_last else bioInfo.textFadeOutDur
+    fadeOutStart = clip_info.duration - fadeOutDur
 
     clip.fx('brightness', filters.opacityFilterArgs(f'0=0;{fadeInEnd}=1')) \
-        .fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{line.duration}=0'))
+        .fx('brightness', filters.opacityFilterArgs(f'{fadeOutStart}=1;{clip_info.duration}=0'))
 
     return clip
